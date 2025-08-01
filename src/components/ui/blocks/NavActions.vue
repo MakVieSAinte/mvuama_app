@@ -19,11 +19,7 @@ import {
 
 import { ref } from 'vue'
 import { Button } from '@/components/ui/button'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import {
   Sidebar,
   SidebarContent,
@@ -102,29 +98,25 @@ const isOpen = ref(false)
 
 <template>
   <div class="flex items-center gap-2 text-sm">
-    <div class="hidden font-medium text-muted-foreground md:inline-block">
-      Edit Oct 08
-    </div>
+    <div class="hidden font-medium text-muted-foreground md:inline-block">Edit Oct 08</div>
     <Button variant="ghost" size="icon" class="h-7 w-7">
       <Star />
     </Button>
     <Popover v-model:open="isOpen">
+      export default { name: 'NavActions', }
       <PopoverTrigger as-child>
-        <Button
-          variant="ghost"
-          size="icon"
-          class="h-7 w-7 data-[state=open]:bg-accent"
-        >
+        <Button variant="ghost" size="icon" class="h-7 w-7 data-[state=open]:bg-accent">
           <MoreHorizontal />
         </Button>
       </PopoverTrigger>
-      <PopoverContent
-        class="w-56 overflow-hidden rounded-lg p-0"
-        align="end"
-      >
+      <PopoverContent class="w-56 overflow-hidden rounded-lg p-0" align="end">
         <Sidebar collapsible="none" class="bg-transparent">
           <SidebarContent>
-            <SidebarGroup v-for="(group, index) in data" :key="index" class="border-b last:border-none">
+            <SidebarGroup
+              v-for="(group, index) in data"
+              :key="index"
+              class="border-b last:border-none"
+            >
               <SidebarGroupContent class="gap-0">
                 <SidebarMenu>
                   <SidebarMenuItem v-for="(item, index) in group" :key="index">

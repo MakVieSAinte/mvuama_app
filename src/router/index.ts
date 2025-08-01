@@ -8,7 +8,47 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
-    }
+    },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: () => import('../views/DashboardView.vue'),
+    },
+    {
+      path: '/vehicles',
+      name: 'vehicles',
+      component: () => import('../views/VehiclesView.vue'),
+    },
+    {
+      path: '/maintenance',
+      name: 'maintenance',
+      component: () => import('../views/MaintenanceView.vue'),
+    },
+    {
+      path: '/checklist',
+      name: 'checklist',
+      component: () => import('../views/ChecklistView.vue'),
+    },
+    {
+      path: '/parking',
+      name: 'parking',
+      component: () => import('../views/ParkingView.vue'),
+    },
+    {
+      path: '/chauffeurs',
+      name: 'chauffeurs',
+      component: () => import('../views/ChauffeursView.vue'),
+    },
+    {
+      path: '/recettes',
+      name: 'recettes',
+      component: () => import('../views/RecettesView.vue'),
+    },
+    {
+      path: '/paiements',
+      name: 'paiements',
+      component: () => import('../views/PaiementsView.vue'),
+    },
   ],
 })
 

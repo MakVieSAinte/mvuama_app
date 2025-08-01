@@ -1,9 +1,29 @@
-<script setup lang="ts">
+<script lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+
+import { defineComponent, ref } from 'vue'
+import TheWelcome from '@/components/TheWelcome.vue'
+
+interface Tab {
+  id: string
+  label: string
+  shortLabel: string
+  icon: any
+}
+
+export default defineComponent({
+  name: 'App',
+  components: {
+    TheWelcome,
+  },
+  setup() {
+    return {}
+  },
+})
 </script>
 
 <template>
-  <RouterView />
+  <TheWelcome />
 </template>
 
 <style scoped>
