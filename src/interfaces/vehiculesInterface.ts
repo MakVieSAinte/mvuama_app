@@ -1,4 +1,3 @@
-
 // Model Interface Student
 
 export interface IStudentModel {
@@ -9,6 +8,6 @@ export interface IStudentModel {
 // Builder Interface Student
 
 export interface IStudentBuilder {
-  errorFirstname: boolean;
-  errorEmail: boolean;
+  errorFirstname: boolean
+  errorEmail: boolean
 }

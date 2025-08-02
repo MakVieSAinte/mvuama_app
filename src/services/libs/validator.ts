@@ -1,6 +1,4 @@
 export class Validator {
-  
-
   /**
    * Validate Firstname
    * @param {*} firstname
@@ -16,7 +14,6 @@ export class Validator {
     }
   }
 
-
   /**
    * Validate Email
    * @param {*} email
@@ -31,5 +28,4 @@ export class Validator {
       return false
     }
   }
-
 }

@@ -6,22 +6,23 @@ import { computed, type HTMLAttributes, onMounted, onUnmounted } from 'vue'
 import { cn } from '@/lib/utils'
 import { provideCommandGroupContext, useCommand } from '.'
 
-const props = defineProps<ListboxGroupProps & {
-  class?: HTMLAttributes['class']
-  heading?: string
-}>()
+const props = defineProps<
+  ListboxGroupProps & {
+    class?: HTMLAttributes['class']
+    heading?: string
+  }
+>()
 
 const delegatedProps = reactiveOmit(props, 'class')
 
 const { allGroups, filterState } = useCommand()
 const id = useId()
 
-const isRender = computed(() => !filterState.search ? true : filterState.filtered.groups.has(id))
+const isRender = computed(() => (!filterState.search ? true : filterState.filtered.groups.has(id)))
 
 provideCommandGroupContext({ id })
 onMounted(() => {
-  if (!allGroups.value.has(id))
-    allGroups.value.set(id, new Set())
+  if (!allGroups.value.has(id)) allGroups.value.set(id, new Set())
 })
 onUnmounted(() => {
   allGroups.value.delete(id)

@@ -1,11 +1,5 @@
 <script setup lang="ts">
-import {
-  ArrowUpRight,
-  Link,
-  MoreHorizontal,
-  StarOff,
-  Trash2,
-} from 'lucide-vue-next'
+import { ArrowUpRight, Link, MoreHorizontal, StarOff, Trash2 } from 'lucide-vue-next'
 
 import {
   DropdownMenu,

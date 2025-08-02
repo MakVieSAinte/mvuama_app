@@ -164,13 +164,7 @@
             v-for="maintenance in urgentMaintenances"
             :key="maintenance.id"
             class="bg-card border border-red-200 rounded-lg p-6"
-          >
-            <MaintenanceCard
-              :maintenance="maintenance"
-              @edit="editMaintenance"
-              @update-status="updateMaintenanceStatus"
-            />
-          </div>
+          ></div>
         </div>
       </div>
 
@@ -182,13 +176,7 @@
             v-for="maintenance in upcomingMaintenances"
             :key="maintenance.id"
             class="bg-card border border-orange-200 rounded-lg p-6"
-          >
-            <MaintenanceCard
-              :maintenance="maintenance"
-              @edit="editMaintenance"
-              @update-status="updateMaintenanceStatus"
-            />
-          </div>
+          ></div>
         </div>
       </div>
 
@@ -200,13 +188,7 @@
             v-for="maintenance in otherMaintenances"
             :key="maintenance.id"
             class="bg-card border border-border rounded-lg p-6"
-          >
-            <MaintenanceCard
-              :maintenance="maintenance"
-              @edit="editMaintenance"
-              @update-status="updateMaintenanceStatus"
-            />
-          </div>
+          ></div>
         </div>
       </div>
     </div>
@@ -239,7 +221,6 @@
 import { defineComponent, ref, computed } from 'vue'
 import { Plus, Wrench } from 'lucide-vue-next'
 import { mockMaintenances, mockVehicles } from '@/data/mockData'
-import MaintenanceCard from '../maintenance/MaintenanceCard.vue'
 import type { Maintenance } from '@/types/fleet'
 
 interface MaintenanceFilters {
@@ -260,9 +241,7 @@ interface NewMaintenanceForm {
 
 export default defineComponent({
   name: 'MaintenanceSchedule',
-  components: {
-    MaintenanceCard,
-  },
+  components: {},
   setup() {
     const showAddForm = ref<boolean>(false)
     const editingMaintenance = ref<Maintenance | null>(null)

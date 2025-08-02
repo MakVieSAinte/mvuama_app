@@ -3,7 +3,9 @@
     <div class="flex items-center gap-3">
       <Wrench class="h-6 w-6" />
       <div>
-        <h3 class="font-medium">{{ getVehicleInfo(maintenance.vehiculeId)?.immatriculation }} - {{ maintenance.type }}</h3>
+        <h3 class="font-medium">
+          {{ getVehicleInfo(maintenance.vehiculeId)?.immatriculation }} - {{ maintenance.type }}
+        </h3>
         <p class="text-sm text-muted-foreground">{{ maintenance.description }}</p>
       </div>
     </div>
@@ -89,13 +91,13 @@ export default defineComponent({
   props: {
     maintenance: {
       type: Object as () => Maintenance,
-      required: true
-    }
+      required: true,
+    },
   },
   emits: ['edit', 'update-status'],
   setup() {
     const getVehicleInfo = (vehiculeId: string): Vehicle | undefined => {
-      return mockVehicles.find(v => v.id === vehiculeId)
+      return mockVehicles.find((v) => v.id === vehiculeId)
     }
 
     const formatDate = (dateString: string): string => {
@@ -104,10 +106,10 @@ export default defineComponent({
 
     const getStatusColor = (statut: Maintenance['statut']): string => {
       const colors: Record<Maintenance['statut'], string> = {
-        'Prévue': 'bg-blue-100 text-blue-800',
+        Prévue: 'bg-blue-100 text-blue-800',
         'En cours': 'bg-yellow-100 text-yellow-800',
-        'Terminée': 'bg-green-100 text-green-800',
-        'Annulée': 'bg-red-100 text-red-800'
+        Terminée: 'bg-green-100 text-green-800',
+        Annulée: 'bg-red-100 text-red-800',
       }
       return colors[statut] || 'bg-gray-100 text-gray-800'
     }
@@ -129,8 +131,8 @@ export default defineComponent({
       getStatusColor,
       getDateUrgency,
       Wrench,
-      Edit
+      Edit,
     }
-  }
+  },
 })
 </script>

@@ -12,7 +12,7 @@ export const mockVehicles: Vehicle[] = [
     statut: 'Disponible',
     dateMiseEnService: '2022-03-15',
     prochainEntretien: '2024-08-15',
-    carburant: 'Essence'
+    carburant: 'Essence',
   },
   {
     id: '2',
@@ -25,7 +25,7 @@ export const mockVehicles: Vehicle[] = [
     statut: 'En service',
     dateMiseEnService: '2021-01-20',
     prochainEntretien: '2024-08-05',
-    carburant: 'Diesel'
+    carburant: 'Diesel',
   },
   {
     id: '3',
@@ -38,7 +38,7 @@ export const mockVehicles: Vehicle[] = [
     statut: 'Maintenance',
     dateMiseEnService: '2023-06-10',
     prochainEntretien: '2024-09-10',
-    carburant: 'Électrique'
+    carburant: 'Électrique',
   },
   {
     id: '4',
@@ -51,8 +51,8 @@ export const mockVehicles: Vehicle[] = [
     statut: 'Disponible',
     dateMiseEnService: '2020-09-05',
     prochainEntretien: '2024-08-20',
-    carburant: 'Diesel'
-  }
+    carburant: 'Diesel',
+  },
 ]
 
 export const mockMaintenances: Maintenance[] = [
@@ -63,7 +63,7 @@ export const mockMaintenances: Maintenance[] = [
     description: 'Révision annuelle complète',
     datePrevue: '2024-08-15',
     statut: 'Prévue',
-    garage: 'Garage Central'
+    garage: 'Garage Central',
   },
   {
     id: '2',
@@ -72,7 +72,7 @@ export const mockMaintenances: Maintenance[] = [
     description: 'Vidange moteur et filtres',
     datePrevue: '2024-08-05',
     statut: 'Prévue',
-    garage: 'Garage Renault'
+    garage: 'Garage Renault',
   },
   {
     id: '3',
@@ -81,7 +81,7 @@ export const mockMaintenances: Maintenance[] = [
     description: 'Mise à jour logiciel',
     datePrevue: '2024-09-10',
     statut: 'En cours',
-    garage: 'Tesla Service'
+    garage: 'Tesla Service',
   },
   {
     id: '4',
@@ -92,8 +92,8 @@ export const mockMaintenances: Maintenance[] = [
     dateRealisee: '2024-07-15',
     statut: 'Terminée',
     cout: 85,
-    garage: 'Garage Central'
-  }
+    garage: 'Garage Central',
+  },
 ]
 
 export const mockChecklists: Checklist[] = [
@@ -103,14 +103,14 @@ export const mockChecklists: Checklist[] = [
     date: '2024-07-30',
     verificateur: 'Jean Dupont',
     items: [
-      { id: '1', nom: 'Niveau d\'huile', verifie: true },
+      { id: '1', nom: "Niveau d'huile", verifie: true },
       { id: '2', nom: 'Pression des pneus', verifie: true },
       { id: '3', nom: 'Éclairage', verifie: false, commentaire: 'Ampoule avant gauche à changer' },
       { id: '4', nom: 'Freins', verifie: true },
-      { id: '5', nom: 'Batterie', verifie: true }
+      { id: '5', nom: 'Batterie', verifie: true },
     ],
-    commentaires: 'Véhicule en bon état général'
-  }
+    commentaires: 'Véhicule en bon état général',
+  },
 ]
 
 // Fonction helper pour calculer la date d'échéance (3 mois après l'entrée)
@@ -129,7 +129,7 @@ export const mockParkingEntries: ParkingEntry[] = [
     place: 'A-15',
     conducteur: 'Marie Martin',
     destination: 'Client Paris',
-    kilometrageSortie: 25000
+    kilometrageSortie: 25000,
   },
   {
     id: '2',
@@ -141,7 +141,7 @@ export const mockParkingEntries: ParkingEntry[] = [
     conducteur: 'Pierre Durand',
     destination: 'Livraison Lyon',
     kilometrageSortie: 44800,
-    kilometrageRetour: 45200
+    kilometrageRetour: 45200,
   },
   {
     id: '3',
@@ -151,8 +151,8 @@ export const mockParkingEntries: ParkingEntry[] = [
     place: 'C-12',
     conducteur: 'Sophie Leroy',
     destination: 'Mission longue durée',
-    kilometrageSortie: 15000
-  }
+    kilometrageSortie: 15000,
+  },
 ]
 
 // Fonction utilitaire exportée pour calculer les échéances

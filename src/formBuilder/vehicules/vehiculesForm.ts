@@ -15,7 +15,6 @@ export class StudentForm {
     this.errorEmail = false
   }
 
-
   /**
    * Verif Firstname
    * @param {*} firstname
@@ -33,7 +32,6 @@ export class StudentForm {
     }
     return this
   }
-
 
   /**
    * Verif Email

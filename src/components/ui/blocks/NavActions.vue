@@ -3,6 +3,7 @@ import {
   ArrowDown,
   ArrowUp,
   Bell,
+  User,
   Copy,
   CornerUpLeft,
   CornerUpRight,
@@ -33,47 +34,29 @@ import {
 const data = [
   [
     {
-      label: 'Customize Page',
-      icon: Settings2,
-    },
-    {
-      label: 'Turn into wiki',
-      icon: FileText,
-    },
-  ],
-  [
-    {
-      label: 'Copy Link',
+      label: 'Copier le lien',
       icon: Link,
     },
     {
-      label: 'Duplicate',
-      icon: Copy,
+      label: 'Configuration',
+      icon: Settings2,
     },
     {
-      label: 'Move to',
-      icon: CornerUpRight,
-    },
-    {
-      label: 'Move to Trash',
-      icon: Trash2,
+      label: 'Profil',
+      icon: User,
     },
   ],
   [
     {
-      label: 'Undo',
-      icon: CornerUpLeft,
-    },
-    {
-      label: 'View analytics',
+      label: 'Voir les statistiques',
       icon: LineChart,
     },
     {
-      label: 'Version History',
+      label: 'Historique des recettes',
       icon: GalleryVerticalEnd,
     },
     {
-      label: 'Show delete pages',
+      label: 'Afficher les éléments supprimés',
       icon: Trash,
     },
     {
@@ -103,7 +86,6 @@ const isOpen = ref(false)
       <Star />
     </Button>
     <Popover v-model:open="isOpen">
-      export default { name: 'NavActions', }
       <PopoverTrigger as-child>
         <Button variant="ghost" size="icon" class="h-7 w-7 data-[state=open]:bg-accent">
           <MoreHorizontal />

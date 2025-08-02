@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { ChevronRight, MoreHorizontal, Plus } from 'lucide-vue-next'
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import {
   SidebarGroup,
   SidebarGroupContent,

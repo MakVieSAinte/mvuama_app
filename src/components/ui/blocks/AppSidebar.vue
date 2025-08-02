@@ -75,6 +75,7 @@ const data = {
     },
   ],
   navMain: [
+    { id: 'home', title: 'Accueil', icon: Home, route: '/home' },
     { id: 'dashboard', title: 'Tableau de bord', icon: ChartArea, route: '/dashboard' },
     { id: 'vehicles', title: 'Véhicules', icon: Car, route: '/vehicles' },
     { id: 'chauffeurs', title: 'Chauffeurs', icon: Users, route: '/chauffeurs' },
@@ -120,8 +121,11 @@ const data = {
         <SidebarMenu>
           <SidebarMenuItem v-for="item in data.navMain" :key="item.id">
             <SidebarMenuButton as-child>
-              <router-link :to="item.route" :data-active="$route.path === item.route"
-                class="flex items-center gap-2 w-full">
+              <router-link
+                :to="item.route"
+                :data-active="$route.path === item.route"
+                class="flex items-center gap-2 w-full"
+              >
                 <component :is="item.icon" />
                 <span>{{ item.title }}</span>
               </router-link>

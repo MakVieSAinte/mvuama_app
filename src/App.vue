@@ -1,8 +1,6 @@
 <script lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-
 import { defineComponent, ref } from 'vue'
-import TheWelcome from '@/components/TheWelcome.vue'
+import Home from '@/components/home/Home.vue'
 
 interface Tab {
   id: string
@@ -14,7 +12,7 @@ interface Tab {
 export default defineComponent({
   name: 'App',
   components: {
-    TheWelcome,
+    Home,
   },
   setup() {
     return {}
@@ -23,7 +21,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <TheWelcome />
+  <Home />
 </template>
 
 <style scoped>
