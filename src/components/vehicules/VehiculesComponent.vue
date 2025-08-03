@@ -1,449 +1,710 @@
 <template>
-  <div class="space-y-6">
-    <div class="flex justify-between items-center">
-      <h2>Gestion des Véhicules</h2>
-      <button
-        @click="showAddForm = true"
-        class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-      >
-        <Plus class="h-4 w-4" />
+  <div class="space-y-8 min-h-screen bg-gradient-to-br from-background to-muted p-4 md:p-8">
+    <!-- Header avec titre -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-end gap-4">
+      <Button class="inline-flex items-center gap-2">
+        <Plus class="h-5 w-5" />
         Ajouter un véhicule
-      </button>
+      </Button>
     </div>
 
-    <!-- Filtres -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-card border border-border rounded-lg">
-      <div>
-        <label class="block text-sm font-medium mb-2">Type</label>
-        <select
-          v-model="filters.type"
-          class="w-full px-3 py-2 border border-border rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-ring"
-        >
-          <option value="all">Tous les types</option>
-          <option value="Voiture">Voiture</option>
-          <option value="Camion">Camion</option>
-          <option value="Utilitaire">Utilitaire</option>
-          <option value="Moto">Moto</option>
-        </select>
-      </div>
+    <br />
 
-      <div>
-        <label class="block text-sm font-medium mb-2">Statut</label>
-        <select
-          v-model="filters.statut"
-          class="w-full px-3 py-2 border border-border rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-ring"
-        >
-          <option value="all">Tous les statuts</option>
-          <option value="Disponible">Disponible</option>
-          <option value="En service">En service</option>
-          <option value="Maintenance">Maintenance</option>
-          <option value="Hors service">Hors service</option>
-        </select>
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium mb-2">Carburant</label>
-        <select
-          v-model="filters.carburant"
-          class="w-full px-3 py-2 border border-border rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-ring"
-        >
-          <option value="all">Tous les carburants</option>
-          <option value="Essence">Essence</option>
-          <option value="Diesel">Diesel</option>
-          <option value="Électrique">Électrique</option>
-          <option value="Hybride">Hybride</option>
-        </select>
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium mb-2">Recherche</label>
-        <input
-          v-model="filters.search"
-          type="text"
-          placeholder="Immatriculation, marque..."
-          class="w-full px-3 py-2 border border-border rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-ring"
-        />
-      </div>
-    </div>
-
-    <!-- Formulaire d'ajout -->
-    <div v-if="showAddForm" class="bg-card border border-border rounded-lg p-6">
-      <h3 class="mb-4">
-        {{ editingVehicle ? 'Modifier le véhicule' : 'Ajouter un nouveau véhicule' }}
-      </h3>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div>
-          <label class="block text-sm font-medium mb-2">Immatriculation *</label>
-          <input
-            v-model="newVehicle.immatriculation"
-            type="text"
-            placeholder="AB-123-CD"
-            class="w-full px-3 py-2 border border-border rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-ring"
+    <!-- Filtres et select colonnes sur une seule ligne -->
+    <div class="bg-card rounded-xl shadow-sm border border-border p-4">
+      <div class="flex flex-col md:flex-row md:items-end gap-3 md:gap-4 w-full">
+        <div class="flex-1 min-w-[120px]">
+          <label class="text-sm font-medium text-foreground mb-1 block">Recherche</label>
+          <Input
+            placeholder="Recherche globale..."
+            :model-value="globalFilter"
+            @update:model-value="setGlobalFilter"
+            class="w-full"
           />
         </div>
-
-        <div>
-          <label class="block text-sm font-medium mb-2">Marque *</label>
-          <input
-            v-model="newVehicle.marque"
-            type="text"
-            placeholder="Peugeot, Renault..."
-            class="w-full px-3 py-2 border border-border rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-ring"
-          />
+        <div class="flex-1 min-w-[120px]">
+          <label class="text-sm font-medium text-foreground mb-1 block">Type</label>
+          <Select v-model="typeFilter" class="w-full h-full">
+            <SelectTrigger class="w-full h-full">
+              <SelectValue placeholder="Tous les types" class="w-full h-full" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous les types</SelectItem>
+              <SelectItem value="Voiture">Voiture</SelectItem>
+              <SelectItem value="Camion">Camion</SelectItem>
+              <SelectItem value="Utilitaire">Utilitaire</SelectItem>
+              <SelectItem value="Moto">Moto</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
-
-        <div>
-          <label class="block text-sm font-medium mb-2">Modèle *</label>
-          <input
-            v-model="newVehicle.modele"
-            type="text"
-            placeholder="308, Master..."
-            class="w-full px-3 py-2 border border-border rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-ring"
-          />
+        <div class="flex-1 min-w-[120px]">
+          <label class="text-sm font-medium text-foreground mb-1 block">Statut</label>
+          <Select v-model="statusFilter" class="w-full h-full">
+            <SelectTrigger class="w-full h-full">
+              <SelectValue placeholder="Tous les statuts" class="w-full h-full" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous les statuts</SelectItem>
+              <SelectItem value="Disponible">Disponible</SelectItem>
+              <SelectItem value="En service">En service</SelectItem>
+              <SelectItem value="Maintenance">Maintenance</SelectItem>
+              <SelectItem value="Hors service">Hors service</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
-
-        <div>
-          <label class="block text-sm font-medium mb-2">Année *</label>
-          <input
-            v-model.number="newVehicle.annee"
-            type="number"
-            placeholder="2023"
-            min="1900"
-            max="2030"
-            class="w-full px-3 py-2 border border-border rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-ring"
-          />
+        <div class="flex-1 min-w-[120px]">
+          <label class="text-sm font-medium text-foreground mb-1 block">Carburant</label>
+          <Select v-model="fuelFilter" class="w-full h-full">
+            <SelectTrigger class="w-full h-full">
+              <SelectValue placeholder="Tous les carburants" class="w-full h-full" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous les carburants</SelectItem>
+              <SelectItem value="Essence">Essence</SelectItem>
+              <SelectItem value="Diesel">Diesel</SelectItem>
+              <SelectItem value="Électrique">Électrique</SelectItem>
+              <SelectItem value="Hybride">Hybride</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
-
-        <div>
-          <label class="block text-sm font-medium mb-2">Type *</label>
-          <select
-            v-model="newVehicle.type"
-            class="w-full px-3 py-2 border border-border rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-ring"
-          >
-            <option value="">Sélectionner un type</option>
-            <option value="Voiture">Voiture</option>
-            <option value="Camion">Camion</option>
-            <option value="Utilitaire">Utilitaire</option>
-            <option value="Moto">Moto</option>
-          </select>
+        <div class="flex-1 min-w-[120px] flex">
+          <DropdownMenu>
+            <DropdownMenuTrigger as-child>
+              <Button
+                variant="outline"
+                class="w-full h-full flex flex-row justify-between items-center"
+              >
+                <span>Colonnes</span>
+                <ChevronDown class="mr-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" class="w-48">
+              <DropdownMenuCheckboxItem
+                v-for="column in table.getAllColumns().filter((column) => column.getCanHide())"
+                :key="column.id"
+                class="capitalize"
+                :model-value="column.getIsVisible()"
+                @update:model-value="
+                  (value) => {
+                    column.toggleVisibility(!!value)
+                  }
+                "
+              >
+                {{ getColumnDisplayName(column.id) }}
+              </DropdownMenuCheckboxItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-
-        <div>
-          <label class="block text-sm font-medium mb-2">Carburant *</label>
-          <select
-            v-model="newVehicle.carburant"
-            class="w-full px-3 py-2 border border-border rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-ring"
-          >
-            <option value="">Sélectionner un carburant</option>
-            <option value="Essence">Essence</option>
-            <option value="Diesel">Diesel</option>
-            <option value="Électrique">Électrique</option>
-            <option value="Hybride">Hybride</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium mb-2">Kilométrage</label>
-          <input
-            v-model.number="newVehicle.kilometrage"
-            type="number"
-            placeholder="25000"
-            min="0"
-            class="w-full px-3 py-2 border border-border rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-ring"
-          />
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium mb-2">Date de mise en service</label>
-          <input
-            v-model="newVehicle.dateMiseEnService"
-            type="date"
-            class="w-full px-3 py-2 border border-border rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-ring"
-          />
-        </div>
-      </div>
-
-      <div class="flex gap-4">
-        <button
-          @click="handleVehicleSubmit"
-          :disabled="!isVehicleFormValid"
-          :class="[
-            'px-4 py-2 rounded-lg transition-colors',
-            isVehicleFormValid
-              ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-              : 'bg-muted text-muted-foreground cursor-not-allowed',
-          ]"
-        >
-          {{ editingVehicle ? 'Modifier' : 'Ajouter' }} le véhicule
-        </button>
-        <button
-          @click="cancelForm"
-          class="px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors"
-        >
-          Annuler
-        </button>
       </div>
     </div>
 
-    <!-- Liste des véhicules -->
-    <div class="grid gap-4">
-      <div
-        v-for="vehicle in filteredVehicles"
-        :key="vehicle.id"
-        class="bg-card border border-border rounded-lg p-6"
-      >
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-3">
-            <Car class="h-6 w-6" />
-            <div>
-              <h3 class="font-medium">{{ vehicle.immatriculation }}</h3>
-              <p class="text-sm text-muted-foreground">
-                {{ vehicle.marque }} {{ vehicle.modele }} ({{ vehicle.annee }})
-              </p>
-            </div>
+    <br />
+
+    <!-- Carte contenant le tableau -->
+    <div class="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
+      <!-- Tableau avec scroll horizontal -->
+      <div class="overflow-x-auto max-w-full">
+        <div class="min-w-full">
+          <Table>
+            <TableHeader>
+              <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
+                <TableHead
+                  v-for="header in headerGroup.headers"
+                  :key="header.id"
+                  :data-pinned="header.column.getIsPinned()"
+                  :class="
+                    cn(
+                      { 'sticky bg-background/95': header.column.getIsPinned() },
+                      header.column.getIsPinned() === 'left' ? 'left-0' : 'right-0',
+                    )
+                  "
+                >
+                  <FlexRender
+                    v-if="!header.isPlaceholder"
+                    :render="header.column.columnDef.header"
+                    :props="header.getContext()"
+                  />
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <template v-if="table.getRowModel().rows?.length">
+                <template v-for="row in table.getRowModel().rows" :key="row.id">
+                  <TableRow :data-state="row.getIsSelected() && 'selected'">
+                    <TableCell
+                      v-for="cell in row.getVisibleCells()"
+                      :key="cell.id"
+                      :data-pinned="cell.column.getIsPinned()"
+                      :class="
+                        cn(
+                          { 'sticky bg-background/95': cell.column.getIsPinned() },
+                          cell.column.getIsPinned() === 'left' ? 'left-0' : 'right-0',
+                        )
+                      "
+                    >
+                      <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
+                    </TableCell>
+                  </TableRow>
+                  <TableRow v-if="row.getIsExpanded()">
+                    <TableCell :colspan="row.getAllCells().length">
+                      {{ JSON.stringify(row.original) }}
+                    </TableCell>
+                  </TableRow>
+                </template>
+              </template>
+
+              <TableRow v-else>
+                <TableCell :colspan="columns.length" class="h-24 text-center">
+                  Aucun résultat.
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="p-6 border-t border-border">
+        <div class="flex items-center justify-between">
+          <div class="flex-1 text-sm text-muted-foreground">
+            {{ table.getFilteredSelectedRowModel().rows.length }} de
+            {{ table.getFilteredRowModel().rows.length }} véhicule(s) sélectionné(s).
           </div>
-          <div class="flex items-center gap-2">
-            <span :class="['px-2 py-1 rounded text-sm', getStatusColor(vehicle.statut)]">
-              {{ vehicle.statut }}
-            </span>
-            <button
-              @click="editVehicle(vehicle)"
-              class="p-2 hover:bg-accent rounded-lg transition-colors"
+          <div class="space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              :disabled="!table.getCanPreviousPage()"
+              @click="table.previousPage()"
             >
-              <Edit class="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
-          <div>
-            <p class="text-muted-foreground">Type</p>
-            <p>{{ vehicle.type }}</p>
-          </div>
-          <div>
-            <p class="text-muted-foreground">Carburant</p>
-            <p>{{ vehicle.carburant }}</p>
-          </div>
-          <div>
-            <p class="text-muted-foreground">Kilométrage</p>
-            <p>{{ vehicle.kilometrage.toLocaleString() }} km</p>
-          </div>
-          <div>
-            <p class="text-muted-foreground">Mise en service</p>
-            <p>{{ formatDate(vehicle.dateMiseEnService) }}</p>
-          </div>
-          <div>
-            <p class="text-muted-foreground">Prochain entretien</p>
-            <p :class="getMaintenanceUrgency(vehicle.prochainEntretien)">
-              {{ formatDate(vehicle.prochainEntretien) }}
-            </p>
+              Précédent
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              :disabled="!table.getCanNextPage()"
+              @click="table.nextPage()"
+            >
+              Suivant
+            </Button>
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- Message si aucun véhicule -->
-    <div
-      v-if="filteredVehicles.length === 0"
-      class="bg-card border border-border rounded-lg p-8 text-center"
-    >
-      <Car class="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-      <p class="text-muted-foreground mb-4">
-        {{
-          vehicles.length === 0
-            ? 'Aucun véhicule enregistré'
-            : 'Aucun véhicule ne correspond aux filtres'
-        }}
-      </p>
-      <button
-        v-if="vehicles.length === 0"
-        @click="showAddForm = true"
-        class="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-      >
-        Ajouter le premier véhicule
-      </button>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, computed } from 'vue'
-import { Plus, Car, Edit } from 'lucide-vue-next'
-import { mockVehicles } from '../../data/mockData'
-import type { Vehicle } from '../../types/fleet'
+<script setup lang="ts">
+import type {
+  ColumnFiltersState,
+  ExpandedState,
+  SortingState,
+  VisibilityState,
+} from '@tanstack/vue-table'
+import {
+  createColumnHelper,
+  FlexRender,
+  getCoreRowModel,
+  getExpandedRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useVueTable,
+} from '@tanstack/vue-table'
+import {
+  ChevronDown,
+  ChevronsUpDown,
+  Edit,
+  Car,
+  Plus,
+  Settings,
+  Eye,
+  Trash2,
+  MoreHorizontal,
+  Truck,
+  User,
+} from 'lucide-vue-next'
+import { h, ref, computed, watch, type Ref } from 'vue'
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select'
 
-interface VehicleFilters {
-  type: string
-  statut: string
-  carburant: string
-  search: string
+// Fonction valueUpdater (nécessaire pour ShadCN-Vue)
+function valueUpdater<T>(updaterOrValue: T | ((old: T) => T), ref: Ref<T>) {
+  ref.value =
+    typeof updaterOrValue === 'function'
+      ? (updaterOrValue as (old: T) => T)(ref.value)
+      : updaterOrValue
 }
 
-interface NewVehicleForm {
+// Interface Vehicle étendue
+export interface Vehicle {
+  id: string
   immatriculation: string
+  libelle: string
   marque: string
   modele: string
   annee: number
-  type: Vehicle['type'] | ''
-  carburant: Vehicle['carburant'] | ''
+  type: 'Voiture' | 'Camion' | 'Utilitaire' | 'Moto'
+  statut: 'Disponible' | 'En service' | 'Maintenance' | 'Hors service'
   kilometrage: number
+  carburant: 'Essence' | 'Diesel' | 'Électrique' | 'Hybride'
   dateMiseEnService: string
-  statut: Vehicle['statut']
   prochainEntretien: string
+  chauffeur?: {
+    nom: string
+    avatar?: string
+  }
+  echeanceAssurance: string
+  dateControletechnique: string
 }
 
-export default defineComponent({
-  name: 'VehicleList',
-  setup() {
-    const showAddForm = ref<boolean>(false)
-    const editingVehicle = ref<Vehicle | null>(null)
-    const vehicles = ref<Vehicle[]>([...mockVehicles])
+// Données mockées étendues
+const data: Vehicle[] = [
+  {
+    id: '1',
+    immatriculation: 'AB-123-CD',
+    libelle: 'Berline compacte fiable',
+    marque: 'Toyota',
+    modele: 'Corolla',
+    annee: 2022,
+    type: 'Voiture',
+    statut: 'Disponible',
+    dateMiseEnService: '2022-03-15',
+    prochainEntretien: '2025-09-01',
+    kilometrage: 32000,
+    carburant: 'Essence',
+    chauffeur: {
+      nom: 'Ahmed Ben Ali',
+      avatar:
+        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
+    },
+    echeanceAssurance: '2026-03-15',
+    dateControletechnique: '2025-12-15',
+  },
+  {
+    id: '2',
+    immatriculation: 'EF-456-GH',
+    libelle: 'Fourgon grande capacité',
+    marque: 'Renault',
+    modele: 'Master',
+    annee: 2020,
+    type: 'Utilitaire',
+    statut: 'En service',
+    dateMiseEnService: '2020-07-10',
+    prochainEntretien: '2025-08-10',
+    kilometrage: 87000,
+    carburant: 'Diesel',
+    chauffeur: {
+      nom: 'Fatima Zahra',
+      avatar:
+        'https://images.unsplash.com/photo-1494790108755-2616b612b123?w=100&h=100&fit=crop&crop=face',
+    },
+    echeanceAssurance: '2025-12-31',
+    dateControletechnique: '2025-11-20',
+  },
+  {
+    id: '3',
+    immatriculation: 'IJ-789-KL',
+    libelle: 'Camion longue distance',
+    marque: 'Mercedes',
+    modele: 'Actros',
+    annee: 2019,
+    type: 'Camion',
+    statut: 'Maintenance',
+    dateMiseEnService: '2019-11-20',
+    prochainEntretien: '2025-08-05',
+    kilometrage: 210000,
+    carburant: 'Diesel',
+    chauffeur: {
+      nom: 'Mohamed Tounsi',
+      avatar:
+        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
+    },
+    echeanceAssurance: '2025-10-01',
+    dateControletechnique: '2025-09-15',
+  },
+  {
+    id: '4',
+    immatriculation: 'MN-012-OP',
+    libelle: 'Citadine électrique',
+    marque: 'Peugeot',
+    modele: '208',
+    annee: 2023,
+    type: 'Voiture',
+    statut: 'Hors service',
+    dateMiseEnService: '2023-01-05',
+    prochainEntretien: '2026-01-05',
+    kilometrage: 12000,
+    carburant: 'Électrique',
+    echeanceAssurance: '2026-01-05',
+    dateControletechnique: '2026-02-10',
+  },
+]
 
-    const filters = ref<VehicleFilters>({
-      type: 'all',
-      statut: 'all',
-      carburant: 'all',
-      search: '',
-    })
+// Données filtrées et filtres
+const globalFilter = ref('')
+const typeFilter = ref('all')
+const statusFilter = ref('all')
+const fuelFilter = ref('all')
 
-    const newVehicle = ref<NewVehicleForm>({
-      immatriculation: '',
-      marque: '',
-      modele: '',
-      annee: new Date().getFullYear(),
-      type: '',
-      carburant: '',
-      kilometrage: 0,
-      dateMiseEnService: new Date().toISOString().split('T')[0],
-      statut: 'Disponible',
-      prochainEntretien: '',
-    })
+// Données filtrées en temps réel
+const filteredData = computed(() => {
+  return data.filter((vehicle) => {
+    const matchesGlobal =
+      !globalFilter.value ||
+      vehicle.libelle.toLowerCase().includes(globalFilter.value.toLowerCase()) ||
+      vehicle.immatriculation.toLowerCase().includes(globalFilter.value.toLowerCase()) ||
+      vehicle.marque.toLowerCase().includes(globalFilter.value.toLowerCase()) ||
+      vehicle.modele.toLowerCase().includes(globalFilter.value.toLowerCase()) ||
+      (vehicle.chauffeur?.nom || '').toLowerCase().includes(globalFilter.value.toLowerCase())
 
-    const isVehicleFormValid = computed(
-      (): boolean =>
-        newVehicle.value.immatriculation.trim() !== '' &&
-        newVehicle.value.marque.trim() !== '' &&
-        newVehicle.value.modele.trim() !== '' &&
-        newVehicle.value.annee > 0 &&
-        newVehicle.value.type !== '' &&
-        newVehicle.value.carburant !== '',
-    )
+    const matchesType = typeFilter.value === 'all' || vehicle.type === typeFilter.value
+    const matchesStatus = statusFilter.value === 'all' || vehicle.statut === statusFilter.value
+    const matchesFuel = fuelFilter.value === 'all' || vehicle.carburant === fuelFilter.value
 
-    const filteredVehicles = computed((): Vehicle[] => {
-      return vehicles.value.filter((vehicle) => {
-        const matchesType = filters.value.type === 'all' || vehicle.type === filters.value.type
-        const matchesStatut =
-          filters.value.statut === 'all' || vehicle.statut === filters.value.statut
-        const matchesCarburant =
-          filters.value.carburant === 'all' || vehicle.carburant === filters.value.carburant
-        const matchesSearch =
-          !filters.value.search ||
-          vehicle.immatriculation.toLowerCase().includes(filters.value.search.toLowerCase()) ||
-          vehicle.marque.toLowerCase().includes(filters.value.search.toLowerCase()) ||
-          vehicle.modele.toLowerCase().includes(filters.value.search.toLowerCase())
+    return matchesGlobal && matchesType && matchesStatus && matchesFuel
+  })
+})
 
-        return matchesType && matchesStatut && matchesCarburant && matchesSearch
+// Fonction pour mettre à jour le filtre global
+function setGlobalFilter(value: string) {
+  globalFilter.value = value
+}
+
+const columnHelper = createColumnHelper<Vehicle>()
+
+// Fonction pour obtenir l'icône du véhicule
+function getVehicleIcon(type: string) {
+  const icons = {
+    Voiture: Car,
+    Camion: Truck,
+    Utilitaire: Truck,
+    Moto: Car,
+  }
+  return icons[type as keyof typeof icons] || Car
+}
+
+// Fonction pour formater les dates
+function formatDate(dateString: string): string {
+  return new Date(dateString).toLocaleDateString('fr-FR')
+}
+
+// Fonction pour obtenir le nom d'affichage des colonnes
+function getColumnDisplayName(columnId: string): string {
+  const displayNames: Record<string, string> = {
+    select: 'Sélection',
+    statut: 'Statut',
+    vehicle: 'Véhicule',
+    immatriculation: 'Immatriculation',
+    marque: 'Marque',
+    modele: 'Modèle',
+    type: 'Type',
+    carburant: 'Carburant',
+    chauffeur: 'Chauffeur',
+    echeanceAssurance: 'Échéance assurance',
+    dateControletechnique: 'Contrôle technique',
+    actions: 'Actions',
+  }
+  return displayNames[columnId] || columnId
+}
+
+const columns = [
+  columnHelper.display({
+    id: 'select',
+    header: ({ table }) =>
+      h(Checkbox, {
+        modelValue:
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && 'indeterminate'),
+        'onUpdate:modelValue': (value) => table.toggleAllPageRowsSelected(!!value),
+        ariaLabel: 'Tout sélectionner',
+      }),
+    cell: ({ row }) => {
+      return h(Checkbox, {
+        modelValue: row.getIsSelected(),
+        'onUpdate:modelValue': (value) => row.toggleSelected(!!value),
+        ariaLabel: 'Sélectionner la ligne',
       })
-    })
-
-    const formatDate = (dateString: string): string => {
-      return new Date(dateString).toLocaleDateString('fr-FR')
-    }
-
-    const getStatusColor = (statut: Vehicle['statut']): string => {
-      const colors: Record<Vehicle['statut'], string> = {
-        Disponible: 'bg-green-100 text-green-800',
-        'En service': 'bg-blue-100 text-blue-800',
-        Maintenance: 'bg-yellow-100 text-yellow-800',
-        'Hors service': 'bg-red-100 text-red-800',
+    },
+    enableSorting: false,
+    enableHiding: false,
+  }),
+  columnHelper.accessor('statut', {
+    enablePinning: true,
+    header: 'Statut',
+    cell: ({ row }) => {
+      const statut = row.getValue('statut') as string
+      const colors: Record<string, string> = {
+        Disponible: 'bg-green-500/20 text-green-700 dark:text-green-300 border border-green-500/30',
+        'En service': 'bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-500/30',
+        Maintenance:
+          'bg-yellow-500/20 text-yellow-700 dark:text-yellow-300 border border-yellow-500/30',
+        'Hors service': 'bg-red-500/20 text-red-700 dark:text-red-300 border border-red-500/30',
       }
-      return colors[statut] || 'bg-gray-100 text-gray-800'
-    }
-
-    const getMaintenanceUrgency = (dateString: string): string => {
-      const today = new Date()
-      const maintenanceDate = new Date(dateString)
-      const diffTime = maintenanceDate.getTime() - today.getTime()
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-
-      if (diffDays < 0) return 'text-red-600'
-      if (diffDays <= 7) return 'text-orange-600'
-      if (diffDays <= 30) return 'text-yellow-600'
-      return ''
-    }
-
-    const handleVehicleSubmit = (): void => {
-      if (!isVehicleFormValid.value) return
-
-      // Calculer la date du prochain entretien (1 an après la mise en service)
-      const serviceDate = new Date(newVehicle.value.dateMiseEnService)
-      const nextMaintenance = new Date(serviceDate)
-      nextMaintenance.setFullYear(nextMaintenance.getFullYear() + 1)
-
-      const vehicleData: Omit<Vehicle, 'id'> = {
-        ...newVehicle.value,
-        type: newVehicle.value.type as Vehicle['type'],
-        carburant: newVehicle.value.carburant as Vehicle['carburant'],
-        prochainEntretien: nextMaintenance.toISOString().split('T')[0],
+      return h(
+        'div',
+        {
+          class: `capitalize px-1.5 py-0.5 rounded text-xs font-semibold flex items-center justify-center ${colors[statut] || 'bg-muted text-muted-foreground border border-muted'}`,
+        },
+        statut,
+      )
+    },
+  }),
+  columnHelper.display({
+    id: 'vehicle',
+    header: 'Véhicule',
+    cell: ({ row }) => {
+      const vehicle = row.original
+      return h('div', { class: 'min-w-0 flex-1' }, [
+        h('div', { class: 'text-sm font-semibold text-foreground truncate' }, vehicle.libelle),
+        h(
+          'div',
+          { class: 'text-xs text-muted-foreground truncate' },
+          `${vehicle.marque} ${vehicle.modele}`,
+        ),
+      ])
+    },
+    enableSorting: false,
+    enableHiding: false,
+  }),
+  columnHelper.accessor('immatriculation', {
+    header: ({ column }) => {
+      return h(
+        Button,
+        {
+          variant: 'ghost',
+          onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+        },
+        () => ['Immatriculation', h(ChevronsUpDown, { class: 'ml-2 h-4 w-4' })],
+      )
+    },
+    cell: ({ row }) =>
+      h('div', { class: 'font-semibold text-foreground' }, row.getValue('immatriculation')),
+  }),
+  columnHelper.accessor('marque', {
+    header: 'Marque',
+    cell: ({ row }) => h('div', { class: 'text-foreground' }, row.getValue('marque')),
+  }),
+  columnHelper.accessor('modele', {
+    header: 'Modèle',
+    cell: ({ row }) => h('div', { class: 'text-foreground' }, row.getValue('modele')),
+  }),
+  columnHelper.accessor('type', {
+    header: 'Type',
+    cell: ({ row }) => h('div', { class: 'text-foreground' }, row.getValue('type')),
+  }),
+  columnHelper.accessor('carburant', {
+    header: 'Carburant',
+    cell: ({ row }) => {
+      const carburant = row.getValue('carburant') as string
+      return h('div', { class: 'font-medium text-muted-foreground' }, carburant)
+    },
+  }),
+  columnHelper.display({
+    id: 'chauffeur',
+    header: 'Chauffeur',
+    cell: ({ row }) => {
+      const chauffeur = row.original.chauffeur
+      const vehicle = row.original
+      if (!chauffeur) {
+        return h('div', { class: 'flex items-center gap-2 text-gray-500' }, [
+          h('div', { class: 'flex-shrink-0' }, [
+            h(Avatar, { class: 'h-8 w-8' }, () => [
+              h(AvatarFallback, { class: 'bg-gray-200' }, () => h(User, { class: 'h-4 w-4' })),
+            ]),
+          ]),
+          h('span', { class: 'text-sm' }, 'Non assigné'),
+        ])
       }
+      return h(HoverCard, {}, () => [
+        h(HoverCardTrigger, {}, () =>
+          h('div', { class: 'flex items-center gap-2 cursor-pointer' }, [
+            h('div', { class: 'flex-shrink-0' }, [
+              h(Avatar, { class: 'h-8 w-8' }, () => [
+                chauffeur.avatar
+                  ? h(AvatarImage, { src: chauffeur.avatar, alt: chauffeur.nom })
+                  : null,
+                h(AvatarFallback, {}, () =>
+                  chauffeur.nom
+                    .split(' ')
+                    .map((n) => n[0])
+                    .join('')
+                    .toUpperCase(),
+                ),
+              ]),
+            ]),
+            h('span', { class: 'text-sm font-medium' }, chauffeur.nom),
+          ]),
+        ),
+        h(HoverCardContent, { class: 'w-72 p-4 flex flex-col items-center gap-2' }, () => [
+          h(Avatar, { class: 'h-16 w-16 mb-2' }, () => [
+            chauffeur.avatar ? h(AvatarImage, { src: chauffeur.avatar, alt: chauffeur.nom }) : null,
+            h(AvatarFallback, {}, () =>
+              chauffeur.nom
+                .split(' ')
+                .map((n) => n[0])
+                .join('')
+                .toUpperCase(),
+            ),
+          ]),
+          h('div', { class: 'text-lg font-semibold text-foreground text-center' }, chauffeur.nom),
+          h('div', { class: 'text-sm text-muted-foreground text-center' }, 'email@email.com'),
+          h('div', { class: 'text-sm text-muted-foreground text-center' }, '+212 600 000 000'),
+          h(
+            Button,
+            {
+              size: 'sm',
+              variant: 'ghost',
+              class: 'mt-2 flex items-center gap-2',
+              onClick: () => viewVehicle(vehicle),
+            },
+            () => [h(Eye, { class: 'h-4 w-4' }), 'Voir plus'],
+          ),
+        ]),
+      ])
+    },
+    enableSorting: false,
+  }),
+  columnHelper.accessor('echeanceAssurance', {
+    header: 'Échéance assurance',
+    cell: ({ row }) => {
+      const date = formatDate(row.getValue('echeanceAssurance'))
+      return h('div', { class: 'text-sm text-muted-foreground' }, date)
+    },
+  }),
+  columnHelper.accessor('dateControletechnique', {
+    header: 'Contrôle technique',
+    cell: ({ row }) => {
+      const date = formatDate(row.getValue('dateControletechnique'))
+      return h('div', { class: 'text-sm text-muted-foreground' }, date)
+    },
+  }),
+  columnHelper.display({
+    id: 'actions',
+    header: 'Actions',
+    cell: ({ row }) => {
+      const vehicle = row.original
+      return h('div', { class: 'relative' }, [
+        h(DropdownMenu, {}, () => [
+          h(DropdownMenuTrigger, { asChild: true }, () =>
+            h(Button, { variant: 'ghost', size: 'icon' }, () =>
+              h(MoreHorizontal, { class: 'h-4 w-4' }),
+            ),
+          ),
+          h(DropdownMenuContent, { align: 'end', class: 'w-48' }, () => [
+            h(DropdownMenuItem, { onClick: () => viewVehicle(vehicle) }, () => [
+              h(Eye, { class: 'mr-2 h-4 w-4' }),
+              'Aperçu',
+            ]),
+            h(DropdownMenuItem, { onClick: () => editVehicle(vehicle) }, () => [
+              h(Edit, { class: 'mr-2 h-4 w-4' }),
+              'Éditer',
+            ]),
+            h(DropdownMenuSeparator),
+            h(
+              DropdownMenuItem,
+              {
+                onClick: () => deleteVehicle(vehicle),
+                class: 'text-red-600 focus:text-red-600',
+              },
+              () => [h(Trash2, { class: 'mr-2 h-4 w-4 text-red-600' }), 'Supprimer'],
+            ),
+          ]),
+        ]),
+      ])
+    },
+    enableSorting: false,
+    enableHiding: false,
+  }),
+]
 
-      if (editingVehicle.value) {
-        const index = vehicles.value.findIndex((v) => v.id === editingVehicle.value!.id)
-        if (index !== -1) {
-          vehicles.value[index] = { ...vehicleData, id: editingVehicle.value.id }
-        }
-      } else {
-        vehicles.value.push({
-          id: Date.now().toString(),
-          ...vehicleData,
-        })
-      }
+const sorting = ref<SortingState>([])
+const columnFilters = ref<ColumnFiltersState>([])
+const columnVisibility = ref<VisibilityState>({
+  // Colonnes masquées par défaut
+  marque: false,
+  modele: false,
+  type: false,
+})
+const rowSelection = ref({})
+const expanded = ref<ExpandedState>({})
 
-      cancelForm()
-    }
-
-    const editVehicle = (vehicle: Vehicle): void => {
-      editingVehicle.value = vehicle
-      newVehicle.value = { ...vehicle }
-      showAddForm.value = true
-    }
-
-    const cancelForm = (): void => {
-      showAddForm.value = false
-      editingVehicle.value = null
-      newVehicle.value = {
-        immatriculation: '',
-        marque: '',
-        modele: '',
-        annee: new Date().getFullYear(),
-        type: '',
-        carburant: '',
-        kilometrage: 0,
-        dateMiseEnService: new Date().toISOString().split('T')[0],
-        statut: 'Disponible',
-        prochainEntretien: '',
-      }
-    }
-
-    return {
-      showAddForm,
-      editingVehicle,
-      vehicles,
-      filters,
-      newVehicle,
-      isVehicleFormValid,
-      filteredVehicles,
-      formatDate,
-      getStatusColor,
-      getMaintenanceUrgency,
-      handleVehicleSubmit,
-      editVehicle,
-      cancelForm,
-      Plus,
-      Car,
-      Edit,
-    }
+const table = useVueTable({
+  get data() {
+    return filteredData.value
+  },
+  columns,
+  getCoreRowModel: getCoreRowModel(),
+  getPaginationRowModel: getPaginationRowModel(),
+  getSortedRowModel: getSortedRowModel(),
+  getFilteredRowModel: getFilteredRowModel(),
+  getExpandedRowModel: getExpandedRowModel(),
+  onSortingChange: (updaterOrValue) => valueUpdater(updaterOrValue, sorting),
+  onColumnFiltersChange: (updaterOrValue) => valueUpdater(updaterOrValue, columnFilters),
+  onColumnVisibilityChange: (updaterOrValue) => valueUpdater(updaterOrValue, columnVisibility),
+  onRowSelectionChange: (updaterOrValue) => valueUpdater(updaterOrValue, rowSelection),
+  onExpandedChange: (updaterOrValue) => valueUpdater(updaterOrValue, expanded),
+  state: {
+    get sorting() {
+      return sorting.value
+    },
+    get columnFilters() {
+      return columnFilters.value
+    },
+    get columnVisibility() {
+      return columnVisibility.value
+    },
+    get rowSelection() {
+      return rowSelection.value
+    },
+    get expanded() {
+      return expanded.value
+    },
+    columnPinning: {
+      left: ['statut'],
+    },
   },
 })
+
+// Fonctions d'actions
+function viewVehicle(vehicle: Vehicle) {
+  alert('Voir le véhicule : ' + vehicle.immatriculation)
+}
+
+function editVehicle(vehicle: Vehicle) {
+  alert('Édition du véhicule : ' + vehicle.immatriculation)
+}
+
+function deleteVehicle(vehicle: Vehicle) {
+  if (confirm(`Êtes-vous sûr de vouloir supprimer le véhicule ${vehicle.immatriculation} ?`)) {
+    alert('Véhicule supprimé : ' + vehicle.immatriculation)
+  }
+}
 </script>

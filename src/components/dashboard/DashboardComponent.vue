@@ -1,19 +1,30 @@
 <template>
   <div class="space-y-6 p-4 md:p-4 lg:p-5">
     <!-- Alertes importantes -->
-    <Alert v-if="hasAlerts" variant="destructive" class="border-orange-200 bg-orange-50">
-      <AlertTriangle class="h-4 w-4" />
-      <AlertTitle>Alertes importantes</AlertTitle>
-      <AlertDescription class="mt-2">
-        <div class="space-y-1">
-          <div v-if="expiredDocuments.length > 0">
-            � {{ expiredDocuments.length }} document(s) expiré(s)
+    <Alert
+      v-if="hasAlerts"
+      variant="destructive"
+      class="border-2 border-amber-400 bg-gradient-to-r from-amber-100 via-yellow-50 to-white/80 shadow-lg backdrop-blur-sm"
+    >
+      <AlertTriangle class="h-5 w-5" />
+      <AlertTitle class="text-amber-900">Attention requise</AlertTitle>
+      <AlertDescription class="mt-3">
+        <div class="grid gap-2">
+          <div v-if="expiredDocuments.length > 0" class="flex items-center gap-2">
+            <div class="h-2 w-2 rounded-full bg-red-500"></div>
+            <span class="text-sm">{{ expiredDocuments.length }} document(s) expiré(s)</span>
           </div>
-          <div v-if="nearExpiryDocuments.length > 0">
-            ⚠️ {{ nearExpiryDocuments.length }} document(s) expirent bientôt
+          <div v-if="nearExpiryDocuments.length > 0" class="flex items-center gap-2">
+            <div class="h-2 w-2 rounded-full bg-orange-500"></div>
+            <span class="text-sm"
+              >{{ nearExpiryDocuments.length }} document(s) expirent bientôt</span
+            >
           </div>
-          <div v-if="vehiclesInMaintenance.length > 0">
-            🔧 {{ vehiclesInMaintenance.length }} véhicule(s) en panne/révision
+          <div v-if="vehiclesInMaintenance.length > 0" class="flex items-center gap-2">
+            <div class="h-2 w-2 rounded-full bg-blue-500"></div>
+            <span class="text-sm"
+              >{{ vehiclesInMaintenance.length }} véhicule(s) en maintenance</span
+            >
           </div>
         </div>
       </AlertDescription>
