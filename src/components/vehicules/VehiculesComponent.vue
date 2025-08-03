@@ -1,13 +1,57 @@
 <template>
   <div class="space-y-8 min-h-screen bg-gradient-to-br from-background to-muted p-4 md:p-8">
+    <!-- Mini dashboard -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div class="bg-card rounded-xl shadow border border-border p-4 flex items-center gap-4">
+        <div class="p-2 rounded-full bg-green-100 dark:bg-green-900">
+          <Car class="h-6 w-6 text-green-600 dark:text-green-300" />
+        </div>
+        <div>
+          <div class="text-2xl font-bold">{{ data.length }}</div>
+          <div class="text-xs text-muted-foreground">Véhicules au total</div>
+        </div>
+      </div>
+      <div class="bg-card rounded-xl shadow border border-border p-4 flex items-center gap-4">
+        <div class="p-2 rounded-full bg-blue-100 dark:bg-blue-900">
+          <CheckCircle class="h-6 w-6 text-blue-600 dark:text-blue-300" />
+        </div>
+        <div>
+          <div class="text-2xl font-bold">
+            {{ data.filter((v) => v.statut === 'Disponible').length }}
+          </div>
+          <div class="text-xs text-muted-foreground">Disponibles</div>
+        </div>
+      </div>
+      <div class="bg-card rounded-xl shadow border border-border p-4 flex items-center gap-4">
+        <div class="p-2 rounded-full bg-yellow-100 dark:bg-yellow-900">
+          <Wrench class="h-6 w-6 text-yellow-600 dark:text-yellow-300" />
+        </div>
+        <div>
+          <div class="text-2xl font-bold">
+            {{ data.filter((v) => v.statut === 'Maintenance').length }}
+          </div>
+          <div class="text-xs text-muted-foreground">En maintenance</div>
+        </div>
+      </div>
+      <div class="bg-card rounded-xl shadow border border-border p-4 flex items-center gap-4">
+        <div class="p-2 rounded-full bg-purple-100 dark:bg-purple-900">
+          <Gauge class="h-6 w-6 text-purple-600 dark:text-purple-300" />
+        </div>
+        <div>
+          <div class="text-2xl font-bold">{{ totalKilometrage }}</div>
+          <div class="text-xs text-muted-foreground">Km cumulés</div>
+        </div>
+      </div>
+    </div>
     <!-- Header avec titre -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-end gap-4">
-      <Button class="inline-flex items-center gap-2">
+      <Button class="inline-flex items-center gap-2" @click="openAddModal = true">
         <Plus class="h-5 w-5" />
         Ajouter un véhicule
       </Button>
     </div>
-
+    <!-- Modal d'ajout de véhicule -->
+    <AjoutVehiculesComponent :open="openAddModal" @close="openAddModal = false" />
     <br />
 
     <!-- Filtres et select colonnes sur une seule ligne -->
@@ -195,6 +239,60 @@
 </template>
 
 <script setup lang="ts">
+import AjoutVehiculesComponent from './AjoutVehiculesComponent.vue'
+import { ref } from 'vue'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog'
+
+const openAddModal = ref(false)
+
+// Formulaire d'ajout de véhicule (doit être défini AVANT usage dans le template)
+const form = ref({
+  marque: '',
+  modele: '',
+  annee: '',
+  immatriculation: '',
+  type: '',
+  statut: '',
+  dateMiseEnService: '',
+  photo: null,
+  vin: '',
+  moteur: '',
+  kilometrage: '',
+  carburant: '',
+  transmission: '',
+  puissance: '',
+  couleur: '',
+  carteGriseNum: '',
+  carteGriseScan: null,
+  assuranceNum: '',
+  assuranceCompagnie: '',
+  assuranceExpiration: '',
+  assuranceDoc: null,
+  controleTechniqueDate: '',
+  controleTechniqueValidite: '',
+  vignette: '',
+  autresDocs: null,
+  prixAchat: '',
+  modeAcquisition: '',
+  fraisAnnexes: '',
+  chauffeur: '',
+  lieuAffectation: '',
+  etat: '',
+  accessoires: '',
+  notes: '',
+})
+
+function onFileChange(event: Event, key: string) {
+  const target = event.target as HTMLInputElement
+  const files = target.files
+  form.value[key] = files && files.length > 1 ? Array.from(files) : files?.[0] || null
+}
 import type {
   ColumnFiltersState,
   ExpandedState,
@@ -223,8 +321,17 @@ import {
   MoreHorizontal,
   Truck,
   User,
+  CheckCircle,
+  Wrench,
+  Gauge,
 } from 'lucide-vue-next'
-import { h, ref, computed, watch, type Ref } from 'vue'
+// Calcul du kilométrage total
+const totalKilometrage = computed(() => {
+  return data
+    .reduce((acc, v) => acc + (typeof v.kilometrage === 'number' ? v.kilometrage : 0), 0)
+    .toLocaleString('fr-FR')
+})
+import { h, computed, watch, type Ref } from 'vue'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -563,8 +670,8 @@ const columns = [
             h('span', { class: 'text-sm font-medium' }, chauffeur.nom),
           ]),
         ),
-        h(HoverCardContent, { class: 'w-72 p-4 flex flex-col items-center gap-2' }, () => [
-          h(Avatar, { class: 'h-16 w-16 mb-2' }, () => [
+        h(HoverCardContent, { class: 'w-80 p-4 flex flex-row items-start gap-4' }, () => [
+          h(Avatar, { class: 'h-16 w-16 flex-shrink-0' }, () => [
             chauffeur.avatar ? h(AvatarImage, { src: chauffeur.avatar, alt: chauffeur.nom }) : null,
             h(AvatarFallback, {}, () =>
               chauffeur.nom
@@ -574,19 +681,21 @@ const columns = [
                 .toUpperCase(),
             ),
           ]),
-          h('div', { class: 'text-lg font-semibold text-foreground text-center' }, chauffeur.nom),
-          h('div', { class: 'text-sm text-muted-foreground text-center' }, 'email@email.com'),
-          h('div', { class: 'text-sm text-muted-foreground text-center' }, '+212 600 000 000'),
-          h(
-            Button,
-            {
-              size: 'sm',
-              variant: 'ghost',
-              class: 'mt-2 flex items-center gap-2',
-              onClick: () => viewVehicle(vehicle),
-            },
-            () => [h(Eye, { class: 'h-4 w-4' }), 'Voir plus'],
-          ),
+          h('div', { class: 'flex flex-col flex-1 gap-1' }, [
+            h('div', { class: 'text-lg font-semibold text-foreground' }, chauffeur.nom),
+            h('div', { class: 'text-sm text-muted-foreground' }, 'email@email.com'),
+            h('div', { class: 'text-sm text-muted-foreground' }, '+212 600 000 000'),
+            h(
+              Button,
+              {
+                size: 'sm',
+                variant: 'ghost',
+                class: 'mt-2 flex items-center gap-2 w-fit',
+                onClick: () => viewVehicle(vehicle),
+              },
+              () => [h(Eye, { class: 'h-4 w-4' }), 'Voir plus'],
+            ),
+          ]),
         ]),
       ])
     },

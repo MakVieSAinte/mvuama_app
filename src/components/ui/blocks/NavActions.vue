@@ -17,6 +17,8 @@ import {
   Trash,
   Trash2,
 } from 'lucide-vue-next'
+import { useTheme } from '@/composables/useTheme'
+import Switch from '@/components/ui/switch/Switch.vue'
 
 import { ref } from 'vue'
 import { Button } from '@/components/ui/button'
@@ -77,10 +79,21 @@ const data = [
 ]
 
 const isOpen = ref(false)
+const { theme, toggleTheme } = useTheme()
 </script>
 
 <template>
   <div class="flex items-center gap-2 text-sm">
+    <div class="flex items-center gap-1">
+      <Switch
+        :model-value="theme === 'dark'"
+        @update:model-value="toggleTheme"
+        aria-label="Changer de thème"
+      />
+      <span class="text-xs text-muted-foreground hidden md:inline">{{
+        theme === 'dark' ? 'Sombre' : 'Clair'
+      }}</span>
+    </div>
     <div class="hidden font-medium text-muted-foreground md:inline-block">Edit Oct 08</div>
     <Button variant="ghost" size="icon" class="h-7 w-7">
       <Star />

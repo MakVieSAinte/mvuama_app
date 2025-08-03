@@ -19,6 +19,13 @@ const delegatedProps = reactiveOmit(props, 'class')
 const forwarded = useForwardPropsEmits(delegatedProps, emits)
 </script>
 
+<script lang="ts">
+import { defineComponent } from 'vue'
+export default defineComponent({
+  name: 'Switch',
+})
+</script>
+
 <template>
   <SwitchRoot
     data-slot="switch"
