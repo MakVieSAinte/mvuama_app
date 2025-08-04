@@ -114,8 +114,7 @@ const data = {
   <Sidebar class="border-r-0" v-bind="props">
     <SidebarHeader>
       <div class="flex items-center justify-between">
-        <TeamSwitcher :teams="data.teams" />
-        <Switch v-model="isDark" :label="isDark ? 'Dark' : 'Light'" class="ml-2" />
+        <TeamSwitcher :teams="data.teams" class="w-full" />
       </div>
       <nav class="mt-4">
         <SidebarMenu>

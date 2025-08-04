@@ -1,54 +1,18 @@
 <template>
   <div class="space-y-8 min-h-screen bg-gradient-to-br from-background to-muted p-4 md:p-8">
     <!-- Mini dashboard -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-      <div class="bg-card rounded-xl shadow border border-border p-4 flex items-center gap-4">
-        <div class="p-2 rounded-full bg-green-100 dark:bg-green-900">
-          <Car class="h-6 w-6 text-green-600 dark:text-green-300" />
-        </div>
-        <div>
-          <div class="text-2xl font-bold">{{ data.length }}</div>
-          <div class="text-xs text-muted-foreground">Véhicules au total</div>
-        </div>
-      </div>
-      <div class="bg-card rounded-xl shadow border border-border p-4 flex items-center gap-4">
-        <div class="p-2 rounded-full bg-blue-100 dark:bg-blue-900">
-          <CheckCircle class="h-6 w-6 text-blue-600 dark:text-blue-300" />
-        </div>
-        <div>
-          <div class="text-2xl font-bold">
-            {{ data.filter((v) => v.statut === 'Disponible').length }}
-          </div>
-          <div class="text-xs text-muted-foreground">Disponibles</div>
-        </div>
-      </div>
-      <div class="bg-card rounded-xl shadow border border-border p-4 flex items-center gap-4">
-        <div class="p-2 rounded-full bg-yellow-100 dark:bg-yellow-900">
-          <Wrench class="h-6 w-6 text-yellow-600 dark:text-yellow-300" />
-        </div>
-        <div>
-          <div class="text-2xl font-bold">
-            {{ data.filter((v) => v.statut === 'Maintenance').length }}
-          </div>
-          <div class="text-xs text-muted-foreground">En maintenance</div>
-        </div>
-      </div>
-      <div class="bg-card rounded-xl shadow border border-border p-4 flex items-center gap-4">
-        <div class="p-2 rounded-full bg-purple-100 dark:bg-purple-900">
-          <Gauge class="h-6 w-6 text-purple-600 dark:text-purple-300" />
-        </div>
-        <div>
-          <div class="text-2xl font-bold">{{ totalKilometrage }}</div>
-          <div class="text-xs text-muted-foreground">Km cumulés</div>
-        </div>
-      </div>
-    </div>
+    <MiniDash />
     <!-- Header avec titre -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-end gap-4">
-      <Button class="inline-flex items-center gap-2" @click="openAddModal = true">
-        <Plus class="h-5 w-5" />
-        Ajouter un véhicule
-      </Button>
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <Button class="inline-flex items-center gap-2" @click="openAddModal = true">
+            <Plus class="h-5 w-5" />
+            Ajouter un véhicule
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Ajouter un véhicule</TooltipContent>
+      </Tooltip>
     </div>
     <!-- Modal d'ajout de véhicule -->
     <AjoutVehiculesComponent :open="openAddModal" @close="openAddModal = false" />
@@ -239,7 +203,9 @@
 </template>
 
 <script setup lang="ts">
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import AjoutVehiculesComponent from './AjoutVehiculesComponent.vue'
+import MiniDash from './base/MiniDashComponent.vue'
 import { ref } from 'vue'
 import {
   Dialog,
@@ -379,7 +345,7 @@ export interface Vehicle {
   modele: string
   annee: number
   type: 'Voiture' | 'Camion' | 'Utilitaire' | 'Moto'
-  statut: 'Disponible' | 'En service' | 'Maintenance' | 'Hors service'
+  statut: 'Disponible' | 'En service' | 'Maintenance' | 'Hors service' | 'En reserve'
   kilometrage: number
   carburant: 'Essence' | 'Diesel' | 'Électrique' | 'Hybride'
   dateMiseEnService: string
@@ -466,6 +432,38 @@ const data: Vehicle[] = [
     annee: 2023,
     type: 'Voiture',
     statut: 'Hors service',
+    dateMiseEnService: '2023-01-05',
+    prochainEntretien: '2026-01-05',
+    kilometrage: 12000,
+    carburant: 'Électrique',
+    echeanceAssurance: '2026-01-05',
+    dateControletechnique: '2026-02-10',
+  },
+  {
+    id: '4',
+    immatriculation: 'MN-012-OP',
+    libelle: 'Citadine électrique',
+    marque: 'Peugeot',
+    modele: '208',
+    annee: 2023,
+    type: 'Voiture',
+    statut: 'En reserve',
+    dateMiseEnService: '2023-01-05',
+    prochainEntretien: '2026-01-05',
+    kilometrage: 12000,
+    carburant: 'Électrique',
+    echeanceAssurance: '2026-01-05',
+    dateControletechnique: '2026-02-10',
+  },
+  {
+    id: '4',
+    immatriculation: 'MN-012-OP',
+    libelle: 'Citadine électrique',
+    marque: 'Peugeot',
+    modele: '208',
+    annee: 2023,
+    type: 'Voiture',
+    statut: 'Disponible',
     dateMiseEnService: '2023-01-05',
     prochainEntretien: '2026-01-05',
     kilometrage: 12000,
