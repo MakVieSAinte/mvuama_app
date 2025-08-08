@@ -9,7 +9,7 @@
         <Button
           v-if="table.getFilteredSelectedRowModel().rows.length > 0"
           variant="destructive"
-          class="inline-flex items-center gap-2"
+          class="inline-flex items-center gap-2 text-amber-50"
           @click="deleteSelectedRows"
         >
         <Trash class="h-5 w-5" />
