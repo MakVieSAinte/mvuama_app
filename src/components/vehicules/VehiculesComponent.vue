@@ -4,7 +4,33 @@
     <MiniDash />
 
     <!-- Header avec titre -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-end gap-4 mb-6">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+      <!-- Sélecteur de vue (tableau/cartes) -->
+      <div
+        class="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground"
+      >
+        <Button
+          variant="ghost"
+          size="sm"
+          :class="{ 'bg-background text-foreground': viewType === 'table' }"
+          @click="viewType = 'table'"
+          class="gap-1"
+        >
+          <TableIcon class="h-4 w-4" />
+          Tableau
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          :class="{ 'bg-background text-foreground': viewType === 'card' }"
+          @click="viewType = 'card'"
+          class="gap-1"
+        >
+          <Grid class="h-4 w-4" />
+          Cartes
+        </Button>
+      </div>
+
       <div class="flex flex-row gap-2">
         <Button
           v-if="table.getFilteredSelectedRowModel().rows.length > 0"
@@ -12,7 +38,7 @@
           class="inline-flex items-center gap-2 text-amber-50"
           @click="deleteSelectedRows"
         >
-        <Trash class="h-5 w-5" />
+          <Trash class="h-5 w-5" />
           Supprimer
         </Button>
         <Button class="inline-flex items-center gap-2" @click="openAddModal = true">
@@ -36,14 +62,53 @@
       />
     </div>
 
-    <!-- Tableau -->
+    <!-- Tableau ou Cartes selon viewType -->
     <div class="mb-6">
-      <VehiculeTable :table="table" :columns="columns" />
+      <VehiculeTable v-if="viewType === 'table'" :table="table" :columns="columns" />
+      <VehiculeCards v-else :table="table" :columns="columns" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, computed, type Ref, watch, onMounted } from 'vue'
+import { Button } from '@/components/ui/button'
+import { Plus, Trash, Table as TableIcon, Grid } from 'lucide-vue-next'
+
+// Gestion centralisée des préférences utilisateur
+const USER_PREFS_KEY = import.meta.env.VITE_MVOUMA_USER_PREFS || 'mvouma_user_prefs'
+type UserPrefs = {
+  viewType?: 'table' | 'card'
+  theme?: string
+  // ...autres préférences à venir
+}
+function getUserPrefs(): UserPrefs {
+  try {
+    const raw = localStorage.getItem(USER_PREFS_KEY)
+    return raw ? JSON.parse(raw) : {}
+  } catch {
+    return {}
+  }
+}
+function setUserPrefs(prefs: Partial<UserPrefs>) {
+  const current = getUserPrefs()
+  const updated = { ...current, ...prefs }
+  localStorage.setItem(USER_PREFS_KEY, JSON.stringify(updated))
+}
+
+// État de la vue (tableau ou cartes) persistant dans les prefs
+const viewType = ref<'table' | 'card'>(getUserPrefs().viewType || 'table')
+watch(viewType, (val) => {
+  setUserPrefs({ viewType: val })
+})
+
+// Composants modulaires
+import AjoutVehiculesModal from './modal/ajoutVehiculesComponent.vue'
+import MiniDash from './base/MiniDashComponent.vue'
+import VehiculeFilters from './base/VehiculeFiltersComponent.vue'
+import VehiculeTable from './base/VehiculeTableComponent.vue'
+import VehiculeCards from './base/VehiculeCardsComponent.vue'
+
 // Fonction pour supprimer les lignes sélectionnées
 function deleteSelectedRows() {
   const selected = table.getFilteredSelectedRowModel().rows.map((r) => r.original)
@@ -53,16 +118,6 @@ function deleteSelectedRows() {
     alert('Suppression de : ' + selected.map((v) => v.immatriculation).join(', '))
   }
 }
-import { ref, computed, h, type Ref } from 'vue'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { Button } from '@/components/ui/button'
-import { Plus, Trash } from 'lucide-vue-next'
-
-// Composants modulaires
-import AjoutVehiculesModal from './modal/ajoutVehiculesComponent.vue'
-import MiniDash from './base/MiniDashComponent.vue'
-import VehiculeFilters from './base/VehiculeFiltersComponent.vue'
-import VehiculeTable from './base/VehiculeTableComponent.vue'
 
 // Imports pour le tableau
 import type {
@@ -72,7 +127,6 @@ import type {
   VisibilityState,
 } from '@tanstack/vue-table'
 import {
-  createColumnHelper,
   getCoreRowModel,
   getExpandedRowModel,
   getFilteredRowModel,
