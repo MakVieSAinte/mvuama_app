@@ -35,12 +35,12 @@ const activeTeam = ref(props.teams[0])
             >
               <component :is="activeTeam.logo" class="size-3" />
             </div>
-            <span class="truncate font-semibold">{{ activeTeam.name }}</span>
+            <span class="truncate font-semibold">{{ activeTeam.name.toUpperCase() }}</span>
             <ChevronDown class="opacity-50" />
           </SidebarMenuButton>
         </DropdownMenuTrigger>
         <DropdownMenuContent class="w-64 rounded-lg" align="start" side="bottom" :side-offset="4">
-          <DropdownMenuLabel class="text-xs text-muted-foreground"> Teams </DropdownMenuLabel>
+          <DropdownMenuLabel class="text-xs text-muted-foreground"> Agences </DropdownMenuLabel>
           <DropdownMenuItem
             v-for="(team, index) in teams"
             :key="team.name"
@@ -50,7 +50,7 @@ const activeTeam = ref(props.teams[0])
             <div class="flex size-6 items-center justify-center rounded-xs border">
               <component :is="team.logo" class="size-4 shrink-0" />
             </div>
-            {{ team.name }}
+            {{ (team.name).toUpperCase() }}
             <DropdownMenuShortcut>⌘{{ index + 1 }}</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
@@ -58,7 +58,7 @@ const activeTeam = ref(props.teams[0])
             <div class="flex size-6 items-center justify-center rounded-md border bg-background">
               <Plus class="size-4" />
             </div>
-            <div class="font-medium text-muted-foreground">Add team</div>
+            <div class="font-medium text-muted-foreground">Ajouter une agence</div>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

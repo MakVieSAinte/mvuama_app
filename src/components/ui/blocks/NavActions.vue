@@ -4,21 +4,16 @@ import {
   ArrowUp,
   Bell,
   User,
-  Copy,
-  CornerUpLeft,
-  CornerUpRight,
-  FileText,
   GalleryVerticalEnd,
   LineChart,
-  Link,
   MoreHorizontal,
   Settings2,
-  Star,
   Trash,
-  Trash2,
+  AlertTriangle,
+  Sun,
+  Moon,
 } from 'lucide-vue-next'
 import { useTheme } from '@/composables/useTheme'
-import Switch from '@/components/ui/switch/Switch.vue'
 
 import { ref } from 'vue'
 import { Button } from '@/components/ui/button'
@@ -36,16 +31,17 @@ import {
 const data = [
   [
     {
-      label: 'Copier le lien',
-      icon: Link,
+      label: 'Profil',
+      icon: User,
     },
     {
       label: 'Configuration',
       icon: Settings2,
     },
     {
-      label: 'Profil',
-      icon: User,
+      label: 'Changer de thème',
+      icon: null,
+      action: 'toggleTheme',
     },
   ],
   [
@@ -83,25 +79,22 @@ const { theme, toggleTheme } = useTheme()
 </script>
 
 <template>
-  <div class="flex items-center gap-2 text-sm">
-    <div class="flex items-center gap-1">
-      <Switch
-        :model-value="theme === 'dark'"
-        @update:model-value="toggleTheme"
-        aria-label="Changer de thème"
-      />
-      <span class="text-xs text-muted-foreground hidden md:inline">{{
-        theme === 'dark' ? 'Sombre' : 'Clair'
-      }}</span>
-    </div>
-    <div class="hidden font-medium text-muted-foreground md:inline-block">Edit Oct 08</div>
-    <Button variant="ghost" size="icon" class="h-7 w-7">
-      <Star />
+  <div class="flex items-center gap-3 text-sm">
+    <!-- Suppression du switch de thème du header -->
+    <!-- Triangle rouge pour alertes -->
+    <Button variant="ghost" size="icon" class="flex items-center gap-2 h-7 w-auto px-2">
+      <AlertTriangle class="text-red-500" />
+      <span class="text-sm text-muted-foreground font-semibold">2</span>
+    </Button>
+    <!-- Triangle orange pour warnings -->
+    <Button variant="ghost" size="icon" class="flex items-center gap-2 h-7 w-auto px-2">
+      <AlertTriangle class="text-orange-400" />
+      <span class="text-sm text-muted-foreground font-semibold">1</span>
     </Button>
     <Popover v-model:open="isOpen">
       <PopoverTrigger as-child>
         <Button variant="ghost" size="icon" class="h-7 w-7 data-[state=open]:bg-accent">
-          <MoreHorizontal />
+          <MoreHorizontal class="text-gray-700 dark:text-gray-100" />
         </Button>
       </PopoverTrigger>
       <PopoverContent class="w-56 overflow-hidden rounded-lg p-0" align="end">
@@ -115,8 +108,16 @@ const { theme, toggleTheme } = useTheme()
               <SidebarGroupContent class="gap-0">
                 <SidebarMenu>
                   <SidebarMenuItem v-for="(item, index) in group" :key="index">
-                    <SidebarMenuButton>
-                      <component :is="item.icon" /> <span>{{ item.label }}</span>
+                    <SidebarMenuButton
+                      @click="item.action === 'toggleTheme' ? toggleTheme() : undefined"
+                    >
+                      <template v-if="item.action === 'toggleTheme'">
+                        <component :is="theme === 'dark' ? Sun : Moon" class="mr-2" />
+                      </template>
+                      <template v-else>
+                        <component :is="item.icon" class="mr-2" />
+                      </template>
+                      <span>{{ item.label }}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>

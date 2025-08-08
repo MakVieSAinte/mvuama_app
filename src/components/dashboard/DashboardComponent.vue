@@ -4,7 +4,7 @@
     <Alert
       v-if="hasAlerts"
       variant="destructive"
-      class="border-2 border-amber-400 bg-gradient-to-r from-amber-100 via-yellow-50 to-white/80 shadow-lg backdrop-blur-sm"
+      class="border-2 border-amber-400 bg-gradient-to-r from-amber-100 via-yellow-50 to-white/80 backdrop-blur-sm"
     >
       <AlertTriangle class="h-5 w-5" />
       <AlertTitle class="text-amber-900">Attention requise</AlertTitle>
@@ -31,9 +31,9 @@
     </Alert>
 
     <!-- KPI Cards -->
-    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+    <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-4 my-5">
       <!-- Total Véhicules -->
-      <Card class="my-6">
+      <Card>
         <div class="py-0">
           <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle class="text-sm font-medium">Total Véhicules</CardTitle>
@@ -47,7 +47,7 @@
       </Card>
 
       <!-- Recettes du mois -->
-      <Card class="my-6">
+      <Card>
         <div class="py-0">
           <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle class="text-sm font-medium">Recettes du mois</CardTitle>
@@ -63,7 +63,7 @@
       </Card>
 
       <!-- Dépenses du mois -->
-      <Card class="my-6">
+      <Card>
         <div class="py-0">
           <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle class="text-sm font-medium">Dépenses du mois</CardTitle>
@@ -77,7 +77,7 @@
       </Card>
 
       <!-- Balance financière -->
-      <Card class="my-6">
+      <Card>
         <div class="py-0">
           <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle class="text-sm font-medium">Balance</CardTitle>
@@ -227,7 +227,7 @@
             <div
               v-for="doc in documentsToExpire.slice(0, 5)"
               :key="doc.id"
-              class="flex items-center justify-between p-3 border rounded-lg"
+              class="flex items-center justify-between p-3 border rounded-lg mb-3"
             >
               <div class="flex-1">
                 <p class="font-medium">{{ doc.vehicleInfo }} - {{ doc.type }}</p>

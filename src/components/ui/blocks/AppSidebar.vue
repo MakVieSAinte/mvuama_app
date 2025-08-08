@@ -59,17 +59,17 @@ function handleTabChange(tabId: string) {
 const data = {
   teams: [
     {
-      name: 'Acme Inc',
+    name: 'Agence de moungali',
       logo: Command,
       plan: 'Enterprise',
     },
     {
-      name: 'Acme Corp.',
+      name: 'Agence de Bacongo',
       logo: AudioWaveform,
       plan: 'Startup',
     },
     {
-      name: 'Evil Corp.',
+      name: 'Agence de Poto-Poto',
       logo: Command,
       plan: 'Free',
     },

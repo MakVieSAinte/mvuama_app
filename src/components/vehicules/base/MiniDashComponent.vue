@@ -3,12 +3,12 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
     <Tooltip>
       <TooltipTrigger as-child>
-        <div class="bg-card rounded-xl shadow border border-border p-4 flex items-center gap-4">
-          <div class="p-2 rounded-full bg-green-100 dark:bg-green-900">
+        <div class="bg-card rounded-xl border border-border p-4 flex items-center gap-4">
+          <div class="p-2 rounded-full bg-green-400 dark:bg-green-900">
             <Car class="h-6 w-6 text-green-600 dark:text-green-300" />
           </div>
           <div>
-            <div class="text-2xl font-bold">{{ data.length }}</div>
+            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ data.length }}</div>
             <div class="text-xs text-muted-foreground">Véhicules au total</div>
           </div>
         </div>
@@ -17,12 +17,12 @@
     </Tooltip>
     <Tooltip>
       <TooltipTrigger as-child>
-        <div class="bg-card rounded-xl shadow border border-border p-4 flex items-center gap-4">
-          <div class="p-2 rounded-full bg-blue-100 dark:bg-blue-900">
+        <div class="bg-card rounded-xl border border-border p-4 flex items-center gap-4">
+          <div class="p-2 rounded-full bg-blue-400 dark:bg-blue-900">
             <CheckCircle class="h-6 w-6 text-blue-600 dark:text-blue-300" />
           </div>
           <div>
-            <div class="text-2xl font-bold">
+            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
               {{ data.filter((v) => v.statut === 'Disponible').length }}
             </div>
             <div class="text-xs text-muted-foreground">Disponibles</div>
@@ -33,12 +33,12 @@
     </Tooltip>
     <Tooltip>
       <TooltipTrigger as-child>
-        <div class="bg-card rounded-xl shadow border border-border p-4 flex items-center gap-4">
-          <div class="p-2 rounded-full bg-yellow-100 dark:bg-yellow-900">
+        <div class="bg-card rounded-xl border border-border p-4 flex items-center gap-4">
+          <div class="p-2 rounded-full bg-yellow-400 dark:bg-yellow-900">
             <Wrench class="h-6 w-6 text-yellow-600 dark:text-yellow-300" />
           </div>
           <div>
-            <div class="text-2xl font-bold">
+            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
               {{ data.filter((v) => v.statut === 'Maintenance').length }}
             </div>
             <div class="text-xs text-muted-foreground">En maintenance</div>
@@ -49,12 +49,14 @@
     </Tooltip>
     <Tooltip>
       <TooltipTrigger as-child>
-        <div class="bg-card rounded-xl shadow border border-border p-4 flex items-center gap-4">
-          <div class="p-2 rounded-full bg-purple-100 dark:bg-purple-900">
+        <div class="bg-card rounded-xl border border-border p-4 flex items-center gap-4">
+          <div class="p-2 rounded-full bg-purple-400 dark:bg-purple-900">
             <Gauge class="h-6 w-6 text-purple-600 dark:text-purple-300" />
           </div>
           <div>
-            <div class="text-2xl font-bold">{{ totalKilometrage }}</div>
+            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              {{ totalKilometrage }}
+            </div>
             <div class="text-xs text-muted-foreground">Km cumulés</div>
           </div>
         </div>
