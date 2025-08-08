@@ -7,22 +7,14 @@
         <Table>
           <TableHeader>
             <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-              <TableHead
-                v-for="header in headerGroup.headers"
-                :key="header.id"
-                :data-pinned="header.column.getIsPinned()"
-                :class="
-                  cn(
-                    { 'sticky bg-background/95': header.column.getIsPinned() },
-                    header.column.getIsPinned() === 'left' ? 'left-0' : 'right-0',
-                  )
-                "
-              >
-                <FlexRender
-                  v-if="!header.isPlaceholder"
-                  :render="header.column.columnDef.header"
-                  :props="header.getContext()"
-                />
+              <TableHead v-for="header in headerGroup.headers" :key="header.id"
+                :data-pinned="header.column.getIsPinned()" :class="cn(
+                  { 'sticky bg-background/95': header.column.getIsPinned() },
+                  header.column.getIsPinned() === 'left' ? 'left-0' : 'right-0',
+                )
+                  ">
+                <FlexRender v-if="!header.isPlaceholder" :render="header.column.columnDef.header"
+                  :props="header.getContext()" />
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -30,17 +22,12 @@
             <template v-if="table.getRowModel().rows?.length">
               <template v-for="row in table.getRowModel().rows" :key="row.id">
                 <TableRow :data-state="row.getIsSelected() && 'selected'">
-                  <TableCell
-                    v-for="cell in row.getVisibleCells()"
-                    :key="cell.id"
-                    :data-pinned="cell.column.getIsPinned()"
-                    :class="
-                      cn(
-                        { 'sticky bg-background/95': cell.column.getIsPinned() },
-                        cell.column.getIsPinned() === 'left' ? 'left-0' : 'right-0',
-                      )
-                    "
-                  >
+                  <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id"
+                    :data-pinned="cell.column.getIsPinned()" :class="cn(
+                      { 'sticky bg-background/95': cell.column.getIsPinned() },
+                      cell.column.getIsPinned() === 'left' ? 'left-0' : 'right-0',
+                    )
+                      ">
                     <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
                   </TableCell>
                 </TableRow>
@@ -62,7 +49,7 @@
       </div>
     </div>
 
-    <!-- Pagination -->
+
     <div class="p-6 border-t border-border">
       <div class="flex items-center justify-between">
         <div class="flex-1 text-sm text-muted-foreground">
@@ -72,13 +59,8 @@
         <div class="flex gap-2">
           <Tooltip>
             <TooltipTrigger as-child>
-              <Button
-                variant="outline"
-                size="sm"
-                :disabled="!table.getCanPreviousPage()"
-                @click="table.previousPage()"
-                class="text-muted-foreground !shadow-none"
-              >
+              <Button variant="outline" size="sm" :disabled="!table.getCanPreviousPage()" @click="table.previousPage()"
+                class="text-muted-foreground !shadow-none">
                 Précédent
               </Button>
             </TooltipTrigger>
@@ -86,13 +68,8 @@
           </Tooltip>
           <Tooltip>
             <TooltipTrigger as-child>
-              <Button
-                variant="outline"
-                size="sm"
-                :disabled="!table.getCanNextPage()"
-                @click="table.nextPage()"
-                class="text-muted-foreground !shadow-none"
-              >
+              <Button variant="outline" size="sm" :disabled="!table.getCanNextPage()" @click="table.nextPage()"
+                class="text-muted-foreground !shadow-none">
                 Suivant
               </Button>
             </TooltipTrigger>

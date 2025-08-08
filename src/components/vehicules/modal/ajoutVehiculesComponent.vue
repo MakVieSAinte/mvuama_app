@@ -1,6 +1,6 @@
 <template>
   <Dialog
-    :open="props.open"
+    :open="open"
     @update:open="
       (val) => {
         if (!val) emit('close')
@@ -115,12 +115,13 @@
           </div>
 
           <!-- Actions -->
-          flex jus-4 pt-4 border-t">
-          <UiButton variant="outline" @click="emit('close')"> Annuler </UiButton>
-          <UiButton @click="handleSubmit" :disabled="!isFormValid">
-            <Plus class="h-4 w-4 mr-2" />
-            Ajouter le véhicule
-          </UiButton>
+          <div class="flex justify-end gap-4 pt-4 border-t">
+            <UiButton variant="outline" @click="emit('close')"> Annuler </UiButton>
+            <UiButton @click="handleSubmit" :disabled="!isFormValid">
+              <Plus class="h-4 w-4 mr-2" />
+              Ajouter le véhicule
+            </UiButton>
+          </div>
         </div>
       </div>
     </DialogContent>
