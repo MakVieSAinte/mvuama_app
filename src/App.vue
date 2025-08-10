@@ -1,27 +1,41 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import Home from '@/components/home/Home.vue'
+import TestVehicleForm from '@/components/test/TestVehicleForm.vue'
 
-interface Tab {
-  id: string
-  label: string
-  shortLabel: string
-  icon: any
-}
+// Interface pour les onglets (à utiliser plus tard)
+// interface Tab {
+//   id: string
+//   label: string
+//   shortLabel: string
+//   icon: string
+// }
 
 export default defineComponent({
   name: 'App',
   components: {
     Home,
+    TestVehicleForm,
   },
   setup() {
-    return {}
+    const showTest = ref(true) // Mettre à true pour afficher le composant de test
+
+    return {
+      showTest,
+    }
   },
 })
 </script>
 
 <template>
-  <Home />
+  <div>
+    <div v-if="showTest">
+      <TestVehicleForm />
+    </div>
+    <div v-else>
+      <Home />
+    </div>
+  </div>
 </template>
 
 <style scoped>
