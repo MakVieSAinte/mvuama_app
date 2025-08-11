@@ -103,7 +103,7 @@ watch(viewType, (val) => {
 })
 
 // Composants modulaires
-import AjoutVehiculesModal from './modal/ajoutVehiculesComponent.vue'
+import AjoutVehiculesModal from './modal/AjoutVehiculesModal.vue'
 import MiniDash from './base/MiniDashComponent.vue'
 import VehiculeFilters from './base/VehiculeFiltersComponent.vue'
 import VehiculeTable from './base/VehiculeTableComponent.vue'

@@ -31,11 +31,11 @@ async function checkUserAndAddRole() {
 
   // Vérifier si l'utilisateur a déjà un membership pour l'agence
   const agencyId = '2f9e2a1c-7a3b-44ed-9f16-82f7c7746f15'
-  const hasMembership = memberships?.some(m => m.agency_id === agencyId)
+  const hasMembership = memberships?.some((m) => m.agency_id === agencyId)
 
   if (hasMembership) {
     console.log("L'utilisateur a déjà un membership pour cette agence")
-    
+
     // Mettre à jour le rôle existant en admin
     const { data: updateData, error: updateError } = await supabase
       .from('memberships')
@@ -56,12 +56,12 @@ async function checkUserAndAddRole() {
       .insert({
         user_id: session.user.id,
         agency_id: agencyId,
-        role: 'admin'
+        role: 'admin',
       })
       .select()
 
     if (insertError) {
-      console.error("Erreur lors de la création du membership:", insertError.message)
+      console.error('Erreur lors de la création du membership:', insertError.message)
     } else {
       console.log('Membership créé avec succès:', insertData)
     }

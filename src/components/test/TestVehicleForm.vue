@@ -122,7 +122,7 @@ export default defineComponent({
       email: '',
       password: '',
     })
-    
+
     // État de l'autorisation
     const hasManagementRole = ref(false)
     const agencyId = '2f9e2a1c-7a3b-44ed-9f16-82f7c7746f15' // ID de l'agence de test
@@ -164,15 +164,18 @@ export default defineComponent({
           isAuthenticated.value = true
           user.value = data.user
           vehicle.value.created_by = data.user.id // Définir l'ID utilisateur pour les créations
-          
+
           // Vérifier si l'utilisateur a un rôle d'administration
           const agencyId = vehicle.value.agency_id
           const hasRole = await MembershipService.hasManagementRole(agencyId)
           if (!hasRole) {
             console.warn("L'utilisateur n'a pas les droits admin/gestionnaire pour cette agence")
-            showMessage("Votre compte n'a pas les droits d'administration nécessaires pour créer des véhicules", 'error')
+            showMessage(
+              "Votre compte n'a pas les droits d'administration nécessaires pour créer des véhicules",
+              'error',
+            )
           }
-          
+
           loadVehicles() // Charger les véhicules après connexion
         } else {
           authError.value = 'Identifiants invalides'
@@ -220,13 +223,16 @@ export default defineComponent({
         showMessage('Veuillez remplir tous les champs obligatoires', 'error')
         return
       }
-      
+
       // Vérifier si l'utilisateur a les droits d'administration nécessaires
       const agencyId = vehicle.value.agency_id
       const hasRole = await MembershipService.hasManagementRole(agencyId)
-      
+
       if (!hasRole) {
-        showMessage("Vous n'avez pas les droits nécessaires (admin ou gestionnaire) pour ajouter un véhicule", 'error')
+        showMessage(
+          "Vous n'avez pas les droits nécessaires (admin ou gestionnaire) pour ajouter un véhicule",
+          'error',
+        )
         return
       }
 
@@ -237,7 +243,7 @@ export default defineComponent({
         if (!vehicle.value.created_by && user.value) {
           vehicle.value.created_by = user.value.id
         }
-        
+
         const result = await VehicleService.createVehicle(vehicle.value)
 
         if (result !== false) {

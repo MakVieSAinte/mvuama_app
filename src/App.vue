@@ -2,6 +2,8 @@
 import { defineComponent, ref } from 'vue'
 import Home from '@/components/home/Home.vue'
 import TestVehicleForm from '@/components/test/TestVehicleForm.vue'
+import TestSetupWorkflow from '@/components/test/TestSetupWorkflow.vue'
+import VehicleDisplay from '@/components/test/VehicleDisplay.vue'
 
 // Interface pour les onglets (à utiliser plus tard)
 // interface Tab {
@@ -16,12 +18,16 @@ export default defineComponent({
   components: {
     Home,
     TestVehicleForm,
+    TestSetupWorkflow,
+    VehicleDisplay,
   },
   setup() {
-    const showTest = ref(true) // Mettre à true pour afficher le composant de test
+    const showTest = ref(false) // Mettre à true pour afficher le composant de test
+    const activeView = ref('vehicleDisplay') // Nouvelle variable pour gérer les vues
 
     return {
       showTest,
+      activeView,
     }
   },
 })
@@ -29,8 +35,18 @@ export default defineComponent({
 
 <template>
   <div>
+ 
+
     <div v-if="showTest">
-      <TestVehicleForm />
+      <div v-if="activeView === 'workflow'">
+        <TestSetupWorkflow />
+      </div>
+      <div v-else-if="activeView === 'vehicleForm'">
+        <TestVehicleForm />
+      </div>
+      <div v-else-if="activeView === 'vehicleDisplay'">
+        <VehicleDisplay />
+      </div>
     </div>
     <div v-else>
       <Home />
@@ -39,6 +55,32 @@ export default defineComponent({
 </template>
 
 <style scoped>
+.navigation {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+  justify-content: center;
+}
+
+.navigation button {
+  padding: 8px 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.navigation button.active {
+  background-color: #4caf50;
+  color: white;
+  border-color: #4caf50;
+}
+
+.navigation button:hover:not(.active) {
+  background-color: #e0e0e0;
+}
+
 header {
   line-height: 1.5;
   max-height: 100vh;

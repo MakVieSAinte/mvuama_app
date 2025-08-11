@@ -1,61 +1,75 @@
-**Add your own guidelines here**
-<!--
+# Guidelines du projet MVOUMA
 
-System Guidelines
+## 1. Structure du projet
 
-Use this file to provide the AI with rules and guidelines you want it to follow.
-This template outlines a few examples of things you can add. You can add your own sections and format it to suit your needs
+- **src/** : Contient tout le code source de l’application Vue 3 (TypeScript).
+  - **components/** : Composants réutilisables, organisés par domaine (chauffeurs, checklist, dashboard, etc.).
+  - **composables/** : Fonctions réutilisables (hooks Vue 3).
+  - **data/** : Données mockées pour le développement.
+  - **formBuilder/** : Logique de génération de formulaires dynamiques.
+  - **interfaces/** et **types/** : Définition des interfaces et types TypeScript pour la robustesse du code.
+  - **lib/** : Fonctions utilitaires génériques.
+  - **locales/** : Fichiers de traduction (i18n).
+  - **router/** : Configuration du routeur Vue.
+  - **services/** : Gestion des appels API, logique métier, intégration Supabase (à centraliser ici).
+  - **stores/** : Stores Pinia pour la gestion d’état globale.
+  - **views/** : Vues principales de l’application (une par page).
 
-TIP: More context isn't always better. It can confuse the LLM. Try and add the most important rules you need
+## 2. Bonnes pratiques générales
 
-# General guidelines
+- **TypeScript** : Toujours typer les props, les retours de fonctions, et les objets manipulés.
+- **Composants** : Privilégier des composants petits, spécialisés et réutilisables.
+- **Dossiers** : Organiser les composants et services par domaine métier.
+- **Nommage** : Utiliser l’anglais pour le code, le français pour l’UI (sauf exceptions métier).
+- **Commentaires** : Documenter les fonctions complexes et les choix techniques importants.
+- **Sécurité** : Ne jamais exposer de secrets ou de clés sensibles côté client.
 
-Any general rules you want the AI to follow.
-For example:
+## 3. Intégration Supabase
 
-* Only use absolute positioning when necessary. Opt for responsive and well structured layouts that use flexbox and grid by default
-* Refactor code as you go to keep code clean
-* Keep file sizes small and put helper functions and components in their own files.
+- Installer `@supabase/supabase-js` et centraliser l’initialisation dans `src/services/supabaseClient.ts`.
+- Utiliser des services ou des composables pour interagir avec Supabase (CRUD, auth, etc.).
+- Toujours gérer les erreurs et afficher des messages clairs à l’utilisateur.
+- Utiliser les types générés par Supabase pour sécuriser les accès aux données.
 
---------------
+## 4. Gestion d’état
 
-# Design system guidelines
-Rules for how the AI should make generations look like your company's design system
+- Utiliser Pinia pour la gestion d’état globale (stores dans `src/stores`).
+- Garder les stores simples, découper par domaine métier.
+- Ne pas stocker de données sensibles dans le store.
 
-Additionally, if you select a design system to use in the prompt box, you can reference
-your design system's components, tokens, variables and components.
-For example:
+## 5. UI/UX
 
-* Use a base font-size of 14px
-* Date formats should always be in the format “Jun 10”
-* The bottom toolbar should only ever have a maximum of 4 items
-* Never use the floating action button with the bottom toolbar
-* Chips should always come in sets of 3 or more
-* Don't use a dropdown if there are 2 or fewer options
+- Utiliser les composants UI du dossier `ui/` pour garantir la cohérence visuelle.
+- Respecter la charte graphique définie dans `assets/base.css` et `assets/main.css`.
+- Privilégier l’accessibilité (labels, contrastes, navigation clavier).
 
-You can also create sub sections and add more specific details
-For example:
+## 6. Internationalisation
 
+- Centraliser toutes les chaînes de caractères dans `src/locales/fr.json` et `en.json`.
+- Utiliser un composable ou un plugin i18n pour la traduction dynamique.
 
-## Button
-The Button component is a fundamental interactive element in our design system, designed to trigger actions or navigate
-users through the application. It provides visual feedback and clear affordances to enhance user experience.
+## 7. Tests
 
-### Usage
-Buttons should be used for important actions that users need to take, such as form submissions, confirming choices,
-or initiating processes. They communicate interactivity and should have clear, action-oriented labels.
+- Écrire des tests E2E avec Playwright (voir `e2e/vue.spec.ts`).
+- Ajouter des tests unitaires pour les fonctions critiques (composables, services).
 
-### Variants
-* Primary Button
-  * Purpose : Used for the main action in a section or page
-  * Visual Style : Bold, filled with the primary brand color
-  * Usage : One primary button per section to guide users toward the most important action
-* Secondary Button
-  * Purpose : Used for alternative or supporting actions
-  * Visual Style : Outlined with the primary color, transparent background
-  * Usage : Can appear alongside a primary button for less important actions
-* Tertiary Button
-  * Purpose : Used for the least important actions
-  * Visual Style : Text-only with no border, using primary color
-  * Usage : For actions that should be available but not emphasized
--->
+## 8. SQL & Backend
+
+- Les scripts SQL sont versionnés à la racine pour la gestion du schéma et des politiques Supabase.
+- Documenter chaque script SQL (but, impact, dépendances).
+
+## 9. Déploiement & Sécurité
+
+- Ne jamais commiter de clés privées ou de secrets.
+- Utiliser des variables d’environnement pour les clés publiques.
+- Documenter la procédure de déploiement dans le README.
+
+## 10. Documentation
+
+- Tenir à jour ce fichier et le README.
+- Documenter chaque module métier (chauffeurs, véhicules, paiements, etc.) dans les fichiers `info*.md`.
+
+---
+
+**Résumé** :
+Ce projet est conçu pour être modulaire, typé, sécurisé et maintenable. Respecte ces guidelines pour garantir la qualité, la sécurité et la pérennité de l’application Mopayo.
