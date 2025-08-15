@@ -8,13 +8,19 @@ const router = createRouter({
     {
       path: '/auth',
       name: 'auth',
+      beforeEnter: authMiddleware,
       meta: { requiresAuth: false },
       children: [
         {
-          path: 'login',
+          path: '/login',
           name: 'login',
           component: () => import('../views/auth/LoginView.vue'),
         },
+        {
+          path: '/register',
+          name: 'register',
+          component: () => import('../views/auth/RegisterView.vue'),
+        }
       ],
     },
     {
@@ -62,7 +68,7 @@ const router = createRouter({
           path: '/paiements',
           name: 'paiements',
           component: () => import('../views/PaiementsView.vue'),
-        }
+        },
       ],
     },
   ],
