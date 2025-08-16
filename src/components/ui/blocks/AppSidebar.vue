@@ -10,6 +10,9 @@ import {
   CheckSquare,
   MapPin,
   File,
+  Bell,
+  History,
+  Route,
   Inbox,
   MessageCircleQuestion,
   Search,
@@ -59,7 +62,7 @@ function handleTabChange(tabId: string) {
 const data = {
   teams: [
     {
-    name: 'Agence de moungali',
+      name: 'Agence de moungali',
       logo: Command,
       plan: 'Enterprise',
     },
@@ -78,12 +81,16 @@ const data = {
     { id: 'home', title: 'Accueil', icon: Home, route: '/home' },
     { id: 'dashboard', title: 'Tableau de bord', icon: ChartArea, route: '/dashboard' },
     { id: 'vehicles', title: 'Véhicules', icon: Car, route: '/vehicles' },
-    { id: 'chauffeurs', title: 'Chauffeurs', icon: Users, route: '/chauffeurs' },
+    { id: 'conducteurs', title: 'Conducteurs', icon: Users, route: '/conducteurs' },
+    { id: 'documents', title: 'Documents', icon: File, route: '/documents' },
     { id: 'recettes', title: 'Recettes', icon: Coins, route: '/recettes' },
     { id: 'paiements', title: 'Paiements', icon: Wallet, route: '/paiements' },
     { id: 'maintenance', title: 'Entretiens', icon: Calendar, route: '/maintenance' },
     { id: 'checklist', title: 'Checklists', icon: CheckSquare, route: '/checklist' },
+    { id: 'gps', title: 'GPS', icon: Route, route: '/gps', disabled: true },
+    { id: 'alertes', title: 'Alertes & Notifications', icon: Bell, route: '/alertes' },
     { id: 'parking', title: 'Parking', icon: MapPin, route: '/parking' },
+    { id: 'historique', title: 'Historique générale', icon: History, route: '/historique' },
   ],
   navSecondary: [
     // {
@@ -92,8 +99,8 @@ const data = {
     //   icon: Inbox,
     // },
     {
-      title: 'Paramètres',
-      url: '#',
+      title: 'Configuration',
+      url: '/configuration',
       icon: Settings2,
     },
     {
@@ -121,6 +128,7 @@ const data = {
           <SidebarMenuItem v-for="item in data.navMain" :key="item.id">
             <SidebarMenuButton as-child>
               <router-link
+                v-if="!item.disabled"
                 :to="item.route"
                 :data-active="$route.path === item.route"
                 class="flex items-center gap-2 w-full"
@@ -128,6 +136,13 @@ const data = {
                 <component :is="item.icon" />
                 <span>{{ item.title }}</span>
               </router-link>
+              <div
+                v-else
+                class="flex items-center gap-2 w-full text-gray-400 cursor-not-allowed opacity-60 select-none"
+              >
+                <component :is="item.icon" />
+                <span>{{ item.title }}</span>
+              </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

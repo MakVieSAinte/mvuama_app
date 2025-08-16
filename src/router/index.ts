@@ -12,15 +12,15 @@ const router = createRouter({
       meta: { requiresAuth: false },
       children: [
         {
-          path: '/login',
+          path: 'login',
           name: 'login',
           component: () => import('../views/auth/LoginView.vue'),
         },
         {
-          path: '/register',
+          path: 'register',
           name: 'register',
           component: () => import('../views/auth/RegisterView.vue'),
-        }
+        },
       ],
     },
     {
@@ -55,9 +55,38 @@ const router = createRouter({
           component: () => import('../views/ParkingView.vue'),
         },
         {
+          path: '/configuration',
+          name: 'configuration',
+          component: () => import('../views/ConfigurationView.vue'),
+        },
+        {
+          path: '/documents',
+          name: 'documents',
+          component: () => import('../views/DocumentsView.vue'),
+        },
+        {
+          path: '/gps',
+          name: 'gps',
+          component: () => import('../views/GpsView.vue'),
+        },
+        {
+          path: '/alertes',
+          name: 'alertes',
+          component: () => import('../views/AlertesView.vue'),
+        },
+        {
+          path: '/historique',
+          name: 'historique',
+          component: () => import('../views/HistoriqueView.vue'),
+        },
+        {
+          path: '/conducteurs',
+          name: 'conducteurs',
+          component: () => import('../views/ConducteursView.vue'),
+        },
+        {
           path: '/chauffeurs',
-          name: 'chauffeurs',
-          component: () => import('../views/ChauffeursView.vue'),
+          redirect: '/conducteurs',
         },
         {
           path: '/recettes',

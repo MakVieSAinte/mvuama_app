@@ -7,20 +7,19 @@ export function authMiddleware(
   from: RouteLocationNormalized,
   next: NavigationGuardNext,
 ) {
-  // Si la route n'est pas /auth/login et que l'utilisateur n'est pas authentifié, on redirige vers login
-  if (!to.path.startsWith('/auth/login') && !AuthService.isAuthenticated()) {
+  // Autoriser l'accès à /auth/login et /auth/register si non connecté
+  if (to.path.startsWith('/auth/login') || to.path.startsWith('/auth/register')) {
+    return next()
+  }
+
+  // Si l'utilisateur n'est pas authentifié, rediriger vers login
+  if (!AuthService.isAuthenticated()) {
     return next('/auth/login')
   }
 
-  if (!to.path.startsWith('/auth/register')) {
-    return next('/auth/register')
-  }
-
-  // Protection admin (optionnel)
+  // Protection admin : doit être authentifié ET admin
   if (to.path.startsWith('/admin')) {
-    if (!AuthService.isAuthenticated()) {
-      return next('/auth/login')
-    } else if (!AuthService.isAdmin()) {
+    if (!AuthService.isAdmin()) {
       return next('/')
     }
   }

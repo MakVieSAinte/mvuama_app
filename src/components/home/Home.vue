@@ -21,9 +21,14 @@ const pageNames: Record<string, string> = {
   maintenance: 'Maintenance',
   checklist: 'Checklist',
   parking: 'Parking',
-  chauffeurs: 'Chauffeurs',
+  conducteurs: 'Conducteurs',
   recettes: 'Recettes',
   paiements: 'Paiements',
+  documents: 'Documents',
+  gps: 'GPS',
+  alertes: 'Alertes & Notifications',
+  historique: 'Historique',
+  configuration: 'Configuration',
 }
 const currentPage = computed(() => pageNames[route.name as string] || '')
 </script>

@@ -52,7 +52,7 @@ import RegisterForm from '@/components/auth/authForm/RegisterForm.vue'
           </p>
         </div>
         <RegisterForm />
-        <p class="px-8 text-center text-sm text-muted-foreground">
+        <p class="px-1 text-center text-sm text-muted-foreground">
           En cliquant sur continuer, vous acceptez nos
           <a href="/terms" class="underline underline-offset-4 hover:text-primary">
             Conditions d'utilisation

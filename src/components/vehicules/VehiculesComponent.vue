@@ -71,36 +71,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, type Ref, watch, onMounted } from 'vue'
+import { ref, computed, type Ref } from 'vue'
 import { Button } from '@/components/ui/button'
 import { Plus, Trash, Table as TableIcon, Grid } from 'lucide-vue-next'
+import { config } from '@/services/config/config'
+import { useUserPrefs } from '@/composables/useUserPrefs'
 
-// Gestion centralisée des préférences utilisateur
-const USER_PREFS_KEY = import.meta.env.VITE_MVOUMA_USER_PREFS || 'mvouma_user_prefs'
-type UserPrefs = {
-  viewType?: 'table' | 'card'
-  theme?: string
-  // ...autres préférences à venir
-}
-function getUserPrefs(): UserPrefs {
-  try {
-    const raw = localStorage.getItem(USER_PREFS_KEY)
-    return raw ? JSON.parse(raw) : {}
-  } catch {
-    return {}
-  }
-}
-function setUserPrefs(prefs: Partial<UserPrefs>) {
-  const current = getUserPrefs()
-  const updated = { ...current, ...prefs }
-  localStorage.setItem(USER_PREFS_KEY, JSON.stringify(updated))
-}
-
-// État de la vue (tableau ou cartes) persistant dans les prefs
-const viewType = ref<'table' | 'card'>(getUserPrefs().viewType || 'table')
-watch(viewType, (val) => {
-  setUserPrefs({ viewType: val })
-})
+// Préférences utilisateur (vue tableau/cartes, thème, etc.)
+const { viewType } = useUserPrefs(config.user_prefs)
 
 // Composants modulaires
 import AjoutVehiculesModal from './modal/AjoutVehiculesModal.vue'

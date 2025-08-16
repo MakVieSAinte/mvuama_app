@@ -1,25 +1,33 @@
 <template>
   <div>
     <router-view />
+    <Toaster :theme="currentTheme" />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref, onMounted } from 'vue'
+import { Toaster } from '@/plugins/sonner'
 
 export default defineComponent({
   name: 'App',
   components: {
-
+    Toaster,
   },
-
   setup() {
-    return {
-
+    const currentTheme = ref('light')
+    const updateTheme = () => {
+      currentTheme.value = document.documentElement.classList.contains('dark') ? 'dark' : 'light'
     }
+    onMounted(() => {
+      updateTheme()
+      // Observe les changements de classe sur <html>
+      const observer = new MutationObserver(updateTheme)
+      observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    })
+    return { currentTheme }
   },
 })
 </script>
-
 
 <style scoped></style>

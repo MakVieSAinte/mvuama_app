@@ -1,6 +1,14 @@
 import { supabase } from '../config/supabaseClient'
 
 export class AuthService {
+  static async signUp(email: string, password: string) {
+    try {
+      const { data, error } = await supabase.auth.signUp({ email, password })
+      return { data, error }
+    } catch (error: any) {
+      return { data: null, error }
+    }
+  }
   static async signIn(email: string, password: string) {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password })

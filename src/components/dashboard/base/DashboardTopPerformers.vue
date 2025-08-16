@@ -45,12 +45,12 @@
       </CardContent>
     </Card>
 
-    <!-- Top 5 chauffeurs les plus performants -->
+    <!-- Top 5 conducteurs les plus performants -->
     <Card>
       <CardHeader>
         <CardTitle class="flex items-center gap-2">
           <Users class="h-5 w-5" />
-          Top 5 chauffeurs performants
+          Top 5 conducteurs performants
         </CardTitle>
         <CardDescription>Classement par recettes générées</CardDescription>
       </CardHeader>
@@ -58,7 +58,7 @@
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Chauffeur</TableHead>
+              <TableHead>Conducteur</TableHead>
               <TableHead class="text-right">Performance</TableHead>
             </TableRow>
           </TableHeader>
