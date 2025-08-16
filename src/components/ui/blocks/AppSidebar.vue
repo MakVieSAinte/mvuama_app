@@ -22,6 +22,7 @@ import {
   Users,
   Coins,
   Wallet,
+  Fuel,
 } from 'lucide-vue-next'
 
 import NavMain from '@/components/ui/blocks/NavMain.vue'
@@ -62,7 +63,7 @@ function handleTabChange(tabId: string) {
 const data = {
   teams: [
     {
-      name: 'Agence de moungali',
+      name: 'Agence de ouenzé',
       logo: Command,
       plan: 'Enterprise',
     },
@@ -71,20 +72,15 @@ const data = {
       logo: AudioWaveform,
       plan: 'Startup',
     },
-    {
-      name: 'Agence de Poto-Poto',
-      logo: Command,
-      plan: 'Free',
-    },
   ],
   navMain: [
     { id: 'home', title: 'Accueil', icon: Home, route: '/home' },
     { id: 'dashboard', title: 'Tableau de bord', icon: ChartArea, route: '/dashboard' },
-    { id: 'vehicles', title: 'Véhicules', icon: Car, route: '/vehicles' },
+    { id: 'vehicles', title: 'Véhicules Liste', icon: Car, route: '/vehicles' },
     { id: 'conducteurs', title: 'Conducteurs', icon: Users, route: '/conducteurs' },
     { id: 'documents', title: 'Documents', icon: File, route: '/documents' },
     { id: 'recettes', title: 'Recettes', icon: Coins, route: '/recettes' },
-    { id: 'paiements', title: 'Paiements', icon: Wallet, route: '/paiements' },
+    { id: 'carburant', title: 'Carburant', icon: Fuel, route: '/carburant' },
     { id: 'maintenance', title: 'Entretiens', icon: Calendar, route: '/maintenance' },
     { id: 'checklist', title: 'Checklists', icon: CheckSquare, route: '/checklist' },
     { id: 'gps', title: 'GPS', icon: Route, route: '/gps', disabled: true },
