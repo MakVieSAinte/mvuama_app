@@ -7,8 +7,12 @@ export function authMiddleware(
   from: RouteLocationNormalized,
   next: NavigationGuardNext,
 ) {
-  // Autoriser l'accès à /auth/login et /auth/register si non connecté
-  if (to.path.startsWith('/auth/login') || to.path.startsWith('/auth/register')) {
+  // Autoriser l'accès à /auth/login, /auth/register et /auth/callback si non connecté
+  if (
+    to.path.startsWith('/auth/login') ||
+    to.path.startsWith('/auth/register') ||
+    to.path.startsWith('/auth/callback')
+  ) {
     return next()
   }
 

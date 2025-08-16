@@ -13,7 +13,7 @@ import {
   Sun,
   Moon,
 } from 'lucide-vue-next'
-import { useTheme } from '@/composables/useTheme'
+import { useUserPrefs } from '@/composables/useUserPrefs'
 
 import { ref } from 'vue'
 import { Button } from '@/components/ui/button'
@@ -75,7 +75,7 @@ const data = [
 ]
 
 const isOpen = ref(false)
-const { theme, toggleTheme } = useTheme()
+const { theme, toggleTheme } = useUserPrefs('user_prefs_mvuama')
 </script>
 
 <template>

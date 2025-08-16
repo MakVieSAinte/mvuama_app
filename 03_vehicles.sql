@@ -14,7 +14,7 @@ CREATE TABLE public.vehicles (
     couleur VARCHAR(50),
     vin VARCHAR(100),
     affectation VARCHAR(100),
-    chauffeur_id UUID REFERENCES public.chauffeurs(id) ON DELETE SET NULL,
+    chauffeur_id UUID REFERENCES public.drivers(id) ON DELETE SET NULL,
     
     -- Caractéristiques techniques
     carburant VARCHAR(50) CHECK (carburant IN ('Essence', 'Diesel', 'Électrique', 'Hybride')),

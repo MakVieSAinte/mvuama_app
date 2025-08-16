@@ -4,6 +4,7 @@
 CREATE TABLE public.drivers (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     agency_id UUID NOT NULL REFERENCES public.agencies(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES public.users(id) ON DELETE SET NULL,
     
     -- Informations personnelles
     first_name VARCHAR(100) NOT NULL,
@@ -36,6 +37,7 @@ CREATE TABLE public.drivers (
 
 -- Index pour améliorer les performances des requêtes
 CREATE INDEX drivers_agency_id_idx ON public.drivers(agency_id);
+CREATE INDEX drivers_user_id_idx ON public.drivers(user_id);
 CREATE INDEX drivers_vehicle_id_idx ON public.drivers(vehicle_id);
 CREATE INDEX drivers_status_idx ON public.drivers(status);
 CREATE INDEX drivers_license_expiry_date_idx ON public.drivers(license_expiry_date);

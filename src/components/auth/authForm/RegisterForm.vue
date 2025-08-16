@@ -7,12 +7,17 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Spinner from '@/components/utils/Spinner.vue'
 import { AuthService } from '@/services/auth/auth'
-import { showToast } from '@/plugins/sonner'
+import { useSonner } from '@/plugins/sonner'
+import { useRouter } from 'vue-router'
 
 const isLoading = ref(false)
+const googleLoading = ref(false)
+const facebookLoading = ref(false)
 const showPassword = ref(false)
 const email = ref('')
 const password = ref('')
+const { toastError, toastSuccess } = useSonner()
+const router = useRouter()
 
 async function onSubmit(event: Event) {
   event.preventDefault()
@@ -20,31 +25,67 @@ async function onSubmit(event: Event) {
   try {
     const { data, error } = await AuthService.signUp(email.value, password.value)
     if (error) {
-      showToast({
-        title: 'Erreur',
-        description: error?.message
-          ? String(error.message)
-          : 'Erreur lors de la création du compte',
-        type: 'error',
-      })
+      toastError(error?.message ? String(error.message) : 'Erreur lors de la création du compte')
     } else {
-      showToast({
-        title: 'Compte créé',
-        description: 'Vérifiez votre email pour valider votre compte.',
-        type: 'success',
-      })
+      const hasSession = Boolean(
+        data && 'session' in data && (data as Record<string, unknown>).session,
+      )
+      toastSuccess('Compte créé. Vérifiez votre email pour valider votre compte.')
+      // Si session active (confirmation désactivée), aller à l'onboarding, sinon vers login
+      if (hasSession) {
+        router.replace({ name: 'onboarding-agency' })
+      } else {
+        router.replace({ name: 'login' })
+      }
     }
-  } catch (e: any) {
-    showToast({
-      title: 'Erreur',
-      description:
-        e && typeof e === 'object' && 'message' in e
-          ? String((e as any).message)
-          : 'Erreur lors de la création du compte',
-      type: 'error',
-    })
+  } catch (e: unknown) {
+    toastError(
+      e && typeof e === 'object' && 'message' in e
+        ? String((e as { message?: string }).message || 'Erreur lors de la création du compte')
+        : 'Erreur lors de la création du compte',
+    )
   } finally {
     isLoading.value = false
+  }
+}
+
+async function handleGoogleSignIn() {
+  googleLoading.value = true
+  try {
+    const { data, error } = await AuthService.signInWithGoogle()
+    if (error) {
+      toastError(error?.message ? String(error.message) : 'Erreur lors de la connexion avec Google')
+    }
+    // La redirection est gérée par Supabase OAuth
+  } catch (e: unknown) {
+    toastError(
+      e && typeof e === 'object' && 'message' in e
+        ? String((e as { message?: string }).message || 'Erreur lors de la connexion avec Google')
+        : 'Erreur lors de la connexion avec Google',
+    )
+  } finally {
+    googleLoading.value = false
+  }
+}
+
+async function handleFacebookSignIn() {
+  facebookLoading.value = true
+  try {
+    const { data, error } = await AuthService.signInWithFacebook()
+    if (error) {
+      toastError(
+        error?.message ? String(error.message) : 'Erreur lors de la connexion avec Facebook',
+      )
+    }
+    // La redirection est gérée par Supabase OAuth
+  } catch (e: unknown) {
+    toastError(
+      e && typeof e === 'object' && 'message' in e
+        ? String((e as { message?: string }).message || 'Erreur lors de la connexion avec Facebook')
+        : 'Erreur lors de la connexion avec Facebook',
+    )
+  } finally {
+    facebookLoading.value = false
   }
 }
 </script>
@@ -87,7 +128,11 @@ async function onSubmit(event: Event) {
             <EyeOff v-else class="w-[17px]" />
           </button>
         </div>
-        <Button :disabled="isLoading" class="mt-4 flex items-center justify-center gap-4 py-3">
+        <Button
+          type="submit"
+          :disabled="isLoading"
+          class="mt-4 flex items-center justify-center gap-4 py-3"
+        >
           <Spinner v-if="isLoading" size="8px" class="mb-3" />
           <span v-if="!isLoading">S'inscrire avec l'email</span>
           <span v-else>Inscription...</span>
@@ -103,7 +148,12 @@ async function onSubmit(event: Event) {
         <span class="bg-background px-2 text-muted-foreground"> Ou s'inscrire avec </span>
       </div>
     </div>
-    <Button variant="outline" type="button" :disabled="isLoading">
+    <Button
+      variant="outline"
+      type="button"
+      @click="handleGoogleSignIn"
+      :disabled="isLoading || googleLoading"
+    >
       <svg
         width="900px"
         height="900px"
@@ -129,9 +179,15 @@ async function onSubmit(event: Event) {
           fill="#EB4335"
         />
       </svg>
-      Google
+      <Spinner v-if="googleLoading" size="8px" class="ml-2" />
+      <span v-else>Google</span>
     </Button>
-    <Button variant="outline" type="button" :disabled="isLoading">
+    <Button
+      variant="outline"
+      type="button"
+      @click="handleFacebookSignIn"
+      :disabled="isLoading || facebookLoading"
+    >
       <svg
         width="900px"
         height="900px"
@@ -148,7 +204,8 @@ async function onSubmit(event: Event) {
           fill="#ffffff"
         />
       </svg>
-      Facebook
+      <Spinner v-if="facebookLoading" size="8px" class="ml-2" />
+      <span v-else>Facebook</span>
     </Button>
   </div>
 </template>

@@ -3,12 +3,56 @@ import { supabase } from '../config/supabaseClient'
 export class AuthService {
   static async signUp(email: string, password: string) {
     try {
-      const { data, error } = await supabase.auth.signUp({ email, password })
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
       return { data, error }
-    } catch (error: any) {
-      return { data: null, error }
+    } catch (error: unknown) {
+      return {
+        data: null,
+        error: error instanceof Error ? error : new Error('Une erreur est survenue'),
+      }
     }
   }
+
+  static async signInWithGoogle() {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
+      return { data, error }
+    } catch (error: unknown) {
+      return {
+        data: null,
+        error: error instanceof Error ? error : new Error('Une erreur est survenue'),
+      }
+    }
+  }
+
+  static async signInWithFacebook() {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'facebook',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
+      return { data, error }
+    } catch (error: unknown) {
+      return {
+        data: null,
+        error: error instanceof Error ? error : new Error('Une erreur est survenue'),
+      }
+    }
+  }
+
   static async signIn(email: string, password: string) {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password })

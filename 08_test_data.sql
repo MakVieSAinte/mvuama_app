@@ -37,25 +37,25 @@ VALUES
 ('4f9e2a1c-7a3b-44ed-9f16-82f7c7746f12', '2f9e2a1c-7a3b-44ed-9f16-82f7c7746f15', 'Moussa', 'Sow', 'moussa@example.com', '+221700000002', 'DRV002', 'B', 'Active', '3f9e2a1c-7a3b-44ed-9f16-82f7c7746f12'),
 ('4f9e2a1c-7a3b-44ed-9f16-82f7c7746f13', '2f9e2a1c-7a3b-44ed-9f16-82f7c7746f15', 'Ibrahima', 'Ndiaye', 'ibrahima@example.com', '+221700000003', 'DRV003', 'B', 'On Leave', NULL);
 
--- Maintenances
-INSERT INTO public.maintenances (agency_id, vehicle_id, maintenance_type, description, status, scheduled_date, cost)
+-- Maintenances (schéma FR: type, statut, date_prevue, cout)
+INSERT INTO public.maintenances (agency_id, vehicle_id, type, description, statut, date_prevue, cout)
 VALUES 
-('2f9e2a1c-7a3b-44ed-9f16-82f7c7746f15', '3f9e2a1c-7a3b-44ed-9f16-82f7c7746f13', 'Réparation', 'Remplacement des freins', 'En cours', CURRENT_DATE, 75000),
-('2f9e2a1c-7a3b-44ed-9f16-82f7c7746f15', '3f9e2a1c-7a3b-44ed-9f16-82f7c7746f11', 'Entretien', 'Vidange huile', 'Terminé', CURRENT_DATE - 10, 25000),
-('2f9e2a1c-7a3b-44ed-9f16-82f7c7746f15', '3f9e2a1c-7a3b-44ed-9f16-82f7c7746f12', 'Contrôle', 'Inspection pré-voyage', 'Planifié', CURRENT_DATE + 5, 15000);
+('2f9e2a1c-7a3b-44ed-9f16-82f7c7746f15', '3f9e2a1c-7a3b-44ed-9f16-82f7c7746f13', 'Freins', 'Remplacement des freins', 'En cours', CURRENT_DATE, 75000),
+('2f9e2a1c-7a3b-44ed-9f16-82f7c7746f15', '3f9e2a1c-7a3b-44ed-9f16-82f7c7746f11', 'Vidange', 'Vidange huile', 'Terminée', CURRENT_DATE - 10, 25000),
+('2f9e2a1c-7a3b-44ed-9f16-82f7c7746f15', '3f9e2a1c-7a3b-44ed-9f16-82f7c7746f12', 'Révision', 'Inspection pré-voyage', 'Prévue', CURRENT_DATE + 5, 15000);
 
--- Checklists
-INSERT INTO public.checklists (agency_id, vehicle_id, checklist_type, status, completed_by)
+-- Checklists (schéma FR: verificateur, commentaires)
+INSERT INTO public.checklists (agency_id, vehicle_id, verificateur, commentaires)
 VALUES 
-('2f9e2a1c-7a3b-44ed-9f16-82f7c7746f15', '3f9e2a1c-7a3b-44ed-9f16-82f7c7746f11', 'Pre-Voyage', 'Completed', '00000000-0000-0000-0000-000000000003'),
-('2f9e2a1c-7a3b-44ed-9f16-82f7c7746f15', '3f9e2a1c-7a3b-44ed-9f16-82f7c7746f12', 'Quotidien', 'Pending', NULL);
+('2f9e2a1c-7a3b-44ed-9f16-82f7c7746f15', '3f9e2a1c-7a3b-44ed-9f16-82f7c7746f11', 'Contrôleur A', 'Pré-voyage OK'),
+('2f9e2a1c-7a3b-44ed-9f16-82f7c7746f15', '3f9e2a1c-7a3b-44ed-9f16-82f7c7746f12', 'Contrôleur B', 'Checklist quotidienne en attente');
 
--- Éléments de checklist
-INSERT INTO public.checklist_items (checklist_id, item_name, status, comments)
+-- Éléments de checklist (schéma FR: nom, verifie, commentaire)
+INSERT INTO public.checklist_items (checklist_id, agency_id, nom, verifie, commentaire)
 VALUES 
-((SELECT id FROM public.checklists LIMIT 1), 'Freins', 'OK', NULL),
-((SELECT id FROM public.checklists LIMIT 1), 'Éclairage', 'OK', NULL),
-((SELECT id FROM public.checklists LIMIT 1), 'Pneus', 'Issue', 'Pression basse sur pneu avant droit');
+((SELECT id FROM public.checklists LIMIT 1), '2f9e2a1c-7a3b-44ed-9f16-82f7c7746f15', 'Freins', true, NULL),
+((SELECT id FROM public.checklists LIMIT 1), '2f9e2a1c-7a3b-44ed-9f16-82f7c7746f15', 'Éclairage', true, NULL),
+((SELECT id FROM public.checklists LIMIT 1), '2f9e2a1c-7a3b-44ed-9f16-82f7c7746f15', 'Pneus', false, 'Pression basse sur pneu avant droit');
 
 -- Paiements
 INSERT INTO public.payments (agency_id, amount, payment_date, payment_type, payment_method, recipient_type, recipient_name, vehicle_id, status)

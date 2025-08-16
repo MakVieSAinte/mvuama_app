@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import { authMiddleware } from '../middleware/auth'
+import { getFirstMembershipAgency } from '@/services/agencies/agency'
+import { AuthService } from '@/services/auth/auth'
+import { supabase } from '@/services/config/supabaseClient'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,7 +24,24 @@ const router = createRouter({
           name: 'register',
           component: () => import('../views/auth/RegisterView.vue'),
         },
+        {
+          path: 'callback',
+          name: 'auth-callback',
+          component: () => import('../views/auth/AuthCallbackView.vue'),
+        },
+        {
+          path: 'onboarding/agency',
+          name: 'onboarding-agency',
+          component: () => import('../views/auth/OnboardingAgencyView.vue'),
+          meta: { requiresAuth: true },
+        },
       ],
+    },
+    {
+      path: '/agency/:slug',
+      name: 'agency-home',
+      component: () => import('../views/DashboardView.vue'),
+      meta: { requiresAuth: true },
     },
     {
       path: '/',
@@ -103,6 +123,30 @@ const router = createRouter({
   ],
 })
 
-// router.beforeEach(authMiddleware)
+// Redirection post-auth: si authentifié mais sans agence => onboarding; sinon rediriger vers /agency/:slug
+// router.beforeEach(async (to, from, next) => {
+//   // Laisse passer login/register, mais pas onboarding qui nécessite auth
+//   if (to.name === 'login' || to.name === 'register' || to.name === 'auth-callback') return next()
+
+//   // Si non authentifié, renvoie au login
+//   const { data: sessionData } = await supabase.auth.getSession()
+//   if (!sessionData.session) {
+//     return next('/auth/login')
+//   }
+
+//   try {
+//     const agency = await getFirstMembershipAgency()
+//     if (!agency && to.name !== 'onboarding-agency') {
+//       return next({ name: 'onboarding-agency' })
+//     }
+//     if (agency && (to.name === 'home' || to.path === '/')) {
+//       const { slugify } = await import('@/services/agencies/agency')
+//       return next({ name: 'agency-home', params: { slug: slugify(agency.name) } })
+//     }
+//     return next()
+//   } catch {
+//     return next()
+//   }
+// })
 
 export default router
