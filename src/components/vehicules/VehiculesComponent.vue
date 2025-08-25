@@ -6,38 +6,11 @@
     <!-- Header avec titre -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
       <!-- Sélecteur de vue (tableau/cartes) -->
-      <div
-        class="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground"
-      >
-        <Button
-          variant="ghost"
-          size="sm"
-          :class="{ 'bg-background text-foreground': viewType === 'table' }"
-          @click="viewType = 'table'"
-          class="gap-1"
-        >
-          <TableIcon class="h-4 w-4" />
-          Tableau
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          :class="{ 'bg-background text-foreground': viewType === 'card' }"
-          @click="viewType = 'card'"
-          class="gap-1"
-        >
-          <Grid class="h-4 w-4" />
-          Cartes
-        </Button>
-      </div>
+      <ViewSelector v-model:view-type="viewType" />
 
       <div class="flex flex-row gap-2">
-        <Button
-          v-if="table.getFilteredSelectedRowModel().rows.length > 0"
-          variant="destructive"
-          class="inline-flex items-center gap-2 text-amber-50"
-          @click="deleteSelectedRows"
-        >
+        <Button v-if="table.getFilteredSelectedRowModel().rows.length > 0" variant="destructive"
+          class="inline-flex items-center gap-2 text-amber-50" @click="deleteSelectedRows">
           <Trash class="h-5 w-5" />
           Supprimer
         </Button>
@@ -53,13 +26,8 @@
 
     <!-- Filtres -->
     <div class="mb-6">
-      <VehiculeFilters
-        v-model:global-filter="globalFilter"
-        v-model:type-filter="typeFilter"
-        v-model:status-filter="statusFilter"
-        v-model:fuel-filter="fuelFilter"
-        :table="table"
-      />
+      <VehiculeFilters v-model:global-filter="globalFilter" v-model:type-filter="typeFilter"
+        v-model:status-filter="statusFilter" v-model:fuel-filter="fuelFilter" :table="table" />
     </div>
 
     <!-- Tableau ou Cartes selon viewType -->
@@ -73,7 +41,8 @@
 <script setup lang="ts">
 import { ref, computed, type Ref } from 'vue'
 import { Button } from '@/components/ui/button'
-import { Plus, Trash, Table as TableIcon, Grid } from 'lucide-vue-next'
+import { Plus, Trash } from 'lucide-vue-next'
+import ViewSelector from '@/components/ui/ViewSelector.vue'
 import { config } from '@/services/config/config'
 import { useUserPrefs } from '@/composables/useUserPrefs'
 
