@@ -3,10 +3,7 @@
     <SelectTrigger :class="triggerClass">
       <SelectValue :placeholder="placeholder">
         <div v-if="selectedItem" class="flex items-center gap-2">
-          <div
-            class="w-3 h-3 rounded-full"
-            :style="{ backgroundColor: selectedItem.color }"
-          ></div>
+          <div class="w-3 h-3 rounded-full" :style="{ backgroundColor: selectedItem.color }"></div>
           <span>{{ selectedItem.label }}</span>
         </div>
       </SelectValue>
@@ -19,10 +16,7 @@
         class="flex items-center gap-2"
       >
         <div class="flex items-center gap-2">
-          <div
-            class="w-3 h-3 rounded-full"
-            :style="{ backgroundColor: item.color }"
-          ></div>
+          <div class="w-3 h-3 rounded-full" :style="{ backgroundColor: item.color }"></div>
           <span>{{ item.label }}</span>
         </div>
       </SelectItem>
@@ -55,7 +49,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   placeholder: 'Sélectionner une option',
-  triggerClass: 'w-full focus:border-primary focus:ring-primary'
+  triggerClass: 'w-full focus:border-primary focus:ring-primary',
 })
 
 defineEmits<{
@@ -63,6 +57,6 @@ defineEmits<{
 }>()
 
 const selectedItem = computed(() => {
-  return props.items.find(item => item.value === props.modelValue)
+  return props.items.find((item) => item.value === props.modelValue)
 })
 </script>

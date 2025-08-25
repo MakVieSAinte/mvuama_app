@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-4">
     <Label class="text-base font-semibold block">Documents du véhicule</Label>
-    
+
     <!-- Zone d'upload de nouveaux documents -->
     <div class="space-y-3">
       <Label class="text-sm font-medium">Ajouter de nouveaux documents</Label>
@@ -11,12 +11,8 @@
       >
         <div class="text-center p-3">
           <FileText class="h-6 w-6 mx-auto text-muted-foreground mb-1" />
-          <p class="text-xs text-muted-foreground">
-            Cliquez pour ajouter des documents
-          </p>
-          <p class="text-xs text-muted-foreground mt-1">
-            PDF, Word, Excel, Images
-          </p>
+          <p class="text-xs text-muted-foreground">Cliquez pour ajouter des documents</p>
+          <p class="text-xs text-muted-foreground mt-1">PDF, Word, Excel, Images</p>
         </div>
         <input
           ref="documentsInput"
@@ -45,12 +41,7 @@
             <span class="text-sm font-medium truncate">{{ doc.name }}</span>
             <span class="text-xs text-muted-foreground">({{ formatFileSize(doc.size) }})</span>
           </div>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            @click="removeDocument(index)"
-          >
+          <Button type="button" variant="ghost" size="sm" @click="removeDocument(index)">
             <X class="h-4 w-4" />
           </Button>
         </div>
@@ -65,11 +56,7 @@
           <SelectValue placeholder="Choisir dans les documents existants" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem
-            v-for="doc in existingDocuments"
-            :key="doc.id"
-            :value="doc.id"
-          >
+          <SelectItem v-for="doc in existingDocuments" :key="doc.id" :value="doc.id">
             <div class="flex items-center gap-2">
               <FileText class="h-4 w-4" />
               <span>{{ doc.name }}</span>
@@ -96,12 +83,7 @@
             <span class="text-sm font-medium">{{ doc.name }}</span>
             <span class="text-xs text-blue-600">(Existant)</span>
           </div>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            @click="removeLinkedDocument(index)"
-          >
+          <Button type="button" variant="ghost" size="sm" @click="removeLinkedDocument(index)">
             <X class="h-4 w-4" />
           </Button>
         </div>
@@ -136,7 +118,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  existingDocuments: () => []
+  existingDocuments: () => [],
 })
 
 const documentsInput = ref<HTMLInputElement | null>(null)
@@ -164,9 +146,9 @@ const removeDocument = (index: number) => {
 
 const addExistingDocument = (docId: string) => {
   if (!docId) return
-  
-  const doc = props.existingDocuments.find(d => d.id === docId)
-  if (doc && !linkedDocuments.value.find(d => d.id === docId)) {
+
+  const doc = props.existingDocuments.find((d) => d.id === docId)
+  if (doc && !linkedDocuments.value.find((d) => d.id === docId)) {
     linkedDocuments.value.push(doc)
   }
   selectedExistingDoc.value = ''
@@ -186,6 +168,6 @@ const formatFileSize = (bytes: number): string => {
 
 defineExpose({
   uploadedDocuments,
-  linkedDocuments
+  linkedDocuments,
 })
 </script>

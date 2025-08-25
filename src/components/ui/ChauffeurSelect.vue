@@ -80,7 +80,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   placeholder: 'Sélectionner un conducteur',
-  triggerClass: 'w-full focus:border-primary focus:ring-primary'
+  triggerClass: 'w-full focus:border-primary focus:ring-primary',
 })
 
 defineEmits<{
@@ -89,6 +89,6 @@ defineEmits<{
 
 const selectedChauffeur = computed(() => {
   if (props.modelValue === 'aucun') return null
-  return props.chauffeurs.find(chauffeur => chauffeur.id.toString() === props.modelValue)
+  return props.chauffeurs.find((chauffeur) => chauffeur.id.toString() === props.modelValue)
 })
 </script>

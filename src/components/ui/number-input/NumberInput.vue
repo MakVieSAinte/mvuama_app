@@ -1,0 +1,56 @@
+<script setup lang="ts">
+import type { HTMLAttributes } from 'vue'
+import { useVModel } from '@vueuse/core'
+import { cn } from '@/lib/utils'
+
+const props = defineProps<{
+  defaultValue?: number
+  modelValue?: string | number
+  class?: HTMLAttributes['class']
+  min?: number
+  max?: number
+  step?: number | string
+  placeholder?: string
+  disabled?: boolean
+  suffix?: string
+}>()
+
+const emits = defineEmits<{
+  (e: 'update:modelValue', payload: string | number): void
+}>()
+
+const modelValue = useVModel(props, 'modelValue', emits, {
+  passive: true,
+  defaultValue: props.defaultValue,
+})
+</script>
+
+<template>
+  <div class="flex">
+    <input
+      v-model="modelValue"
+      type="number"
+      :min="min"
+      :max="max"
+      :step="step"
+      :placeholder="placeholder"
+      :disabled="disabled"
+      :class="
+        cn(
+          'file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 bg-transparent px-3 py-1 text-base transition-colors outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
+          'focus-visible:border focus-visible:border-primary focus-visible:ring-0',
+          'aria-invalid:border-destructive',
+          suffix ? 'rounded-l-md border-r-0 rounded-r-none' : 'rounded-md border',
+          'focus:border-primary focus:ring-primary border-2',
+          props.class,
+        )
+      "
+    />
+    <div
+      v-if="suffix"
+      class="inline-flex items-center justify-center rounded-r-md border border-l-0 border-input bg-muted px-3"
+    >
+      <span class="text-sm text-muted-foreground">{{ suffix }}</span>
+    </div>
+  </div>
+</template>

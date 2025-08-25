@@ -4,7 +4,7 @@
       class="!fixed !m-0 !max-w-none !w-[85%] !h-[90%] !rounded-none !left-1/2 !top-1/2 !-translate-x-1/2 !-translate-y-1/2 p-0 overflow-hidden flex flex-col"
     >
       <DialogHeader class="p-6 border-b">
-        <DialogTitle class="text-2xl">Ajouter un nouveau véhicule</DialogTitle>
+        <DialogTitle class="text-2xl">Ajouter un nouveau véhicule SSSSSSSSSSSSSs</DialogTitle>
         <DialogDescription>
           Veuillez remplir les informations du véhicule. Les champs marqués d'un * sont
           obligatoires.
@@ -20,7 +20,7 @@
               <Info class="h-5 w-5" />
               Informations essentielles
             </h3>
-            
+
             <!-- Section photos avec upload multiple -->
             <div class="mb-6">
               <Label class="text-base font-semibold mb-4 block">Photos du véhicule</Label>
@@ -49,12 +49,11 @@
                   />
                 </div>
                 <!-- Aperçu des images -->
-                <div v-if="vehiclePhotos.length > 0" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-                  <div
-                    v-for="(photo, index) in vehiclePhotos"
-                    :key="index"
-                    class="relative group"
-                  >
+                <div
+                  v-if="vehiclePhotos.length > 0"
+                  class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3"
+                >
+                  <div v-for="(photo, index) in vehiclePhotos" :key="index" class="relative group">
                     <img
                       :src="photo.url"
                       :alt="`Photo ${index + 1}`"
@@ -87,7 +86,10 @@
                   Marque <span class="text-red-500">*</span>
                 </Label>
                 <Select v-model="form.marque">
-                  <SelectTrigger id="marque" class="w-full focus:border-primary focus:ring-primary border-2">
+                  <SelectTrigger
+                    id="marque"
+                    class="w-full focus:border-primary focus:ring-primary border-2"
+                  >
                     <SelectValue placeholder="Sélectionner une marque" />
                   </SelectTrigger>
                   <SelectContent>
@@ -97,25 +99,28 @@
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div>
                 <Label for="modele" class="mb-3 block">
                   Modèle <span class="text-red-500">*</span>
                 </Label>
-                <Input 
-                  id="modele" 
-                  v-model="form.modele" 
+                <Input
+                  id="modele"
+                  v-model="form.modele"
                   placeholder="Modèle du véhicule"
                   class="focus:border-primary focus:ring-primary border-2"
                 />
               </div>
-              
+
               <div>
                 <Label for="annee" class="mb-3 block">
                   Année <span class="text-red-500">*</span>
                 </Label>
                 <Select v-model="form.annee">
-                  <SelectTrigger id="annee" class="w-full focus:border-primary focus:ring-primary border-2">
+                  <SelectTrigger
+                    id="annee"
+                    class="w-full focus:border-primary focus:ring-primary border-2"
+                  >
                     <SelectValue placeholder="Année" />
                   </SelectTrigger>
                   <SelectContent>
@@ -125,7 +130,7 @@
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div>
                 <Label for="immatriculation" class="mb-3 block">
                   Numéro d'immatriculation <span class="text-red-500">*</span>
@@ -137,13 +142,16 @@
                   class="uppercase focus:border-primary focus:ring-primary border-2"
                 />
               </div>
-              
+
               <div>
                 <Label for="type" class="mb-3 block">
                   Type de véhicule <span class="text-red-500">*</span>
                 </Label>
                 <Select v-model="form.type">
-                  <SelectTrigger id="type" class="w-full focus:border-primary focus:ring-primary border-2">
+                  <SelectTrigger
+                    id="type"
+                    class="w-full focus:border-primary focus:ring-primary border-2"
+                  >
                     <SelectValue placeholder="Sélectionner un type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -155,7 +163,7 @@
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div>
                 <Label for="statut" class="mb-3 block">
                   Statut <span class="text-red-500">*</span>
@@ -167,7 +175,7 @@
                   trigger-class="w-full focus:border-primary focus:ring-primary border-2"
                 />
               </div>
-              
+
               <div>
                 <Label for="carburant" class="mb-3 block">
                   Carburant <span class="text-red-500">*</span>
@@ -179,7 +187,7 @@
                   trigger-class="w-full focus:border-primary focus:ring-primary border-2"
                 />
               </div>
-              
+
               <div>
                 <Label for="chauffeur" class="mb-3 block">Conducteur attitré</Label>
                 <ChauffeurSelect
@@ -189,7 +197,7 @@
                   trigger-class="w-full focus:border-primary focus:ring-primary border-2"
                 />
               </div>
-              
+
               <div>
                 <Label for="kilometrage" class="mb-3 block">Kilométrage initial</Label>
                 <div class="flex">
@@ -210,7 +218,7 @@
                 </div>
               </div>
             </div>
-            
+
             <!-- Section GPS -->
             <div class="mt-6">
               <h4 class="text-base font-semibold mb-4 flex items-center gap-2">
@@ -221,7 +229,7 @@
                 <Checkbox id="hasGPS" v-model="form.hasGPS" />
                 <Label for="hasGPS" class="text-sm font-medium">Équipé d'un GPS</Label>
               </div>
-              
+
               <div v-if="form.hasGPS" class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <div>
                   <Label for="gpsImei" class="mb-2 block">IMEI</Label>
@@ -261,7 +269,7 @@
                 </div>
               </div>
             </div>
-            
+
             <!-- Description -->
             <div class="mt-6">
               <Label for="description" class="mb-3 block">Description détaillée</Label>
@@ -273,7 +281,7 @@
                 class="focus:border-primary focus:ring-primary border-2 min-h-[120px]"
               />
             </div>
-            
+
             <!-- Section Documents -->
             <div class="mt-6">
               <DocumentUploader :existing-documents="existingDocuments" />
@@ -334,12 +342,7 @@ import {
 } from '@/config/vehiculeConfig'
 
 // Import des icônes
-import {
-  Info,
-  ImageIcon,
-  X,
-  Satellite,
-} from 'lucide-vue-next'
+import { Info, ImageIcon, X, Satellite } from 'lucide-vue-next'
 
 export default defineComponent({
   name: 'AjoutVehiculesModal',
@@ -407,40 +410,40 @@ export default defineComponent({
 
     // Configuration des chauffeurs avec photos et initiales
     const chauffeurs: ChauffeurConfig[] = [
-      { 
-        id: 1, 
+      {
+        id: 1,
         nom: 'Ahmed Ben Ali',
         initiales: generateInitials('Ahmed Ben Ali'),
         couleurInitiales: getInitialsColor('Ahmed Ben Ali'),
-        photo: undefined
+        photo: undefined,
       },
-      { 
-        id: 2, 
+      {
+        id: 2,
         nom: 'Fatima Zahra',
         initiales: generateInitials('Fatima Zahra'),
         couleurInitiales: getInitialsColor('Fatima Zahra'),
-        photo: undefined
+        photo: undefined,
       },
-      { 
-        id: 3, 
+      {
+        id: 3,
         nom: 'Mohamed Tounsi',
         initiales: generateInitials('Mohamed Tounsi'),
         couleurInitiales: getInitialsColor('Mohamed Tounsi'),
-        photo: undefined
+        photo: undefined,
       },
-      { 
-        id: 4, 
+      {
+        id: 4,
         nom: 'Aisha Mansouri',
         initiales: generateInitials('Aisha Mansouri'),
         couleurInitiales: getInitialsColor('Aisha Mansouri'),
-        photo: undefined
+        photo: undefined,
       },
-      { 
-        id: 5, 
+      {
+        id: 5,
         nom: 'Youssef Khalil',
         initiales: generateInitials('Youssef Khalil'),
         couleurInitiales: getInitialsColor('Youssef Khalil'),
-        photo: undefined
+        photo: undefined,
       },
     ]
 
@@ -507,19 +510,19 @@ export default defineComponent({
       const input = event.target as HTMLInputElement
       if (input.files && input.files.length > 0) {
         const files = Array.from(input.files)
-        
+
         // Vérifier qu'on ne dépasse pas 5 images au total
         if (vehiclePhotos.value.length + files.length > 5) {
           alert('Vous ne pouvez ajouter que 5 images maximum')
           return
         }
 
-        files.forEach(file => {
+        files.forEach((file) => {
           const reader = new FileReader()
           reader.onload = (e) => {
             vehiclePhotos.value.push({
               url: e.target?.result as string,
-              file: file
+              file: file,
             })
           }
           reader.readAsDataURL(file)
@@ -545,20 +548,20 @@ export default defineComponent({
       // Références et données images
       photosInput,
       vehiclePhotos,
-      
+
       // Données de configuration
       marques,
       annees,
       chauffeurs,
       existingDocuments,
-      
+
       // Configurations des statuts et carburants
       vehicleStatuses: VEHICLE_STATUSES,
       fuelTypes: FUEL_TYPES,
-      
+
       // Formulaire
       form,
-      
+
       // Méthodes
       uploadPhotos,
       onPhotosSelected,
