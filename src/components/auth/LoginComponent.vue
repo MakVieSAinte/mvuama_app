@@ -39,7 +39,7 @@
     </div>
     <div class="flex h-full w-full items-center justify-center p-6 lg:p-8">
       <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-        <div class="flex flex-col space-y-2 text-center">
+        <div class="flex flex-col space-y-2 text-left">
           <h1 class="text-4xl font-semibold tracking-tight">Connexion</h1>
           <p class="text-md text-muted-foreground">
             Entrez votre email et mot de passe pour accéder à votre espace

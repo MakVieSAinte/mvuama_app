@@ -19,6 +19,16 @@ export class Validator {
     return regex.test(email)
   }
 
+    /**
+   * Valide la complexité d'un mot de passe
+   * @param {string} password - Le mot de passe à valider
+   * @returns {boolean} - true si le mot de passe est valide, sinon false
+   */
+  static password(password: string): boolean {
+    // Exemple : au moins 8 caractères, une majuscule, une minuscule, un chiffre
+    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(password)
+  }
+
   /**
    * Valide un numéro de plaque d'immatriculation
    * @param {string} plateNumber - Le numéro de plaque à valider

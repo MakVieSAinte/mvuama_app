@@ -30,8 +30,8 @@
       <div class="relative z-20 mt-auto">
         <blockquote class="space-y-2">
           <p class="text-lg">
-            &ldquo;l'inscription de mes chauffeurs et la gestion des documents sont
-            devenues ultra simples. Je recommande à tous les gestionnaires de flotte !&rdquo;
+            &ldquo;l'inscription de mes chauffeurs et la gestion des documents sont devenues ultra
+            simples. Je recommande à tous les gestionnaires de flotte !&rdquo;
           </p>
           <footer class="text-sm">Sofia Davis</footer>
         </blockquote>
@@ -39,10 +39,10 @@
     </div>
     <div class="flex h-full w-full items-center justify-center p-6 lg:p-8">
       <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-        <div class="flex flex-col space-y-2 text-center">
+        <div class="flex flex-col space-y-2 text-left">
           <h1 class="text-4xl font-semibold tracking-tight">Créer un compte</h1>
           <p class="text-md text-muted-foreground">
-            Entrez votre email ci-dessous pour créer votre compte
+            Veuillez renseigner les champs ci-dessous pour créer votre compte
           </p>
         </div>
         <RegisterForm />
