@@ -1,21 +1,15 @@
-<script setup lang="ts">
-import { cn } from '@/lib/utils'
-import { buttonVariants } from '@/components/ui/button'
-import LoginForm from '@/components/auth/authForm/LoginForm.vue'
-</script>
-
 <template>
   <div
     class="container relative hidden h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0"
   >
-    <a
-      href="/examples/authentication"
+    <router-link
+      :to="{ name: 'register' }"
       :class="
         cn(buttonVariants({ variant: 'ghost' }), 'absolute right-4 top-4 md:right-8 md:top-8')
       "
     >
       Inscrivez-vous
-    </a>
+    </router-link>
     <div class="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
       <div class="absolute inset-0 bg-zinc-900" />
       <div class="relative z-20 flex items-center text-lg font-medium">
@@ -36,8 +30,8 @@ import LoginForm from '@/components/auth/authForm/LoginForm.vue'
       <div class="relative z-20 mt-auto">
         <blockquote class="space-y-2">
           <p class="text-lg">
-            &ldquo;Cette bibliothèque m'a fait gagner d'innombrables heures de travail et m'a permis
-            de livrer des designs superbes à mes clients plus rapidement que jamais.&rdquo;
+            &ldquo;L'application m'a permis de gérer ma flotte et mes conducteurs en toute simplicité.
+            L'interface est claire et le suivi des véhicules efficace.&rdquo;
           </p>
           <footer class="text-sm">Sofia Davis</footer>
         </blockquote>
@@ -46,13 +40,13 @@ import LoginForm from '@/components/auth/authForm/LoginForm.vue'
     <div class="flex h-full w-full items-center justify-center p-6 lg:p-8">
       <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
         <div class="flex flex-col space-y-2 text-center">
-          <h1 class="text-4xl font-semibold tracking-tight">Créer un compte</h1>
+          <h1 class="text-4xl font-semibold tracking-tight">Connexion</h1>
           <p class="text-md text-muted-foreground">
-            Entrez votre email ci-dessous pour créer votre compte
+            Entrez votre email et mot de passe pour accéder à votre espace
           </p>
         </div>
         <LoginForm />
-        <p class="px-8 text-center text-sm text-muted-foreground">
+        <p class="px-1 text-center text-sm text-muted-foreground">
           En cliquant sur continuer, vous acceptez nos
           <a href="/terms" class="underline underline-offset-4 hover:text-primary">
             Conditions d'utilisation
@@ -67,3 +61,21 @@ import LoginForm from '@/components/auth/authForm/LoginForm.vue'
     </div>
   </div>
 </template>
+
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { cn } from '@/lib/utils'
+import { buttonVariants } from '@/components/ui/button'
+import LoginForm from '@/components/auth/authForm/LoginForm.vue'
+
+export default defineComponent({
+  name: 'LoginComponent',
+  components: { LoginForm },
+  methods: {
+    cn,
+    buttonVariants,
+  },
+})
+</script>
+
+<style scoped></style>

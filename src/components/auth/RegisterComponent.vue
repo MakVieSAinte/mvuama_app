@@ -1,21 +1,15 @@
-<script setup lang="ts">
-import { cn } from '@/lib/utils'
-import { buttonVariants } from '@/components/ui/button'
-import RegisterForm from '@/components/auth/authForm/RegisterForm.vue'
-</script>
-
 <template>
   <div
     class="container relative hidden h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0"
   >
-    <a
-      to="/auth/login"
+    <router-link
+      :to="{ name: 'login' }"
       :class="
         cn(buttonVariants({ variant: 'ghost' }), 'absolute right-4 top-4 md:right-8 md:top-8')
       "
     >
       Connexion
-    </a>
+    </router-link>
     <div class="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
       <div class="absolute inset-0 bg-zinc-900" />
       <div class="relative z-20 flex items-center text-lg font-medium">
@@ -36,8 +30,8 @@ import RegisterForm from '@/components/auth/authForm/RegisterForm.vue'
       <div class="relative z-20 mt-auto">
         <blockquote class="space-y-2">
           <p class="text-lg">
-            &ldquo;Cette bibliothèque m'a fait gagner d'innombrables heures de travail et m'a permis
-            de livrer des designs superbes à mes clients plus rapidement que jamais.&rdquo;
+            &ldquo;l'inscription de mes chauffeurs et la gestion des documents sont
+            devenues ultra simples. Je recommande à tous les gestionnaires de flotte !&rdquo;
           </p>
           <footer class="text-sm">Sofia Davis</footer>
         </blockquote>
@@ -67,3 +61,21 @@ import RegisterForm from '@/components/auth/authForm/RegisterForm.vue'
     </div>
   </div>
 </template>
+
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { cn } from '@/lib/utils'
+import { buttonVariants } from '@/components/ui/button'
+import RegisterForm from '@/components/auth/authForm/RegisterForm.vue'
+
+export default defineComponent({
+  name: 'RegisterComponent',
+  components: { RegisterForm },
+  methods: {
+    cn,
+    buttonVariants,
+  },
+})
+</script>
+
+<style scoped></style>
