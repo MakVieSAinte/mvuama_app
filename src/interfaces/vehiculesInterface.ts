@@ -40,22 +40,13 @@ export interface IVehicleModel {
 // Builder Interface Vehicle
 
 export interface IVehicleBuilder {
+  errorAgencyId: boolean
   errorPlateNumber: boolean
   errorBrand: boolean
   errorModel: boolean
+  errorYear: boolean
+  errorType: boolean
+  errorColor: boolean
+  errorFuelType: boolean
   errorMileage: boolean
-}
-
-// Student Model Interface (conservé pour compatibilité)
-
-export interface IStudentModel {
-  firstname: string
-  email: string
-}
-
-// Builder Interface Student (conservé pour compatibilité)
-
-export interface IStudentBuilder {
-  errorFirstname: boolean
-  errorEmail: boolean
 }

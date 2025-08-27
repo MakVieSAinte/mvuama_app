@@ -75,7 +75,7 @@ const data = {
   ],
   navMain: [
     { id: 'home', title: 'Accueil', icon: Home, route: '/home' },
-    { id: 'dashboard', title: 'Tableau de bord', icon: ChartArea, route: '/dashboard' },
+    { id: 'dashboard', title: 'Tableau de bord', icon: ChartArea, route: '/' },
     { id: 'vehicles', title: 'Véhicules Liste', icon: Car, route: '/vehicles' },
     { id: 'conducteurs', title: 'Conducteurs', icon: Users, route: '/conducteurs' },
     { id: 'documents', title: 'Documents', icon: File, route: '/documents' },

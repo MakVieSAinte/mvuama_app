@@ -17,18 +17,23 @@
           <!-- Accordéon pour organiser les sections -->
           <Accordion
             type="multiple"
-            default-value="['info-base', 'info-tech', 'finance']"
-            class="w-full"
+            default-value="['info-base', 'info-tech', 'documents', 'finance']"
+            class="w-full space-y-4"
           >
             <!-- 1️⃣ Informations de base -->
-            <AccordionItem value="info-base">
-              <AccordionTrigger class="text-lg font-semibold hover:no-underline">
+            <AccordionItem
+              value="info-base"
+              class="border border-border rounded-lg overflow-hidden"
+            >
+              <AccordionTrigger
+                class="text-lg font-semibold hover:no-underline bg-muted/30 px-6 py-4 border-b border-border"
+              >
                 <div class="flex items-center gap-2">
                   <Info class="h-5 w-5" />
                   Informations de base
                 </div>
               </AccordionTrigger>
-              <AccordionContent class="space-y-6 pt-4">
+              <AccordionContent class="space-y-6 pt-4 bg-muted/10 px-6 pb-6">
                 <!-- Section photos avec upload multiple -->
                 <div>
                   <Label class="text-base font-semibold mb-4 block">Photos du véhicule</Label>
@@ -334,14 +339,19 @@
             </AccordionItem>
 
             <!-- 2️⃣ Informations techniques -->
-            <AccordionItem value="info-tech">
-              <AccordionTrigger class="text-lg font-semibold hover:no-underline">
+            <AccordionItem
+              value="info-tech"
+              class="border border-border rounded-lg overflow-hidden"
+            >
+              <AccordionTrigger
+                class="text-lg font-semibold hover:no-underline bg-muted/30 px-6 py-4 border-b border-border"
+              >
                 <div class="flex items-center gap-2">
                   <Settings class="h-5 w-5" />
                   Informations techniques
                 </div>
               </AccordionTrigger>
-              <AccordionContent class="space-y-6 pt-4">
+              <AccordionContent class="space-y-6 pt-4 bg-muted/10 px-6 pb-6">
                 <!-- Carburant et moteur -->
                 <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   <div>
@@ -538,14 +548,19 @@
             </AccordionItem>
 
             <!-- 3️⃣ Documents et certifications -->
-            <AccordionItem value="documents">
-              <AccordionTrigger class="text-lg font-semibold hover:no-underline">
+            <AccordionItem
+              value="documents"
+              class="border border-border rounded-lg overflow-hidden"
+            >
+              <AccordionTrigger
+                class="text-lg font-semibold hover:no-underline bg-muted/30 px-6 py-4 border-b border-border"
+              >
                 <div class="flex items-center gap-2">
                   <FileText class="h-5 w-5" />
                   Documents et certifications
                 </div>
               </AccordionTrigger>
-              <AccordionContent class="space-y-6 pt-4">
+              <AccordionContent class="space-y-6 pt-4 bg-muted/10 px-6 pb-6">
                 <!-- Dates importantes -->
                 <div class="grid gap-6 md:grid-cols-3">
                   <div>
@@ -697,14 +712,16 @@
             </AccordionItem>
 
             <!-- 4️⃣ Informations financières -->
-            <AccordionItem value="finance">
-              <AccordionTrigger class="text-lg font-semibold hover:no-underline">
+            <AccordionItem value="finance" class="border border-border rounded-lg overflow-hidden">
+              <AccordionTrigger
+                class="text-lg font-semibold hover:no-underline bg-muted/30 px-6 py-4 border-b border-border"
+              >
                 <div class="flex items-center gap-2">
                   <DollarSign class="h-5 w-5" />
                   Informations financières
                 </div>
               </AccordionTrigger>
-              <AccordionContent class="space-y-6 pt-4">
+              <AccordionContent class="space-y-6 pt-4 bg-muted/10 px-6 pb-6">
                 <!-- Planning et tarification -->
                 <div class="grid gap-6 md:grid-cols-2">
                   <div>

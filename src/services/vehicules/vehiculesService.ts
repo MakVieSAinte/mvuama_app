@@ -1,183 +1,147 @@
 import { supabase } from '../config/supabaseClient'
-import type { IVehicleModel } from '../../interfaces/vehiculesInterface'
 
-/**
- * Service pour la gestion des véhicules via Supabase
- */
-export class VehicleService {
-  /**
-   * Récupère tous les véhicules actifs (non supprimés) depuis la vue active_vehicles
-   * @returns Un tableau de véhicules actifs ou false en cas d'erreur
-   */
-  static async getActiveVehicles(): Promise<IVehicleModel[] | false> {
+export default class VehicleService {
+  agency_id?: string
+  plate_number?: string
+  brand?: string
+  model?: string
+  mileage?: number
+  year?: number | null
+  type?: string | null
+  status?: string | null
+  color?: string | null
+  vin?: string | null
+  service_assignment?: string | null
+  driver_id?: string | null
+  fuel_type?: string | null
+  service_start_date?: string | null
+  passenger_capacity?: number | null
+  load_capacity?: number | null
+  condition?: string | null
+  description?: string | null
+  next_technical_control?: string | null
+  next_maintenance?: string | null
+  insurance_company?: string | null
+  insurance_policy_number?: string | null
+  insurance_expiry?: string | null
+  current_location?: string | null
+  usage_area?: string | null
+  daily_rate?: number | null
+  operating_days?: string | null
+  departure_time?: string | null
+  max_return_time?: string | null
+
+  constructor(
+    agency_id?: string,
+    plate_number?: string,
+    brand?: string,
+    model?: string,
+    mileage?: number,
+    year?: number | null,
+    type?: string | null,
+    status?: string | null,
+    color?: string | null,
+    vin?: string | null,
+    service_assignment?: string | null,
+    driver_id?: string | null,
+    fuel_type?: string | null,
+    service_start_date?: string | null,
+    passenger_capacity?: number | null,
+    load_capacity?: number | null,
+    condition?: string | null,
+    description?: string | null,
+    next_technical_control?: string | null,
+    next_maintenance?: string | null,
+    insurance_company?: string | null,
+    insurance_policy_number?: string | null,
+    insurance_expiry?: string | null,
+    current_location?: string | null,
+    usage_area?: string | null,
+    daily_rate?: number | null,
+    operating_days?: string | null,
+    departure_time?: string | null,
+    max_return_time?: string | null,
+  ) {
+    this.agency_id = agency_id
+    this.plate_number = plate_number
+    this.brand = brand
+    this.model = model
+    this.mileage = mileage
+    this.year = year
+    this.type = type
+    this.status = status
+    this.color = color
+    this.vin = vin
+    this.service_assignment = service_assignment
+    this.driver_id = driver_id
+    this.fuel_type = fuel_type
+    this.service_start_date = service_start_date
+    this.passenger_capacity = passenger_capacity
+    this.load_capacity = load_capacity
+    this.condition = condition
+    this.description = description
+    this.next_technical_control = next_technical_control
+    this.next_maintenance = next_maintenance
+    this.insurance_company = insurance_company
+    this.insurance_policy_number = insurance_policy_number
+    this.insurance_expiry = insurance_expiry
+    this.current_location = current_location
+    this.usage_area = usage_area
+    this.daily_rate = daily_rate
+    this.operating_days = operating_days
+    this.departure_time = departure_time
+    this.max_return_time = max_return_time
+  }
+
+  async save() {
     try {
-      // Requête vers la vue active_vehicles de Supabase
-      const { data, error } = await supabase.from('active_vehicles').select('*')
-
-      // Gestion des erreurs
-      if (error) {
-        console.error('Erreur lors de la récupération des véhicules:', error.message)
-        return false
-      }
-
-      // Vérification que des données ont été trouvées
-      if (data && data.length > 0) {
-        return data as IVehicleModel[]
-      } else {
-        // Aucun véhicule trouvé, mais pas d'erreur
-        return []
-      }
+      const { data, error } = await supabase.from('vehicles').insert([
+        {
+          agency_id: this.agency_id,
+          plate_number: this.plate_number,
+          brand: this.brand,
+          model: this.model,
+          mileage: this.mileage,
+          year: this.year,
+          type: this.type,
+          status: this.status,
+          color: this.color,
+          vin: this.vin,
+          service_assignment: this.service_assignment,
+          driver_id: this.driver_id,
+          fuel_type: this.fuel_type,
+          service_start_date: this.service_start_date,
+          passenger_capacity: this.passenger_capacity,
+          load_capacity: this.load_capacity,
+          condition: this.condition,
+          description: this.description,
+          next_technical_control: this.next_technical_control,
+          next_maintenance: this.next_maintenance,
+          insurance_company: this.insurance_company,
+          insurance_policy_number: this.insurance_policy_number,
+          insurance_expiry: this.insurance_expiry,
+          current_location: this.current_location,
+          usage_area: this.usage_area,
+          daily_rate: this.daily_rate,
+          operating_days: this.operating_days,
+          departure_time: this.departure_time,
+          max_return_time: this.max_return_time,
+        },
+      ])
+      if (error) throw error
+      return data
     } catch (error) {
-      console.error('Exception lors de la récupération des véhicules:', error)
-      return false
+      return 'Erreur'
     }
   }
 
-  /**
-   * Récupère un véhicule actif par son ID
-   * @param id L'identifiant UUID du véhicule
-   * @returns L'objet véhicule ou false en cas d'erreur ou non trouvé
-   */
-  static async getVehicleById(id: string): Promise<IVehicleModel | false> {
+  async getAll() {
     try {
-      const { data, error } = await supabase
-        .from('active_vehicles')
-        .select('*')
-        .eq('id', id)
-        .single()
-
-      if (error) {
-        console.error('Erreur lors de la récupération du véhicule:', error.message)
-        return false
-      }
-
-      if (data) {
-        return data as IVehicleModel
-      } else {
-        return false
-      }
+      const { data, error } = await supabase.from('vehicles').select('*')
+      if (error) throw error
+      return data
     } catch (error) {
-      console.error('Exception lors de la récupération du véhicule:', error)
-      return false
-    }
-  }
-
-  /**
-   * Récupère les véhicules par agence
-   * @param agencyId L'identifiant UUID de l'agence
-   * @returns Un tableau de véhicules ou false en cas d'erreur
-   */
-  static async getVehiclesByAgency(agencyId: string): Promise<IVehicleModel[] | false> {
-    try {
-      const { data, error } = await supabase
-        .from('active_vehicles')
-        .select('*')
-        .eq('agency_id', agencyId)
-
-      if (error) {
-        console.error('Erreur lors de la récupération des véhicules par agence:', error.message)
-        return false
-      }
-
-      if (data) {
-        return data as IVehicleModel[]
-      } else {
-        return []
-      }
-    } catch (error) {
-      console.error('Exception lors de la récupération des véhicules par agence:', error)
-      return false
-    }
-  }
-
-  /**
-   * Crée un nouveau véhicule
-   * @param vehicle Les données du véhicule à créer
-   * @returns Le véhicule créé ou false en cas d'erreur
-   */
-  static async createVehicle(
-    vehicle: Omit<IVehicleModel, 'id' | 'created_at' | 'updated_at'>,
-  ): Promise<IVehicleModel | false> {
-    try {
-      const { data, error } = await supabase.from('vehicles').insert([vehicle]).select().single()
-
-      if (error) {
-        console.error('Erreur lors de la création du véhicule:', error.message)
-        return false
-      }
-
-      if (data) {
-        return data as IVehicleModel
-      } else {
-        return false
-      }
-    } catch (error) {
-      console.error('Exception lors de la création du véhicule:', error)
-      return false
-    }
-  }
-
-  /**
-   * Met à jour un véhicule existant
-   * @param id L'identifiant UUID du véhicule à mettre à jour
-   * @param vehicleData Les données à mettre à jour
-   * @returns Le véhicule mis à jour ou false en cas d'erreur
-   */
-  static async updateVehicle(
-    id: string,
-    vehicleData: Partial<IVehicleModel>,
-  ): Promise<IVehicleModel | false> {
-    try {
-      // Ajout de la date de mise à jour
-      const updateData = {
-        ...vehicleData,
-        updated_at: new Date().toISOString(),
-      }
-
-      const { data, error } = await supabase
-        .from('vehicles')
-        .update(updateData)
-        .eq('id', id)
-        .select()
-        .single()
-
-      if (error) {
-        console.error('Erreur lors de la mise à jour du véhicule:', error.message)
-        return false
-      }
-
-      if (data) {
-        return data as IVehicleModel
-      } else {
-        return false
-      }
-    } catch (error) {
-      console.error('Exception lors de la mise à jour du véhicule:', error)
-      return false
-    }
-  }
-
-  /**
-   * Suppression logique d'un véhicule (soft delete)
-   * @param id L'identifiant UUID du véhicule à supprimer
-   * @returns true si la suppression a réussi, false sinon
-   */
-  static async deleteVehicle(id: string): Promise<boolean> {
-    try {
-      const { error } = await supabase
-        .from('vehicles')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', id)
-
-      if (error) {
-        console.error('Erreur lors de la suppression du véhicule:', error.message)
-        return false
-      }
-
-      return true
-    } catch (error) {
-      console.error('Exception lors de la suppression du véhicule:', error)
-      return false
+      return 'Erreur'
     }
   }
 }
