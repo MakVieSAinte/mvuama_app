@@ -2,7 +2,7 @@ import { Validator } from '../../services/libs/validator'
 import type { IRegisterModel, IRegisterBuilder } from '../../interfaces/registerInterface'
 
 export class RegisterForm {
-  // Propri�t�s obligatoires et erreurs associ�es
+  // Propriétés obligatoires et erreurs associées
   first_name: string
   errorFirstName: boolean
   errorFirstNameMessage: string
@@ -25,16 +25,16 @@ export class RegisterForm {
   errorConfirmPassword: boolean
   errorConfirmPasswordMessage: string
 
-  // Propri�t�s optionnelles
+  // Propriétés optionnelles
   phone_number?: string | null
   errorPhoneNumber: boolean
   errorPhoneNumberMessage: string
 
   constructor() {
-    // Initialisation des propri�t�s obligatoires
+    // Initialisation des propriétés obligatoires
     this.first_name = ''
     this.errorFirstName = false
-    this.errorFirstNameMessage = 'Veuillez saisir un pr�nom valide'
+    this.errorFirstNameMessage = 'Veuillez saisir un prénom valide'
     this.last_name = ''
     this.errorLastName = false
     this.errorLastNameMessage = 'Veuillez saisir un nom valide'
@@ -50,21 +50,21 @@ export class RegisterForm {
     this.password = ''
     this.errorPassword = false
     this.errorPasswordMessage =
-      'Le mot de passe doit contenir au moins 8 caract�res, une majuscule, une minuscule et un chiffre'
+      'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre'
     this.confirm_password = ''
     this.errorConfirmPassword = false
     this.errorConfirmPasswordMessage = 'Les mots de passe ne correspondent pas'
 
-    // Initialisation des propri�t�s optionnelles
+    // Initialisation des propriétés optionnelles
     this.phone_number = null
     this.errorPhoneNumber = false
-    this.errorPhoneNumberMessage = 'Num�ro de t�l�phone invalide'
+    this.errorPhoneNumberMessage = 'Numéro de téléphone invalide'
   }
 
   /**
-   * D�finit et valide le pr�nom
-   * @param {string} first_name - Le pr�nom de l'utilisateur
-   * @returns {RegisterForm} - L'instance courante pour le cha�nage
+   * Définit et valide le prénom
+   * @param {string} first_name - Le prénom de l'utilisateur
+   * @returns {RegisterForm} - L'instance courante pour le chaînage
    */
   setFirstName(first_name: string) {
     this.first_name = first_name
@@ -72,9 +72,9 @@ export class RegisterForm {
     this.errorFirstName = this.first_name.trim() === '' || !isValid
 
     if (this.first_name.trim() === '') {
-      this.errorFirstNameMessage = 'Le pr�nom est requis'
+      this.errorFirstNameMessage = 'Le prénom est requis'
     } else if (!isValid) {
-      this.errorFirstNameMessage = 'Veuillez saisir un pr�nom valide'
+      this.errorFirstNameMessage = 'Veuillez saisir un prénom valide'
     }
 
     return this
@@ -132,7 +132,7 @@ export class RegisterForm {
       this.errorPhoneNumber = !isValid
 
       if (!isValid) {
-        this.errorPhoneNumberMessage = 'Veuillez saisir un num�ro de t�l�phone valide'
+        this.errorPhoneNumberMessage = 'Veuillez saisir un numéro de téléphone valide'
       }
     } else {
       this.errorPhoneNumber = false
@@ -187,7 +187,7 @@ export class RegisterForm {
       this.errorPasswordMessage = 'Le mot de passe est requis'
     } else if (!isValid) {
       this.errorPasswordMessage =
-        'Le mot de passe doit contenir au moins 8 caract�res, une majuscule, une minuscule et un chiffre'
+        'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre'
     }
 
     return this

@@ -2,7 +2,6 @@
 
 ## Règles générales
 
-- Utiliser l'indentation par espaces (2), fin de ligne LF, UTF-8, pas d'espaces en fin de ligne, saut de ligne final.
 - Code lisible, typé, documenté (JSDoc pour fonctions, interfaces, composants, endpoints).
 - Respecter la structure des dossiers : composants, vues, router, store, assets, types, composables, utils (frontend) ; controllers, models, routes, middleware, config, types (backend), formBuilder, services, interfaces, libs.
 - Ne jamais inclure de secrets, mots de passe, tokens, clés ou credentials dans le code.
