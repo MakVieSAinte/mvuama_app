@@ -25,7 +25,7 @@
         >
           <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
         </svg>
-        Acme Inc
+        mvuama app
       </div>
       <div class="relative z-20 mt-auto">
         <blockquote class="space-y-2">
@@ -33,7 +33,7 @@
             &ldquo;L'application m'a permis de gérer ma flotte et mes conducteurs en toute simplicité.
             L'interface est claire et le suivi des véhicules efficace.&rdquo;
           </p>
-          <footer class="text-sm">Sofia Davis</footer>
+          <footer class="text-sm">Davy Malongo</footer>
         </blockquote>
       </div>
     </div>

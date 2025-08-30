@@ -1,27 +1,34 @@
 <template>
   <div class="lds-ring-wrapper">
-    <div class="lds-ring" :style="{ width: size, height: size }">
+    <div class="lds-ring" :style="{ width: size, height: size, '--spinner-color': colorComputed }">
       <div
         v-for="n in 4"
         :key="n"
-        :style="{ borderColor: `${color} transparent transparent transparent` }"
+        :style="{ borderColor: `var(--spinner-color) transparent transparent transparent` }"
       ></div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
+import { defineProps, computed } from 'vue'
 
-defineProps({
+const props = defineProps({
   size: {
     type: String,
-    default: '15px', // taille par défaut
+    default: '15px',
   },
   color: {
     type: String,
-    default: 'currentColor',
+    default: '#fff', // blanc par défaut
   },
+})
+
+// Couleur dynamique : si non précisé, hérite du texte parent (currentColor)
+const colorComputed = computed(() => {
+  if (props.color) return props.color
+  // Utilise la couleur du texte parent, qui s'adapte au thème
+  return 'currentColor'
 })
 </script>
 
@@ -36,18 +43,20 @@ defineProps({
 .lds-ring {
   display: inline-block;
   position: relative;
-  vertical-align: middle; /* Aligner avec le texte */
-  width: var(--spinner-size, 18px);
-  height: var(--spinner-size, 18px);
+  vertical-align: middle;
+  width: var(--spinner-size, 15px);
+  height: var(--spinner-size, 15px);
 }
 .lds-ring div {
   box-sizing: border-box;
   display: block;
   position: absolute;
-  width: calc(var(--spinner-size, 18px) * 0.8);
-  height: calc(var(--spinner-size, 18px) * 0.8);
-  margin: calc(var(--spinner-size, 18px) * 0.1);
-  border: calc(var(--spinner-size, 18px) * 0.1) solid;
+  width: 80%;
+  height: 80%;
+  top: 10%;
+  left: 10%;
+  border: 2px solid;
+  border-color: var(--spinner-color, currentColor) transparent transparent transparent;
   border-radius: 50%;
   animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
 }
@@ -69,4 +78,3 @@ defineProps({
   }
 }
 </style>
-

@@ -10,18 +10,13 @@
               <UiSteps :current-step="currentStep" :steps="steps" />
             </div>
 
-            <!-- Prénom et Nom -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <!-- Nom -->
               <div class="grid gap-1">
                 <UiLabel for="last_name" class="mb-1 block">Nom</UiLabel>
-                <UiInput
-                  id="last_name"
-                  placeholder="Nom"
-                  type="text"
-                  v-model="formData.last_name"
-                  :class="{ 'border-red-500': formErrors.errorLastName }"
-                ></UiInput>
+                <UiInput id="last_name" placeholder="Nom" type="text" v-model="formModel.last_name"
+                  :class="{ 'border-red-500': formErrors.errorLastName }">
+                </UiInput>
                 <span v-if="formErrors.errorLastName" class="text-xs text-red-500">
                   {{ formErrors.errorLastNameMessage }}
                 </span>
@@ -30,13 +25,8 @@
               <!-- Prénom -->
               <div class="grid gap-1">
                 <UiLabel for="first_name" class="mb-1 block">Prénom</UiLabel>
-                <UiInput
-                  id="first_name"
-                  placeholder="Prénom"
-                  type="text"
-                  v-model="formData.first_name"
-                  :class="{ 'border-red-500': formErrors.errorFirstName }"
-                />
+                <UiInput id="first_name" placeholder="Prénom" type="text" v-model="formModel.first_name"
+                  :class="{ 'border-red-500': formErrors.errorFirstName }" />
                 <span v-if="formErrors.errorFirstName" class="text-xs text-red-500">
                   {{ formErrors.errorFirstNameMessage }}
                 </span>
@@ -46,16 +36,9 @@
             <!-- Email -->
             <div class="grid gap-1 mt-2">
               <UiLabel for="email" class="mb-1 block">Email</UiLabel>
-              <UiInput
-                id="email"
-                placeholder="votre@email.com"
-                type="email"
-                auto-capitalize="none"
-                auto-complete="email"
-                auto-correct="on"
-                v-model="formData.email"
-                :class="{ 'border-red-500': formErrors.errorEmail }"
-              />
+              <UiInput id="email" placeholder="votre@email.com" type="email" auto-capitalize="none"
+                auto-complete="email" auto-correct="on" v-model="formModel.email"
+                :class="{ 'border-red-500': formErrors.errorEmail }" />
               <span v-if="formErrors.errorEmail" class="text-xs text-red-500">
                 {{ formErrors.errorEmailMessage }}
               </span>
@@ -63,17 +46,10 @@
 
             <!-- Numéro de téléphone -->
             <div class="grid gap-1 mt-2">
-              <UiLabel for="phone_number" class="mb-1 block"
-                >Numéro de téléphone (optionnel)</UiLabel
-              >
-              <UiInput
-                id="phone_number"
-                placeholder="Entrez votre numéro (+242 06 613 93 33)"
-                type="tel"
-                v-model="formData.phone_number"
-                @input="updatePhone"
-                :class="{ 'border-red-500': formErrors.errorPhoneNumber }"
-              />
+              <UiLabel for="phone_number" class="mb-1 block">Numéro de téléphone (optionnel)</UiLabel>
+              <UiInput id="phone_number" placeholder="Entrez votre numéro (+242 06 613 93 33)" type="tel"
+                v-model="formModel.phone_number" @input="updatePhone"
+                :class="{ 'border-red-500': formErrors.errorPhoneNumber }" />
               <span v-if="formErrors.errorPhoneNumber" class="text-xs text-red-500">
                 {{ formErrors.errorPhoneNumberMessage }}
               </span>
@@ -87,22 +63,20 @@
               <UiSteps :current-step="currentStep" :steps="steps" />
             </div>
 
-            <!-- Pays (Select uniquement, même style que les autres champs) -->
+            <!-- Pays -->
             <div class="grid gap-1 mt-2">
               <UiLabel for="country" class="mb-1 block">Pays</UiLabel>
-              <Select v-model="formData.country" :disabled="isPhoneValid">
-                <SelectTrigger
-                  id="country"
-                  class="w-full border border-input rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors duration-150"
-                  :class="{ 'border-red-500': formErrors.errorCountry }"
-                >
+              <Select v-model="formModel.country" :disabled="isPhoneValid">
+                <SelectTrigger id="country"
+                  class="w-full border border-input rounded-md px-3 py-2 focus:outline-none focus:border-primary transition-colors duration-150"
+                  :class="{ 'border-red-500': formErrors.errorCountry }">
                   <SelectValue placeholder="Sélectionnez un pays" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Pays</SelectLabel>
                     <SelectItem v-for="c in countries" :key="c.code" :value="c.code">
-                      <img :src="`https://flagcdn.com/24x18/${c.code.toLowerCase()}.png`" width="18" height="12" />
+                      <img :src="`https://flagcdn.com/24x18/${c.code.toLowerCase()}.png`" width="15" height="9" />
                       <span>{{ countryCodeToFlag(c.code) }}</span> {{ c.name }}
                     </SelectItem>
                   </SelectGroup>
@@ -116,13 +90,21 @@
             <!-- Devise -->
             <div class="grid gap-1 mt-2">
               <UiLabel for="currency" class="mb-1 block">Devise</UiLabel>
-              <UiInput
-                id="currency"
-                placeholder="Entrez votre devise"
-                type="text"
-                v-model="formData.currency"
-                :class="{ 'border-red-500': formErrors.errorCurrency }"
-              />
+              <Select v-model="formModel.currency">
+                <SelectTrigger id="currency"
+                  class="w-full border border-input rounded-md px-3 py-2 focus:outline-none focus:border-primary transition-colors duration-150"
+                  :class="{ 'border-red-500': formErrors.errorCurrency }">
+                  <SelectValue placeholder="Sélectionnez une devise" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Devise</SelectLabel>
+                    <SelectItem v-for="c in currencies" :key="c.code" :value="c.code">
+                      <span class="text-bold">{{ c.symbol }}</span> {{ c.name }} ({{ c.code }})
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
               <span v-if="formErrors.errorCurrency" class="text-xs text-red-500">
                 {{ formErrors.errorCurrencyMessage }}
               </span>
@@ -139,77 +121,49 @@
             <!-- Mot de passe -->
             <div class="grid gap-1 mt-2 relative">
               <UiLabel for="password" class="mb-1 block">Mot de passe</UiLabel>
-              <UiInput
-                id="password"
-                placeholder="Mot de passe"
-                :type="showPassword ? 'text' : 'password'"
-                auto-complete="new-password"
-                class="pr-10"
-                v-model="formData.password"
-                :class="{ 'border-red-500': formErrors.errorPassword }"
-              />
-              <button
-                type="button"
-                @click="showPassword = !showPassword"
-                tabindex="-1"
-                class="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground focus:outline-none"
-              >
+              <UiInput id="password" placeholder="Mot de passe" :type="showPassword ? 'text' : 'password'"
+                auto-complete="new-password" class="pr-10" v-model="formModel.password"
+                :class="{ 'border-red-500': formErrors.errorPassword }" />
+              <button type="button" @click="showPassword = !showPassword" tabindex="-1"
+                class="absolute right-2 -bottom-2 -translate-y-1/2 text-muted-foreground focus:outline-none">
                 <Eye v-if="!showPassword" class="w-[17px]" />
                 <EyeOff v-else class="w-[17px]" />
               </button>
-              <span v-if="formErrors.errorPassword" class="text-xs text-red-500">
-                {{ formErrors.errorPasswordMessage }}
-              </span>
             </div>
+            <span v-if="formErrors.errorPassword" class="text-xs text-red-500">
+              {{ formErrors.errorPasswordMessage }}
+            </span>
 
             <!-- Confirmer mot de passe -->
             <div class="grid gap-1 mt-2 relative">
               <UiLabel for="confirm_password" class="mb-1 block">Confirmer le mot de passe</UiLabel>
-              <UiInput
-                id="confirm_password"
-                placeholder="Confirmer le mot de passe"
-                :type="showConfirmPassword ? 'text' : 'password'"
-                auto-complete="new-password"
-                class="pr-10"
-                v-model="formData.confirm_password"
-                :class="{ 'border-red-500': formErrors.errorConfirmPassword }"
-              />
-              <button
-                type="button"
-                @click="showConfirmPassword = !showConfirmPassword"
-                tabindex="-1"
-                class="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground focus:outline-none"
-              >
+              <UiInput id="confirm_password" placeholder="Confirmer le mot de passe"
+                :type="showConfirmPassword ? 'text' : 'password'" auto-complete="new-password" class="pr-10"
+                v-model="formModel.confirm_password" :class="{ 'border-red-500': formErrors.errorConfirmPassword }" />
+              <button type="button" @click="showConfirmPassword = !showConfirmPassword" tabindex="-1"
+                class="absolute right-2 -bottom-2 -translate-y-1/2 text-muted-foreground focus:outline-none">
                 <Eye v-if="!showConfirmPassword" class="w-[17px]" />
                 <EyeOff v-else class="w-[17px]" />
               </button>
-              <span v-if="formErrors.errorConfirmPassword" class="text-xs text-red-500">
-                {{ formErrors.errorConfirmPasswordMessage }}
-              </span>
             </div>
+            <span v-if="formErrors.errorConfirmPassword" class="text-xs text-red-500">
+              {{ formErrors.errorConfirmPasswordMessage }}
+            </span>
 
             <!-- Message d'erreur général -->
-            <div
-              v-if="errorMessage"
-              class="p-3 rounded bg-red-100 border border-red-300 text-red-800 mt-4"
-            >
+            <div v-if="errorMessage" class="p-3 rounded bg-red-100 border border-red-300 text-red-800 mt-4">
               {{ errorMessage }}
             </div>
           </div>
 
           <!-- Navigation des étapes -->
           <div class="flex justify-between mt-8">
-            <UiButton
-              type="button"
-              variant="outline"
-              @click="prevStep"
-              :disabled="currentStep === 0 || isLoading"
-            >
+            <UiButton type="button" variant="outline" @click="prevStep" :disabled="currentStep === 0 || isLoading">
               Précédent
             </UiButton>
 
-            <UiButton type="submit" :disabled="isLoading">
-              <span v-if="isLoading" class="animate-spin mr-2">⏳</span>
+            <UiButton type="submit" :disabled="isLoading" class="text-white">
+              <Spinner v-if="isLoading" class="mr-1" size="15px" color="#fff" />
               {{ isLastStep ? "S'inscrire" : 'Suivant' }}
             </UiButton>
           </div>
@@ -235,15 +189,16 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import UiSteps from '@/components/ui/steps/index.vue'
+import Spinner from '@/components/utils/Spinner.vue'
 import { RegisterForm } from '@/formBuilder/auth/registerForm'
 import RegisterService from '@/services/auth/registerService'
 import type { IRegisterBuilder } from '@/interfaces/registerInterface'
-import { formatPhoneNumber, formatAsYouType } from '@/lib/phoneService'
+import { formatPhoneNumber, formatAsYouType } from '@/lib/phone'
 import { countries } from '@/lib/countries'
+import { currencies } from '@/lib/currency'
 import { countryCodeToFlag } from '@/lib/codeToFlags'
 import parsePhoneNumberFromString from 'libphonenumber-js'
 
-//import supprimé
 
 export default defineComponent({
   name: 'RegisterForm',
@@ -254,6 +209,7 @@ export default defineComponent({
     UiInput,
     UiLabel,
     UiSteps,
+    Spinner,
     Select,
     SelectContent,
     SelectGroup,
@@ -262,20 +218,22 @@ export default defineComponent({
     SelectTrigger,
     SelectValue,
   },
-  created() {},
+
+  created() { },
+
   data() {
     return {
       showPassword: false,
       showConfirmPassword: false,
       isLoading: false,
       errorMessage: '',
-      currentStep: 1,
+      currentStep: 0,
       steps: [
         { title: '', description: '' },
         { title: '', description: '' },
         { title: '', description: '' },
       ],
-      formData: {
+      formModel: {
         first_name: '',
         last_name: '',
         email: '',
@@ -300,9 +258,11 @@ export default defineComponent({
         national: '',
         valid: false,
       },
-      countryCodeToFlag: countryCodeToFlag
+      countryCodeToFlag: countryCodeToFlag,
+      currencies: currencies,
     }
   },
+
   computed: {
     isLastStep(): boolean {
       return this.currentStep === this.steps.length - 1
@@ -311,32 +271,28 @@ export default defineComponent({
       return countries
     },
     isPhoneValid() {
-      return this.formatted && this.formatted.valid && !!this.formData.phone_number
+      return this.formatted && this.formatted.valid && !!this.formModel.phone_number
     },
   },
-  watch: {},
-  methods: {
-    // updatePhone() {
-    //   this.formData.phone_number = formatAsYouType(this.formData.phone_number, "CG")
-    //   this.formatted = formatPhoneNumber(this.formData.phone_number, "CG")
 
-    // },
+  watch: {},
+
+  methods: {
 
     updatePhone() {
-      const raw = this.formData.phone_number
+      const raw = this.formModel.phone_number
 
-      // Détecte le pays si le numéro contient l'indicatif (+242, +33, etc.)
+      // Détecte le pays si le numéro contient l'indicatif
       const parsed = parsePhoneNumberFromString(raw)
       if (parsed && parsed.country) {
-        this.formData.country = parsed.country
+        this.formModel.country = parsed.country
       }
 
       // Formate au fil de la frappe
-      this.formData.phone_number = formatAsYouType(raw, this.formData.country)
-      this.formatted = formatPhoneNumber(this.formData.phone_number, this.formData.country)
+      this.formModel.phone_number = formatAsYouType(raw, this.formModel.country)
+      this.formatted = formatPhoneNumber(this.formModel.phone_number, this.formModel.country)
     },
 
-    // Méthodes de formatage supprimées
 
     validateCurrentStep(): boolean {
       const registerForm = new RegisterForm()
@@ -344,10 +300,10 @@ export default defineComponent({
       // Valide uniquement les champs de l'étape actuelle
       if (this.currentStep === 0) {
         registerForm
-          .setFirstName(this.formData.first_name)
-          .setLastName(this.formData.last_name)
-          .setEmail(this.formData.email)
-          .setPhoneNumber(this.formData.phone_number || null)
+          .setFirstName(this.formModel.first_name)
+          .setLastName(this.formModel.last_name)
+          .setEmail(this.formModel.email)
+          .setPhoneNumber(this.formModel.phone_number || null)
 
         this.formErrors = registerForm.builderRegisterForm()
 
@@ -358,15 +314,15 @@ export default defineComponent({
           this.formErrors.errorPhoneNumber
         )
       } else if (this.currentStep === 1) {
-        registerForm.setCountry(this.formData.country).setCurrency(this.formData.currency)
+        registerForm.setCountry(this.formModel.country).setCurrency(this.formModel.currency)
 
         this.formErrors = registerForm.builderRegisterForm()
 
         return !(this.formErrors.errorCountry || this.formErrors.errorCurrency)
       } else if (this.currentStep === 2) {
         registerForm
-          .setPassword(this.formData.password)
-          .setConfirmPassword(this.formData.confirm_password)
+          .setPassword(this.formModel.password)
+          .setConfirmPassword(this.formModel.confirm_password)
 
         this.formErrors = registerForm.builderRegisterForm()
 
@@ -381,14 +337,14 @@ export default defineComponent({
       const registerForm = new RegisterForm()
 
       registerForm
-        .setFirstName(this.formData.first_name)
-        .setLastName(this.formData.last_name)
-        .setEmail(this.formData.email)
-        .setPhoneNumber(this.formData.phone_number || null)
-        .setCountry(this.formData.country)
-        .setCurrency(this.formData.currency)
-        .setPassword(this.formData.password)
-        .setConfirmPassword(this.formData.confirm_password)
+        .setFirstName(this.formModel.first_name)
+        .setLastName(this.formModel.last_name)
+        .setEmail(this.formModel.email)
+        .setPhoneNumber(this.formModel.phone_number || null)
+        .setCountry(this.formModel.country)
+        .setCurrency(this.formModel.currency)
+        .setPassword(this.formModel.password)
+        .setConfirmPassword(this.formModel.confirm_password)
 
       this.formErrors = registerForm.builderRegisterForm()
 
@@ -437,14 +393,14 @@ export default defineComponent({
 
         // Création d'une instance du service d'inscription
         const registerService = new RegisterService(
-          this.formData.first_name,
-          this.formData.last_name,
-          this.formData.email,
-          this.formData.country,
-          this.formData.currency,
-          this.formData.phone_number || null,
-          this.formData.password,
-          this.formData.confirm_password,
+          this.formModel.first_name,
+          this.formModel.last_name,
+          this.formModel.email,
+          this.formModel.country,
+          this.formModel.currency,
+          this.formModel.phone_number || null,
+          this.formModel.password,
+          this.formModel.confirm_password,
         )
 
         // Soumission de l'inscription
