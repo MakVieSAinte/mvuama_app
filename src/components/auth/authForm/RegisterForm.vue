@@ -47,7 +47,7 @@
             <!-- Numéro de téléphone -->
             <div class="grid gap-1 mt-2">
               <UiLabel for="phone_number" class="mb-1 block">Numéro de téléphone (optionnel)</UiLabel>
-              <UiInput id="phone_number" placeholder="Entrez votre numéro (+242 06 613 93 33)" type="tel"
+              <UiInput id="phone_number" placeholder="Entrez votre numéro Ex: (+242 06 613 93 33)" type="tel"
                 v-model="formModel.phone_number" @input="updatePhone"
                 :class="{ 'border-red-500': formErrors.errorPhoneNumber }" />
               <span v-if="formErrors.errorPhoneNumber" class="text-xs text-red-500">

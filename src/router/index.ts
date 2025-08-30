@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import { authMiddleware } from '../middleware/auth'
+import { AuthService } from '../services/auth/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -118,6 +119,40 @@ const router = createRouter({
       ],
     },
   ],
+})
+
+// Navigation guard global : vérifie l'authentification sur toutes les routes
+router.beforeEach(async (to, from, next) => {
+  // Autoriser l'accès aux routes d'authentification sans être connecté
+  if (
+    to.path.startsWith('/auth/login') ||
+    to.path.startsWith('/auth/register') ||
+    to.path.startsWith('/auth/callback')
+  ) {
+    return next()
+  }
+
+  // Vérifier la session via l'API Supabase si on vient juste de se connecter
+  if (from.path === '/auth/login') {
+    try {
+      const session = await AuthService.getCurrentSession()
+      if (session) {
+        console.log("Session active détectée, autorisation d'accès")
+        return next()
+      }
+    } catch (error) {
+      console.error('Erreur lors de la vérification de la session:', error)
+    }
+  }
+
+  // Pour toutes les autres routes, vérifier si l'utilisateur est connecté
+  if (!AuthService.isAuthenticated()) {
+    console.log('Utilisateur non connecté, redirection vers la page de connexion')
+    return next('/auth/login')
+  }
+
+  // Si l'utilisateur est connecté, permettre l'accès à la route demandée
+  return next()
 })
 
 export default router

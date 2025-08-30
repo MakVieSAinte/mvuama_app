@@ -23,9 +23,12 @@ import {
   Coins,
   Wallet,
   Fuel,
+  ChevronsUpDown,
+  CreditCard,
+  LogOut,
+  User,
 } from 'lucide-vue-next'
 
-import NavMain from '@/components/ui/blocks/NavMain.vue'
 import NavSecondary from '@/components/ui/blocks/NavSecondary.vue'
 import TeamSwitcher from '@/components/ui/blocks/TeamSwitcher.vue'
 import {
@@ -37,27 +40,34 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  useSidebar,
 } from '@/components/ui/sidebar'
 
-import { ref, watchEffect, onMounted } from 'vue'
+import { defineComponent } from 'vue'
 import { defineEmits } from 'vue'
-import Switch from '@/components/ui/switch/Switch.vue'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 const props = defineProps<SidebarProps & { activeTab: string }>()
 
-// Gestion du thème persistant
-function getInitialTheme() {
-  const savedTheme = localStorage.getItem('theme')
-  if (savedTheme === 'dark') return true
-  if (savedTheme === 'light') return false
-  return window.matchMedia('(prefers-color-scheme: dark)').matches
+// Information utilisateur pour le dropdown
+const { isMobile } = useSidebar()
+
+const userInfo = {
+  name: 'Shadcn',
+  email: 'm@example.com',
+  avatar: 'https://github.com/shadcn.png',
 }
-const isDark = ref(getInitialTheme())
 
 const emit = defineEmits(['tab-change'])
-function handleTabChange(tabId: string) {
-  emit('tab-change', tabId)
-}
 
 // Sur changement, appliquer la classe et sauvegarder
 const data = {
@@ -146,6 +156,73 @@ const data = {
     </SidebarHeader>
     <SidebarContent>
       <NavSecondary :items="data.navSecondary" class="mt-auto" />
+
+      <!-- Menu dropdown de l'utilisateur -->
+      <div class="mb-4 mt-1 mx-2">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger as-child>
+                <SidebarMenuButton
+                  size="lg"
+                  class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                >
+                  <Avatar class="h-8 w-8 rounded-lg">
+                    <AvatarImage :src="userInfo.avatar" :alt="userInfo.name" />
+                    <AvatarFallback class="rounded-lg">SC</AvatarFallback>
+                  </Avatar>
+                  <div class="grid flex-1 text-left text-sm leading-tight">
+                    <span class="truncate font-semibold">{{ userInfo.name }}</span>
+                    <span class="truncate text-xs text-muted-foreground">{{ userInfo.email }}</span>
+                  </div>
+                  <ChevronsUpDown class="ml-auto size-4" />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                class="w-[--reka-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                :side="isMobile ? 'bottom' : 'right'"
+                align="end"
+                :side-offset="4"
+              >
+                <DropdownMenuLabel class="p-0 font-normal">
+                  <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                    <Avatar class="h-8 w-8 rounded-lg">
+                      <AvatarImage :src="userInfo.avatar" :alt="userInfo.name" />
+                      <AvatarFallback class="rounded-lg">SC</AvatarFallback>
+                    </Avatar>
+                    <div class="grid flex-1 text-left text-sm leading-tight">
+                      <span class="truncate font-semibold">{{ userInfo.name }}</span>
+                      <span class="truncate text-xs text-muted-foreground">{{
+                        userInfo.email
+                      }}</span>
+                    </div>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem>
+                    <User class="mr-2 h-4 w-4" />
+                    Profil
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <CreditCard class="mr-2 h-4 w-4" />
+                    Abonnement
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Bell class="mr-2 h-4 w-4" />
+                    Notifications
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <LogOut class="mr-2 h-4 w-4" />
+                  Déconnexion
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </div>
     </SidebarContent>
     <SidebarRail />
   </Sidebar>
