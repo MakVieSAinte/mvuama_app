@@ -102,7 +102,8 @@
                   <SelectGroup>
                     <SelectLabel>Pays</SelectLabel>
                     <SelectItem v-for="c in countries" :key="c.code" :value="c.code">
-                      {{ c.name }}
+                      <img :src="`https://flagcdn.com/24x18/${c.code.toLowerCase()}.png`" width="18" height="12" />
+                      <span>{{ countryCodeToFlag(c.code) }}</span> {{ c.name }}
                     </SelectItem>
                   </SelectGroup>
                 </SelectContent>
@@ -239,6 +240,7 @@ import RegisterService from '@/services/auth/registerService'
 import type { IRegisterBuilder } from '@/interfaces/registerInterface'
 import { formatPhoneNumber, formatAsYouType } from '@/lib/phoneService'
 import { countries } from '@/lib/countries'
+import { countryCodeToFlag } from '@/lib/codeToFlags'
 import parsePhoneNumberFromString from 'libphonenumber-js'
 
 //import supprimé
@@ -298,6 +300,7 @@ export default defineComponent({
         national: '',
         valid: false,
       },
+      countryCodeToFlag: countryCodeToFlag
     }
   },
   computed: {
