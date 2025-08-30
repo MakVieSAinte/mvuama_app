@@ -1,5 +1,6 @@
 import { Validator } from '../../services/libs/validator'
 import type { IRegisterModel, IRegisterBuilder } from '../../interfaces/registerInterface'
+import parsePhoneNumberFromString from 'libphonenumber-js'
 
 export class RegisterForm {
   // Propriétés obligatoires et erreurs associées
@@ -119,23 +120,32 @@ export class RegisterForm {
   }
 
   /**
-   * D�finit et valide le num�ro de t�l�phone
-   * @param {string | null} phone_number - Le num�ro de t�l�phone
-   * @returns {RegisterForm} - L'instance courante pour le cha�nage
+   * Définit et valide le numéro de téléphone
+   * @param {string | null} phone_number - Le numéro de téléphone
+   * @returns {RegisterForm} - L'instance courante pour le chaînage
    */
   setPhoneNumber(phone_number: string | null) {
     this.phone_number = phone_number
 
     if (phone_number !== null && phone_number.trim() !== '') {
-      // Validation basique: au moins 8 chiffres, peut contenir +, -, espaces
-      const isValid = /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,12}$/im.test(phone_number.trim())
-      this.errorPhoneNumber = !isValid
-
-      if (!isValid) {
-        this.errorPhoneNumberMessage = 'Veuillez saisir un numéro de téléphone valide'
+      try {
+        const parsed = parsePhoneNumberFromString(phone_number, 'CG')
+        if (parsed && parsed.isValid()) {
+          this.errorPhoneNumber = false
+          this.errorPhoneNumberMessage = ''
+          this.phone_number = parsed.formatInternational()
+        } else {
+          this.errorPhoneNumber = true
+          this.errorPhoneNumberMessage =
+            'Veuillez saisir un numéro de téléphone valide avec le code du pays'
+        }
+      } catch (e) {
+        this.errorPhoneNumber = true
+        this.errorPhoneNumberMessage = 'Numéro de téléphone invalide'
       }
     } else {
       this.errorPhoneNumber = false
+      this.errorPhoneNumberMessage = ''
     }
 
     return this
