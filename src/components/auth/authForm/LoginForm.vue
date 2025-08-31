@@ -1,7 +1,7 @@
 <template>
-  <div class="grid gap-6">
-    <form @submit.prevent="handleLogin">
-      <div class="grid gap-2">
+  <div class="grid gap-4 w-full">
+    <form @submit.prevent="handleLogin" class="w-full">
+      <div class="grid gap-3 w-full">
         <div class="grid gap-1">
           <UiLabel class="mb-1 block" for="email">Email</UiLabel>
           <UiInput
@@ -43,30 +43,37 @@
           </span>
         </div>
 
-        <div class="flex items-center space-x-2 mt-2">
-          <Checkbox id="remember" v-model="formData.remember" />
-          <label
-            for="remember"
-            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+        <div class="flex items-center justify-between flex-wrap mt-2">
+          <div class="flex items-center space-x-2">
+            <Checkbox id="remember" v-model="formData.remember" />
+            <label
+              for="remember"
+              class="text-xs sm:text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Se souvenir de moi
+            </label>
+          </div>
+          <a
+            href="#"
+            class="text-xs sm:text-sm text-muted-foreground underline-offset-4 hover:underline mt-1 sm:mt-0"
+            >Mot de passe oublié?</a
           >
-            Se souvenir de moi
-          </label>
         </div>
 
         <!-- Message d'erreur général -->
         <div
           v-if="errorMessage"
-          class="p-3 rounded bg-red-100 border border-red-300 text-red-800 mt-4"
+          class="p-3 rounded bg-red-100 border border-red-300 text-red-800 mt-4 text-sm"
         >
           {{ errorMessage }}
         </div>
 
         <UiButton
           type="submit"
-          class="mt-4 flex items-center justify-center gap-4 py-3"
+          class="mt-4 flex items-center justify-center gap-4 py-3 w-full"
           :disabled="isLoading"
         >
-          <Spinner v-if="isLoading" class="mr-2" size="18px" color="#fff" />
+          <Loader2 v-if="isLoading" class="mr-2 h-4 w-4 animate-spin" />
           Se connecter
         </UiButton>
       </div>
@@ -76,19 +83,19 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { Eye, EyeOff } from 'lucide-vue-next'
+import { Eye, EyeOff, Loader2 } from 'lucide-vue-next'
 import { Button as UiButton } from '@/components/ui/button'
 import { Input as UiInput } from '@/components/ui/input'
 import { Label as UiLabel } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
-import Spinner from '@/components/utils/Spinner.vue'
 import { LoginForm } from '@/formBuilder/auth/loginForm'
 import { LoginService } from '@/services/auth/loginService'
+import { AuthNotificationService } from '@/services/auth/authNotificationService'
 import type { ILoginBuilder } from '@/interfaces/loginInterface'
 
 export default defineComponent({
   name: 'LoginForm',
-  components: { Eye, EyeOff, UiButton, UiInput, UiLabel, Checkbox, Spinner },
+  components: { Eye, EyeOff, UiButton, UiInput, UiLabel, Checkbox, Loader2 },
   data() {
     return {
       showPassword: false,
@@ -162,19 +169,28 @@ export default defineComponent({
 
         if (!result) {
           this.errorMessage = 'Email ou mot de passe incorrect'
+          AuthNotificationService.notifyLoginError('Email ou mot de passe incorrect')
           return
         }
 
         // Petite pause pour laisser le temps aux tokens d'être correctement enregistrés
         await new Promise((resolve) => setTimeout(resolve, 100))
 
+        // Notification de connexion réussie
+        const username = this.formData.email.split('@')[0] || 'Utilisateur'
+        AuthNotificationService.notifyLoginSuccess(username)
+
         // Redirection vers le dashboard
         this.$router.push('/')
       } catch (error: unknown) {
         console.error('Erreur de login dans le composant:', error)
         // Affichage de l'erreur spécifique provenant du service
-        this.errorMessage =
+        const errorMessage =
           error instanceof Error ? error.message : "Une erreur inattendue s'est produite"
+        this.errorMessage = errorMessage
+
+        // Notification d'erreur
+        AuthNotificationService.notifyLoginError(errorMessage)
       } finally {
         this.isLoading = false
       }

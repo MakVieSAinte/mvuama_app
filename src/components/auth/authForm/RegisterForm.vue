@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div class="grid gap-6">
-      <div class="mb-8">
-        <form @submit.prevent="handleStepAction">
+    <div class="grid gap-4 w-full">
+      <div class="mb-6 w-full">
+        <form @submit.prevent="handleStepAction" class="w-full max-w-full">
           <!-- Étape 1: Informations personnelles -->
-          <div v-if="currentStep === 0" class="grid gap-2">
-            <div class="flex items-center justify-between mb-4">
-              <h2 class="text-xl font-semibold mr-3 mb-2 w-max">Informations personnelles</h2>
+          <div v-if="currentStep === 0" class="grid gap-3">
+            <div class="flex flex-wrap items-center justify-between mb-3 gap-2">
+              <h2 class="text-lg sm:text-xl font-semibold mb-1">Informations personnelles</h2>
               <UiSteps :current-step="currentStep" :steps="steps" />
             </div>
 
@@ -14,8 +14,13 @@
               <!-- Nom -->
               <div class="grid gap-1">
                 <UiLabel for="last_name" class="mb-1 block">Nom</UiLabel>
-                <UiInput id="last_name" placeholder="Nom" type="text" v-model="formModel.last_name"
-                  :class="{ 'border-red-500': formErrors.errorLastName }">
+                <UiInput
+                  id="last_name"
+                  placeholder="Nom"
+                  type="text"
+                  v-model="formModel.last_name"
+                  :class="{ 'border-red-500': formErrors.errorLastName }"
+                >
                 </UiInput>
                 <span v-if="formErrors.errorLastName" class="text-xs text-red-500">
                   {{ formErrors.errorLastNameMessage }}
@@ -25,8 +30,13 @@
               <!-- Prénom -->
               <div class="grid gap-1">
                 <UiLabel for="first_name" class="mb-1 block">Prénom</UiLabel>
-                <UiInput id="first_name" placeholder="Prénom" type="text" v-model="formModel.first_name"
-                  :class="{ 'border-red-500': formErrors.errorFirstName }" />
+                <UiInput
+                  id="first_name"
+                  placeholder="Prénom"
+                  type="text"
+                  v-model="formModel.first_name"
+                  :class="{ 'border-red-500': formErrors.errorFirstName }"
+                />
                 <span v-if="formErrors.errorFirstName" class="text-xs text-red-500">
                   {{ formErrors.errorFirstNameMessage }}
                 </span>
@@ -34,22 +44,38 @@
             </div>
 
             <!-- Email -->
-            <div class="grid gap-1 mt-2">
+            <div class="grid gap-1 mt-2 w-full">
               <UiLabel for="email" class="mb-1 block">Email</UiLabel>
-              <UiInput id="email" placeholder="votre@email.com" type="email" auto-capitalize="none"
-                auto-complete="email" auto-correct="on" v-model="formModel.email"
-                :class="{ 'border-red-500': formErrors.errorEmail }" />
+              <UiInput
+                id="email"
+                placeholder="votre@email.com"
+                type="email"
+                auto-capitalize="none"
+                auto-complete="email"
+                auto-correct="on"
+                v-model="formModel.email"
+                :class="{ 'border-red-500': formErrors.errorEmail }"
+                class="w-full"
+              />
               <span v-if="formErrors.errorEmail" class="text-xs text-red-500">
                 {{ formErrors.errorEmailMessage }}
               </span>
             </div>
 
             <!-- Numéro de téléphone -->
-            <div class="grid gap-1 mt-2">
-              <UiLabel for="phone_number" class="mb-1 block">Numéro de téléphone (optionnel)</UiLabel>
-              <UiInput id="phone_number" placeholder="Entrez votre numéro Ex: (+242 06 613 93 33)" type="tel"
-                v-model="formModel.phone_number" @input="updatePhone"
-                :class="{ 'border-red-500': formErrors.errorPhoneNumber }" />
+            <div class="grid gap-1 mt-2 w-full">
+              <UiLabel for="phone_number" class="mb-1 block"
+                >Numéro de téléphone (optionnel)</UiLabel
+              >
+              <UiInput
+                id="phone_number"
+                placeholder="Entrez votre numéro Ex: (+242 06 613 93 33)"
+                type="tel"
+                v-model="formModel.phone_number"
+                @input="updatePhone"
+                :class="{ 'border-red-500': formErrors.errorPhoneNumber }"
+                class="w-full"
+              />
               <span v-if="formErrors.errorPhoneNumber" class="text-xs text-red-500">
                 {{ formErrors.errorPhoneNumberMessage }}
               </span>
@@ -57,26 +83,32 @@
           </div>
 
           <!-- Étape 2: Informations régionales -->
-          <div v-if="currentStep === 1" class="grid gap-2">
-            <div class="flex items-center justify-between mb-4">
-              <h2 class="text-xl font-semibold mr-6">Informations régionales</h2>
+          <div v-if="currentStep === 1" class="grid gap-3">
+            <div class="flex flex-wrap items-center justify-between mb-3 gap-2">
+              <h2 class="text-lg sm:text-xl font-semibold mb-1">Informations régionales</h2>
               <UiSteps :current-step="currentStep" :steps="steps" />
             </div>
 
             <!-- Pays -->
-            <div class="grid gap-1 mt-2">
+            <div class="grid gap-1 mt-2 w-full">
               <UiLabel for="country" class="mb-1 block">Pays</UiLabel>
               <Select v-model="formModel.country" :disabled="isPhoneValid">
-                <SelectTrigger id="country"
+                <SelectTrigger
+                  id="country"
                   class="w-full border border-input rounded-md px-3 py-2 focus:outline-none focus:border-primary transition-colors duration-150"
-                  :class="{ 'border-red-500': formErrors.errorCountry }">
+                  :class="{ 'border-red-500': formErrors.errorCountry }"
+                >
                   <SelectValue placeholder="Sélectionnez un pays" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Pays</SelectLabel>
                     <SelectItem v-for="c in countries" :key="c.code" :value="c.code">
-                      <img :src="`https://flagcdn.com/24x18/${c.code.toLowerCase()}.png`" width="15" height="9" />
+                      <img
+                        :src="`https://flagcdn.com/24x18/${c.code.toLowerCase()}.png`"
+                        width="15"
+                        height="9"
+                      />
                       <span>{{ countryCodeToFlag(c.code) }}</span> {{ c.name }}
                     </SelectItem>
                   </SelectGroup>
@@ -88,12 +120,14 @@
             </div>
 
             <!-- Devise -->
-            <div class="grid gap-1 mt-2">
+            <div class="grid gap-1 mt-2 w-full">
               <UiLabel for="currency" class="mb-1 block">Devise</UiLabel>
               <Select v-model="formModel.currency">
-                <SelectTrigger id="currency"
+                <SelectTrigger
+                  id="currency"
                   class="w-full border border-input rounded-md px-3 py-2 focus:outline-none focus:border-primary transition-colors duration-150"
-                  :class="{ 'border-red-500': formErrors.errorCurrency }">
+                  :class="{ 'border-red-500': formErrors.errorCurrency }"
+                >
                   <SelectValue placeholder="Sélectionnez une devise" />
                 </SelectTrigger>
                 <SelectContent>
@@ -112,20 +146,30 @@
           </div>
 
           <!-- Étape 3: Sécurité du compte -->
-          <div v-if="currentStep === 2" class="grid gap-2">
-            <div class="flex items-center justify-between mb-4">
-              <h2 class="text-xl font-semibold mr-6">Sécurité du compte</h2>
+          <div v-if="currentStep === 2" class="grid gap-3">
+            <div class="flex flex-wrap items-center justify-between mb-3 gap-2">
+              <h2 class="text-lg sm:text-xl font-semibold mb-1">Sécurité du compte</h2>
               <UiSteps :current-step="currentStep" :steps="steps" />
             </div>
 
             <!-- Mot de passe -->
-            <div class="grid gap-1 mt-2 relative">
+            <div class="grid gap-1 mt-2 relative w-full">
               <UiLabel for="password" class="mb-1 block">Mot de passe</UiLabel>
-              <UiInput id="password" placeholder="Mot de passe" :type="showPassword ? 'text' : 'password'"
-                auto-complete="new-password" class="pr-10" v-model="formModel.password"
-                :class="{ 'border-red-500': formErrors.errorPassword }" />
-              <button type="button" @click="showPassword = !showPassword" tabindex="-1"
-                class="absolute right-2 -bottom-2 -translate-y-1/2 text-muted-foreground focus:outline-none">
+              <UiInput
+                id="password"
+                placeholder="Mot de passe"
+                :type="showPassword ? 'text' : 'password'"
+                auto-complete="new-password"
+                class="pr-10 w-full"
+                v-model="formModel.password"
+                :class="{ 'border-red-500': formErrors.errorPassword }"
+              />
+              <button
+                type="button"
+                @click="showPassword = !showPassword"
+                tabindex="-1"
+                class="absolute right-2 -bottom-2 -translate-y-1/2 text-muted-foreground focus:outline-none"
+              >
                 <Eye v-if="!showPassword" class="w-[17px]" />
                 <EyeOff v-else class="w-[17px]" />
               </button>
@@ -135,13 +179,23 @@
             </span>
 
             <!-- Confirmer mot de passe -->
-            <div class="grid gap-1 mt-2 relative">
+            <div class="grid gap-1 mt-2 relative w-full">
               <UiLabel for="confirm_password" class="mb-1 block">Confirmer le mot de passe</UiLabel>
-              <UiInput id="confirm_password" placeholder="Confirmer le mot de passe"
-                :type="showConfirmPassword ? 'text' : 'password'" auto-complete="new-password" class="pr-10"
-                v-model="formModel.confirm_password" :class="{ 'border-red-500': formErrors.errorConfirmPassword }" />
-              <button type="button" @click="showConfirmPassword = !showConfirmPassword" tabindex="-1"
-                class="absolute right-2 -bottom-2 -translate-y-1/2 text-muted-foreground focus:outline-none">
+              <UiInput
+                id="confirm_password"
+                placeholder="Confirmer le mot de passe"
+                :type="showConfirmPassword ? 'text' : 'password'"
+                auto-complete="new-password"
+                class="pr-10 w-full"
+                v-model="formModel.confirm_password"
+                :class="{ 'border-red-500': formErrors.errorConfirmPassword }"
+              />
+              <button
+                type="button"
+                @click="showConfirmPassword = !showConfirmPassword"
+                tabindex="-1"
+                class="absolute right-2 -bottom-2 -translate-y-1/2 text-muted-foreground focus:outline-none"
+              >
                 <Eye v-if="!showConfirmPassword" class="w-[17px]" />
                 <EyeOff v-else class="w-[17px]" />
               </button>
@@ -151,14 +205,22 @@
             </span>
 
             <!-- Message d'erreur général -->
-            <div v-if="errorMessage" class="p-3 rounded bg-red-100 border border-red-300 text-red-800 mt-4">
+            <div
+              v-if="errorMessage"
+              class="p-3 rounded bg-red-100 border border-red-300 text-red-800 mt-4"
+            >
               {{ errorMessage }}
             </div>
           </div>
 
           <!-- Navigation des étapes -->
-          <div class="flex justify-between mt-8">
-            <UiButton type="button" variant="outline" @click="prevStep" :disabled="currentStep === 0 || isLoading">
+          <div class="flex justify-between mt-8 w-full">
+            <UiButton
+              type="button"
+              variant="outline"
+              @click="prevStep"
+              :disabled="currentStep === 0 || isLoading"
+            >
               Précédent
             </UiButton>
 
@@ -189,7 +251,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import UiSteps from '@/components/ui/steps/index.vue'
-import Spinner from '@/components/utils/Spinner.vue'
+import { default as Spinner } from '@/components/utils/Spinner.vue'
 import { RegisterForm } from '@/formBuilder/auth/registerForm'
 import RegisterService from '@/services/auth/registerService'
 import type { IRegisterBuilder } from '@/interfaces/registerInterface'
@@ -198,7 +260,7 @@ import { countries } from '@/lib/countries'
 import { currencies } from '@/lib/currency'
 import { countryCodeToFlag } from '@/lib/codeToFlags'
 import parsePhoneNumberFromString from 'libphonenumber-js'
-
+import { AuthNotificationService } from '@/services/auth/authNotificationService'
 
 export default defineComponent({
   name: 'RegisterForm',
@@ -219,7 +281,7 @@ export default defineComponent({
     SelectValue,
   },
 
-  created() { },
+  created() {},
 
   data() {
     return {
@@ -278,7 +340,6 @@ export default defineComponent({
   watch: {},
 
   methods: {
-
     updatePhone() {
       const raw = this.formModel.phone_number
 
@@ -292,7 +353,6 @@ export default defineComponent({
       this.formModel.phone_number = formatAsYouType(raw, this.formModel.country)
       this.formatted = formatPhoneNumber(this.formModel.phone_number, this.formModel.country)
     },
-
 
     validateCurrentStep(): boolean {
       const registerForm = new RegisterForm()
@@ -407,15 +467,24 @@ export default defineComponent({
         const result = await registerService.save()
 
         if (result === 'Erreur') {
-          this.errorMessage = "Une erreur est survenue lors de l'inscription. Veuillez réessayer."
+          const errorMsg = "Une erreur est survenue lors de l'inscription. Veuillez réessayer."
+          this.errorMessage = errorMsg
+          // Notification d'échec d'inscription
+          AuthNotificationService.notifyRegistrationError(errorMsg)
           return
         }
+
+        // Notification de succès d'inscription
+        AuthNotificationService.notifyRegistrationSuccess()
 
         // Redirection vers la page de connexion ou dashboard
         this.$router.push('/auth/login')
       } catch (error: unknown) {
-        this.errorMessage =
+        const errorMsg =
           error instanceof Error ? error.message : "Une erreur inattendue s'est produite"
+        this.errorMessage = errorMsg
+        // Notification d'erreur
+        AuthNotificationService.notifyRegistrationError(errorMsg)
       } finally {
         this.isLoading = false
       }
@@ -427,5 +496,25 @@ export default defineComponent({
 <style scoped>
 .icon-svg {
   width: 16px !important;
+}
+
+/* Styles de responsive pour le formulaire */
+@media screen and (max-width: 640px) {
+  /* Pour les petits écrans */
+  :deep(form) {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  :deep(.grid) {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  /* Pour très petits écrans */
+  :deep(form) {
+    width: 100%;
+  }
 }
 </style>

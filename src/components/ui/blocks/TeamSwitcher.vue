@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ChevronDown, Plus } from 'lucide-vue-next'
-import { type Component, ref } from 'vue'
+import type { Component } from 'vue'
+
+import { ChevronsUpDown, Plus } from 'lucide-vue-next'
+import { ref } from 'vue'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,7 +13,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from '@/components/ui/sidebar'
 
 const props = defineProps<{
   teams: {
@@ -21,6 +28,7 @@ const props = defineProps<{
   }[]
 }>()
 
+const { isMobile } = useSidebar()
 const activeTeam = ref(props.teams[0])
 </script>
 
@@ -29,17 +37,30 @@ const activeTeam = ref(props.teams[0])
     <SidebarMenuItem>
       <DropdownMenu>
         <DropdownMenuTrigger as-child>
-          <SidebarMenuButton class="w-fit px-1.5">
+          <SidebarMenuButton
+            size="lg"
+            class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+          >
             <div
-              class="flex aspect-square size-5 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground"
+              class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"
             >
-              <component :is="activeTeam.logo" class="size-3" />
+              <component :is="activeTeam.logo" class="size-4" />
             </div>
-            <span class="truncate font-semibold">{{ activeTeam.name.toUpperCase() }}</span>
-            <ChevronDown class="opacity-50" />
+            <div class="grid flex-1 text-left text-sm leading-tight">
+              <span class="truncate font-semibold">
+                {{ activeTeam.name }}
+              </span>
+              <span class="truncate text-xs">{{ activeTeam.plan }}</span>
+            </div>
+            <ChevronsUpDown class="ml-auto" />
           </SidebarMenuButton>
         </DropdownMenuTrigger>
-        <DropdownMenuContent class="w-64 rounded-lg" align="start" side="bottom" :side-offset="4">
+        <DropdownMenuContent
+          class="w-[--reka-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+          align="start"
+          :side="isMobile ? 'bottom' : 'right'"
+          :side-offset="4"
+        >
           <DropdownMenuLabel class="text-xs text-muted-foreground"> Agences </DropdownMenuLabel>
           <DropdownMenuItem
             v-for="(team, index) in teams"
@@ -47,10 +68,10 @@ const activeTeam = ref(props.teams[0])
             class="gap-2 p-2"
             @click="activeTeam = team"
           >
-            <div class="flex size-6 items-center justify-center rounded-xs border">
+            <div class="flex size-6 items-center justify-center rounded-sm border">
               <component :is="team.logo" class="size-4 shrink-0" />
             </div>
-            {{ (team.name).toUpperCase() }}
+            {{ team.name }}
             <DropdownMenuShortcut>⌘{{ index + 1 }}</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuSeparator />

@@ -44,8 +44,16 @@ import {
 } from '@/components/ui/sidebar'
 
 import { defineComponent } from 'vue'
-import { defineEmits } from 'vue'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,23 +66,102 @@ import {
 
 const props = defineProps<SidebarProps & { activeTab: string }>()
 
+// Import des fonctionnalités Vue réactives
+import { ref, onMounted } from 'vue'
+
 // Information utilisateur pour le dropdown
 const { isMobile } = useSidebar()
 
-const userInfo = {
-  name: 'Shadcn',
-  email: 'm@example.com',
+// Import du service utilisateur
+import { UserService } from '@/services/user/userService'
+
+// Informations par défaut (en attendant de charger les vraies données)
+const userInfo = ref({
+  name: 'Chargement...',
+  firstName: '',
+  lastName: '',
+  email: '',
   avatar: 'https://github.com/shadcn.png',
+})
+
+// État du modal de confirmation de déconnexion
+const isLogoutDialogOpen = ref(false)
+
+// Charger les informations de l'utilisateur au montage du composant
+onMounted(async () => {
+  try {
+    // Récupérer les données formatées de l'utilisateur via le service
+    const userData = await UserService.getUserDisplayInfo()
+
+    if (userData) {
+      // Mettre à jour les informations de l'utilisateur
+      userInfo.value = {
+        name: userData.name,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        avatar: userData.avatar || 'https://github.com/shadcn.png',
+      }
+      console.log('Informations utilisateur chargées:', userInfo.value)
+    } else {
+      console.log('Aucun utilisateur connecté trouvé')
+    }
+  } catch (error) {
+    console.error('Erreur lors de la récupération des informations utilisateur:', error)
+  }
+})
+
+// Événements du composant (non utilisés actuellement)
+
+// Imports pour la gestion de l'authentification et de la navigation
+import { AuthService } from '@/services/auth/auth'
+import { AuthNotificationService } from '@/services/auth/authNotificationService'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+// Ouvrir le modal de confirmation
+function openLogoutConfirmation() {
+  isLogoutDialogOpen.value = true
 }
 
-const emit = defineEmits(['tab-change'])
+// Fonction pour gérer la déconnexion après confirmation
+async function handleLogout() {
+  try {
+    console.log('Tentative de déconnexion...')
+    const success = await AuthService.signOut()
+
+    if (success) {
+      console.log('Déconnexion réussie')
+      // Nettoyer le localStorage si nécessaire
+      localStorage.removeItem('sb-user')
+      localStorage.removeItem('sb-access-token')
+      localStorage.removeItem('sb:session')
+
+      // Fermer le modal
+      isLogoutDialogOpen.value = false
+
+      // Rediriger vers la page de connexion
+      router.push('/auth/login')
+    } else {
+      console.error('Échec de la déconnexion')
+
+      // Afficher une notification d'erreur
+      AuthNotificationService.notifyLoginError('Échec de la déconnexion')
+    }
+  } catch (error) {
+    console.error('Erreur lors de la déconnexion:', error)
+
+    // Afficher une notification d'erreur
+    AuthNotificationService.notifyLoginError("Une erreur s'est produite lors de la déconnexion")
+  }
+}
 
 // Sur changement, appliquer la classe et sauvegarder
 const data = {
   teams: [
     {
       name: 'Agence de ouenzé',
-      logo: Command,
+      logo: AudioWaveform,
       plan: 'Enterprise',
     },
     {
@@ -127,7 +214,7 @@ const data = {
   <Sidebar class="border-r-0" v-bind="props">
     <SidebarHeader>
       <div class="flex items-center justify-between">
-        <TeamSwitcher :teams="data.teams" class="w-full" />
+        <TeamSwitcher :teams="data.teams" class="w-full mt-2" />
       </div>
       <nav class="mt-4">
         <SidebarMenu>
@@ -169,7 +256,9 @@ const data = {
                 >
                   <Avatar class="h-8 w-8 rounded-lg">
                     <AvatarImage :src="userInfo.avatar" :alt="userInfo.name" />
-                    <AvatarFallback class="rounded-lg">SC</AvatarFallback>
+                    <AvatarFallback class="rounded-lg">{{
+                      userInfo.name ? userInfo.name.substring(0, 2).toUpperCase() : 'SC'
+                    }}</AvatarFallback>
                   </Avatar>
                   <div class="grid flex-1 text-left text-sm leading-tight">
                     <span class="truncate font-semibold">{{ userInfo.name }}</span>
@@ -188,7 +277,9 @@ const data = {
                   <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <Avatar class="h-8 w-8 rounded-lg">
                       <AvatarImage :src="userInfo.avatar" :alt="userInfo.name" />
-                      <AvatarFallback class="rounded-lg">SC</AvatarFallback>
+                      <AvatarFallback class="rounded-lg">{{
+                        userInfo.name ? userInfo.name.substring(0, 2).toUpperCase() : 'SC'
+                      }}</AvatarFallback>
                     </Avatar>
                     <div class="grid flex-1 text-left text-sm leading-tight">
                       <span class="truncate font-semibold">{{ userInfo.name }}</span>
@@ -214,9 +305,16 @@ const data = {
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <LogOut class="mr-2 h-4 w-4" />
-                  Déconnexion
+                <DropdownMenuItem
+                  @click="openLogoutConfirmation"
+                  class="group hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-300"
+                >
+                  <LogOut
+                    class="mr-2 h-4 w-4 group-hover:text-red-600 transition-all duration-300"
+                  />
+                  <span class="group-hover:text-red-600 transition-all duration-300"
+                    >Déconnexion</span
+                  >
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -226,4 +324,26 @@ const data = {
     </SidebarContent>
     <SidebarRail />
   </Sidebar>
+
+  <!-- Modal de confirmation de déconnexion -->
+  <Dialog v-model:open="isLogoutDialogOpen">
+    <DialogContent class="sm:max-w-[355px]">
+      <DialogHeader>
+        <DialogTitle class="text-left text-xl">Confirmer la déconnexion</DialogTitle>
+        <DialogDescription class="text-left">
+          Êtes-vous sûr de vouloir vous déconnecter ?
+        </DialogDescription>
+      </DialogHeader>
+      <DialogFooter class="flex justify-end sm:justify-end mt-6">
+        <Button variant="outline" @click="isLogoutDialogOpen = false"> Annuler </Button>
+        <Button
+          variant="destructive"
+          @click="handleLogout"
+          class="bg-red-600 hover:bg-red-700 text-white"
+        >
+          Déconnexion
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 </template>

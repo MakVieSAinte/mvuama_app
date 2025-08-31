@@ -1,4 +1,5 @@
 import { supabase } from '../config/supabaseClient'
+import { AuthNotificationService } from './authNotificationService'
 
 export class AuthService {
   static async signUp(email: string, password: string) {
@@ -10,11 +11,21 @@ export class AuthService {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       })
+
+      if (!error) {
+        AuthNotificationService.notifyRegistrationSuccess()
+      } else {
+        AuthNotificationService.notifyRegistrationError(error.message)
+      }
+
       return { data, error }
     } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Une erreur est survenue'
+      AuthNotificationService.notifyRegistrationError(errorMessage)
+
       return {
         data: null,
-        error: error instanceof Error ? error : new Error('Une erreur est survenue'),
+        error: error instanceof Error ? error : new Error(errorMessage),
       }
     }
   }
@@ -59,9 +70,18 @@ export class AuthService {
 
       if (error) {
         console.error("Erreur d'authentification Supabase:", error)
+        AuthNotificationService.notifyLoginError(error.message || 'Identifiants incorrects')
         throw new Error(error.message || 'Erreur lors de la connexion')
       }
 
+      // Récupérer le nom d'utilisateur pour un message personnalisé
+      const username =
+        data.user?.user_metadata?.name ||
+        data.user?.user_metadata?.first_name ||
+        email.split('@')[0] ||
+        'Utilisateur'
+
+      AuthNotificationService.notifyLoginSuccess(username)
       return data
     } catch (error) {
       console.error('Exception dans signIn:', error)
@@ -96,6 +116,9 @@ export class AuthService {
     try {
       const { error } = await supabase.auth.signOut()
       if (error) throw error
+
+      // Notification de déconnexion réussie
+      AuthNotificationService.notifyLogout()
       return true
     } catch (error) {
       console.error('Erreur lors de la déconnexion:', error)
@@ -114,6 +137,21 @@ export class AuthService {
       return data.session
     } catch (error) {
       console.error('Erreur lors de la récupération de la session:', error)
+      return null
+    }
+  }
+
+  /**
+   * Récupère les informations de l'utilisateur connecté
+   * @returns {Promise<any>} - Les données de l'utilisateur ou null
+   */
+  static async getCurrentUser() {
+    try {
+      const { data, error } = await supabase.auth.getUser()
+      if (error) throw error
+      return data.user
+    } catch (error) {
+      console.error('Erreur lors de la récupération des données utilisateur:', error)
       return null
     }
   }
