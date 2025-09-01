@@ -97,4 +97,51 @@ export class AuthNotificationService {
       },
     })
   }
+
+  /**
+   * Affiche une notification après l'envoi d'un email de réinitialisation de mot de passe
+   */
+  static notifyResetEmailSent() {
+    this.toast.toastSuccess('Email de réinitialisation envoyé !', {
+      description:
+        'Un email contenant les instructions pour réinitialiser votre mot de passe a été envoyé à votre adresse.',
+      duration: 6000,
+    })
+  }
+
+  /**
+   * Affiche une notification après une erreur d'envoi d'email de réinitialisation
+   * @param error Message d'erreur
+   */
+  static notifyResetEmailError(error: string = "L'envoi de l'email a échoué") {
+    this.toast.toastError(error, {
+      description: 'Veuillez vérifier votre adresse email et réessayer.',
+      duration: 5000,
+    })
+  }
+
+  /**
+   * Affiche une notification après une réinitialisation de mot de passe réussie
+   */
+  static notifyPasswordResetSuccess() {
+    this.toast.toastSuccess('Mot de passe réinitialisé avec succès !', {
+      description: 'Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.',
+      duration: 5000,
+      action: {
+        label: 'Se connecter',
+        onClick: () => (window.location.href = '/auth/login'),
+      },
+    })
+  }
+
+  /**
+   * Affiche une notification après une erreur de réinitialisation de mot de passe
+   * @param error Message d'erreur
+   */
+  static notifyPasswordResetError(error: string = 'La réinitialisation du mot de passe a échoué') {
+    this.toast.toastError(error, {
+      description: 'Veuillez réessayer ou demander un nouveau lien de réinitialisation.',
+      duration: 5000,
+    })
+  }
 }

@@ -2,6 +2,7 @@
 import {
   AudioWaveform,
   Blocks,
+  Building,
   Calendar,
   Command,
   Home,
@@ -115,7 +116,6 @@ onMounted(async () => {
 
 // Imports pour la gestion de l'authentification et de la navigation
 import { AuthService } from '@/services/auth/auth'
-import { AuthNotificationService } from '@/services/auth/authNotificationService'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
@@ -142,32 +142,27 @@ async function handleLogout() {
 
       // Rediriger vers la page de connexion
       router.push('/auth/login')
+
+      // Les notifications sont déjà gérées par la méthode signOut de AuthService
     } else {
       console.error('Échec de la déconnexion')
-
-      // Afficher une notification d'erreur
-      AuthNotificationService.notifyLoginError('Échec de la déconnexion')
+      // Les notifications d'erreur sont déjà gérées par la méthode signOut de AuthService
     }
   } catch (error) {
     console.error('Erreur lors de la déconnexion:', error)
-
-    // Afficher une notification d'erreur
-    AuthNotificationService.notifyLoginError("Une erreur s'est produite lors de la déconnexion")
+    // Les erreurs sont déjà gérées par la méthode signOut de AuthService
   }
 }
 
 // Sur changement, appliquer la classe et sauvegarder
+// Données de l'interface
 const data = {
+  // Des équipes de test (elles seront remplacées par des données dynamiques)
   teams: [
     {
-      name: 'Agence de ouenzé',
+      name: 'MVUAMA Agency',
       logo: AudioWaveform,
-      plan: 'Enterprise',
-    },
-    {
-      name: 'Agence de Bacongo',
-      logo: AudioWaveform,
-      plan: 'Startup',
+      plan: 'Licence Pro',
     },
   ],
   navMain: [
@@ -291,17 +286,26 @@ const data = {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <User class="mr-2 h-4 w-4" />
-                    Profil
+                  <DropdownMenuItem asChild>
+                    <router-link to="/profile" class="flex w-full items-center cursor-pointer">
+                      <User class="mr-2 h-4 w-4" />
+                      <span>Profil</span>
+                    </router-link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <CreditCard class="mr-2 h-4 w-4" />
-                    Abonnement
+                  <DropdownMenuItem asChild>
+                    <router-link to="/subscription" class="flex w-full items-center cursor-pointer">
+                      <CreditCard class="mr-2 h-4 w-4" />
+                      <span>Abonnement</span>
+                    </router-link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Bell class="mr-2 h-4 w-4" />
-                    Notifications
+                  <DropdownMenuItem asChild>
+                    <router-link
+                      to="/notifications"
+                      class="flex w-full items-center cursor-pointer"
+                    >
+                      <Bell class="mr-2 h-4 w-4" />
+                      <span>Notifications</span>
+                    </router-link>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />

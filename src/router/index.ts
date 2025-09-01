@@ -2,10 +2,17 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import { authMiddleware } from '../middleware/auth'
 import { AuthService } from '../services/auth/auth'
+import { supabase } from '../services/config/supabaseClient'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/create-agency',
+      name: 'create-agency',
+      component: () => import('../views/CreateAgencyView.vue'),
+      meta: { requiresAuth: true },
+    },
     {
       path: '/auth',
       name: 'auth',
@@ -21,6 +28,26 @@ const router = createRouter({
           path: 'register',
           name: 'register',
           component: () => import('../views/auth/RegisterView.vue'),
+        },
+        {
+          path: 'forgot-password',
+          name: 'forgot-password',
+          component: () => import('../views/auth/ForgotPasswordView.vue'),
+        },
+        {
+          path: 'forgot-password-confirmation',
+          name: 'forgot-password-confirmation',
+          component: () => import('../views/auth/ForgotPasswordConfirmationView.vue'),
+        },
+        {
+          path: 'reset-password',
+          name: 'reset-password',
+          component: () => import('../views/auth/ResetPasswordView.vue'),
+        },
+        {
+          path: 'handler',
+          name: 'auth-handler',
+          component: () => import('../views/auth/AuthHandlerView.vue'),
         },
         {
           path: 'callback',
@@ -116,6 +143,33 @@ const router = createRouter({
           name: 'paiements',
           component: () => import('../views/PaiementsView.vue'),
         },
+        {
+          path: '/profile',
+          name: 'profile',
+          component: () => import('../views/user/ProfileView.vue'),
+          meta: {
+            requiresAuth: true,
+            title: 'Profil Utilisateur',
+          },
+        },
+        {
+          path: '/subscription',
+          name: 'subscription',
+          component: () => import('../views/user/SubscriptionView.vue'),
+          meta: {
+            requiresAuth: true,
+            title: 'Abonnement',
+          },
+        },
+        {
+          path: '/notifications',
+          name: 'notifications',
+          component: () => import('../views/user/NotificationView.vue'),
+          meta: {
+            requiresAuth: true,
+            title: 'Notifications',
+          },
+        },
       ],
     },
   ],
@@ -123,36 +177,65 @@ const router = createRouter({
 
 // Navigation guard global : vérifie l'authentification sur toutes les routes
 router.beforeEach(async (to, from, next) => {
+  console.log(`Navigation de ${from.path} vers ${to.path}`)
+
   // Autoriser l'accès aux routes d'authentification sans être connecté
   if (
     to.path.startsWith('/auth/login') ||
     to.path.startsWith('/auth/register') ||
-    to.path.startsWith('/auth/callback')
+    to.path.startsWith('/auth/callback') ||
+    to.path.startsWith('/auth/forgot-password') ||
+    to.path.startsWith('/auth/forgot-password-confirmation') ||
+    to.path.startsWith('/auth/reset-password') ||
+    to.path.startsWith('/auth/handler')
   ) {
+    console.log("Accès à une route d'authentification autorisé")
     return next()
   }
 
-  // Vérifier la session via l'API Supabase si on vient juste de se connecter
-  if (from.path === '/auth/login') {
-    try {
-      const session = await AuthService.getCurrentSession()
-      if (session) {
-        console.log("Session active détectée, autorisation d'accès")
-        return next()
-      }
-    } catch (error) {
-      console.error('Erreur lors de la vérification de la session:', error)
-    }
-  }
+  // Vérifier si l'utilisateur est authentifié via Supabase
+  try {
+    const { data } = await supabase.auth.getSession()
+    console.log('Session Supabase vérifiée:', data?.session ? 'Active' : 'Inactive')
 
-  // Pour toutes les autres routes, vérifier si l'utilisateur est connecté
-  if (!AuthService.isAuthenticated()) {
-    console.log('Utilisateur non connecté, redirection vers la page de connexion')
+    // Si l'utilisateur n'est pas authentifié, rediriger vers login
+    if (!data.session) {
+      console.log('Aucune session active, redirection vers login')
+      return next('/auth/login')
+    }
+
+    // Si l'utilisateur vient de se connecter, vérifier s'il a une agence
+    if (from.path === '/auth/login' || to.path === '/create-agency') {
+      console.log("Vérification des agences de l'utilisateur après connexion")
+
+      try {
+        const { AgencyService } = await import('../services/agencies/agencyService')
+        const { data: agencies } = await AgencyService.getUserAgencies(data.session.user.id)
+        console.log('Agences trouvées:', agencies)
+
+        // Si l'utilisateur n'a pas d'agence, le rediriger vers create-agency
+        if (!agencies || agencies.length === 0) {
+          if (to.path !== '/create-agency') {
+            console.log("Aucune agence trouvée, redirection vers création d'agence")
+            return next('/create-agency')
+          }
+        } else if (to.path === '/create-agency') {
+          // Si l'utilisateur a déjà des agences et tente d'accéder à create-agency, le rediriger vers le dashboard
+          console.log("L'utilisateur a déjà des agences, redirection vers dashboard")
+          return next('/')
+        }
+      } catch (agencyError) {
+        console.error('Erreur lors de la vérification des agences:', agencyError)
+      }
+    }
+
+    // Si l'utilisateur est connecté, permettre l'accès à la route demandée
+    console.log('Navigation autorisée')
+    return next()
+  } catch (error) {
+    console.error("Erreur lors de la vérification de l'authentification:", error)
     return next('/auth/login')
   }
-
-  // Si l'utilisateur est connecté, permettre l'accès à la route demandée
-  return next()
 })
 
 export default router

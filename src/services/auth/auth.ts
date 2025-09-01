@@ -12,16 +12,10 @@ export class AuthService {
         },
       })
 
-      if (!error) {
-        AuthNotificationService.notifyRegistrationSuccess()
-      } else {
-        AuthNotificationService.notifyRegistrationError(error.message)
-      }
-
+      // Ne pas envoyer de notification ici, laissons le composant le faire
       return { data, error }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Une erreur est survenue'
-      AuthNotificationService.notifyRegistrationError(errorMessage)
 
       return {
         data: null,
@@ -74,14 +68,7 @@ export class AuthService {
         throw new Error(error.message || 'Erreur lors de la connexion')
       }
 
-      // Récupérer le nom d'utilisateur pour un message personnalisé
-      const username =
-        data.user?.user_metadata?.name ||
-        data.user?.user_metadata?.first_name ||
-        email.split('@')[0] ||
-        'Utilisateur'
-
-      AuthNotificationService.notifyLoginSuccess(username)
+      // Ne pas envoyer de notification ici, laissons le composant s'en charger
       return data
     } catch (error) {
       console.error('Exception dans signIn:', error)
@@ -99,8 +86,25 @@ export class AuthService {
     // Vérifier aussi si on a un utilisateur dans localStorage
     const user = localStorage.getItem('sb-user')
 
+    console.log("Vérification de l'authentification:", { session, user })
+
     // Si on a une session ou un utilisateur, on considère qu'on est authentifié
     return !!(session || user)
+  }
+
+  /**
+   * Vérifie de manière asynchrone si l'utilisateur est authentifié
+   * @returns {Promise<boolean>} - true si l'utilisateur est authentifié
+   */
+  static async checkAuth(): Promise<boolean> {
+    try {
+      const session = await this.getCurrentSession()
+      console.log('Session actuelle:', session ? 'Active' : 'Inactive')
+      return !!session
+    } catch (error) {
+      console.error("Erreur lors de la vérification de l'authentification:", error)
+      return false
+    }
   }
 
   static isAdmin(): boolean {

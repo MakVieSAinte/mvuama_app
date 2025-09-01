@@ -1,0 +1,9 @@
+.custom-tabs .tab-trigger[data-state='active'] {
+  background-color: rgba(0, 0, 0, 0.07) !important;
+  color: var(--foreground) !important;
+}
+
+.dark .custom-tabs .tab-trigger[data-state='active'] {
+  background-color: rgba(255, 255, 255, 0.07) !important;
+  color: var(--foreground) !important;
+}

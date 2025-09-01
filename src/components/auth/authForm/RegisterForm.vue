@@ -203,14 +203,6 @@
             <span v-if="formErrors.errorConfirmPassword" class="text-xs text-red-500">
               {{ formErrors.errorConfirmPasswordMessage }}
             </span>
-
-            <!-- Message d'erreur général -->
-            <div
-              v-if="errorMessage"
-              class="p-3 rounded bg-red-100 border border-red-300 text-red-800 mt-4"
-            >
-              {{ errorMessage }}
-            </div>
           </div>
 
           <!-- Navigation des étapes -->
@@ -288,7 +280,6 @@ export default defineComponent({
       showPassword: false,
       showConfirmPassword: false,
       isLoading: false,
-      errorMessage: '',
       currentStep: 0,
       steps: [
         { title: '', description: '' },
@@ -442,8 +433,6 @@ export default defineComponent({
 
     async register() {
       try {
-        this.errorMessage = ''
-
         // Validation complète du formulaire
         if (!this.validateForm()) {
           return
@@ -468,7 +457,6 @@ export default defineComponent({
 
         if (result === 'Erreur') {
           const errorMsg = "Une erreur est survenue lors de l'inscription. Veuillez réessayer."
-          this.errorMessage = errorMsg
           // Notification d'échec d'inscription
           AuthNotificationService.notifyRegistrationError(errorMsg)
           return
@@ -482,7 +470,6 @@ export default defineComponent({
       } catch (error: unknown) {
         const errorMsg =
           error instanceof Error ? error.message : "Une erreur inattendue s'est produite"
-        this.errorMessage = errorMsg
         // Notification d'erreur
         AuthNotificationService.notifyRegistrationError(errorMsg)
       } finally {

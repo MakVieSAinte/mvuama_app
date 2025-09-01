@@ -33,15 +33,15 @@
             type="button"
             @click="showPassword = !showPassword"
             tabindex="-1"
-            class="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground focus:outline-none"
+            class="absolute right-2 -bottom-2 -translate-y-1/2 text-muted-foreground focus:outline-none"
           >
             <Eye v-if="!showPassword" class="w-[17px]" />
             <EyeOff v-else class="w-[17px]" />
           </button>
-          <span v-if="formErrors.errorPassword" class="text-xs text-red-500">
-            {{ formErrors.errorPasswordMessage }}
-          </span>
         </div>
+        <span v-if="formErrors.errorPassword" class="text-xs text-red-500">
+          {{ formErrors.errorPasswordMessage }}
+        </span>
 
         <div class="flex items-center justify-between flex-wrap mt-2">
           <div class="flex items-center space-x-2">
@@ -53,19 +53,11 @@
               Se souvenir de moi
             </label>
           </div>
-          <a
-            href="#"
+          <router-link
+            to="/auth/forgot-password"
             class="text-xs sm:text-sm text-muted-foreground underline-offset-4 hover:underline mt-1 sm:mt-0"
-            >Mot de passe oublié?</a
+            >Mot de passe oublié?</router-link
           >
-        </div>
-
-        <!-- Message d'erreur général -->
-        <div
-          v-if="errorMessage"
-          class="p-3 rounded bg-red-100 border border-red-300 text-red-800 mt-4 text-sm"
-        >
-          {{ errorMessage }}
         </div>
 
         <UiButton
@@ -91,6 +83,8 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { LoginForm } from '@/formBuilder/auth/loginForm'
 import { LoginService } from '@/services/auth/loginService'
 import { AuthNotificationService } from '@/services/auth/authNotificationService'
+import { supabase } from '@/services/config/supabaseClient'
+import { AgencyService } from '@/services/agencies/agencyService'
 import type { ILoginBuilder } from '@/interfaces/loginInterface'
 
 export default defineComponent({
@@ -100,7 +94,6 @@ export default defineComponent({
     return {
       showPassword: false,
       isLoading: false,
-      errorMessage: '',
       formData: {
         email: '',
         password: '',
@@ -147,8 +140,6 @@ export default defineComponent({
      */
     async handleLogin() {
       try {
-        this.errorMessage = ''
-
         // Validation du formulaire
         if (!this.validateForm()) {
           return
@@ -168,7 +159,6 @@ export default defineComponent({
         const result = await loginService.login()
 
         if (!result) {
-          this.errorMessage = 'Email ou mot de passe incorrect'
           AuthNotificationService.notifyLoginError('Email ou mot de passe incorrect')
           return
         }
@@ -180,21 +170,47 @@ export default defineComponent({
         const username = this.formData.email.split('@')[0] || 'Utilisateur'
         AuthNotificationService.notifyLoginSuccess(username)
 
-        // Redirection vers le dashboard
-        this.$router.push('/')
+        // Vérifier si l'utilisateur a des agences
+        try {
+          console.log('Tentative de redirection après connexion...')
+          const { data: user } = await supabase.auth.getUser()
+          console.log('Utilisateur récupéré:', user)
+
+          if (user && user.user) {
+            console.log('Recherche des agences pour userId:', user.user.id)
+            const { data: agencies, error } = await AgencyService.getUserAgencies(user.user.id)
+            console.log("Résultat de la recherche d'agences:", { agencies, error })
+
+            // Forcer la navigation vers la page appropriée
+            if (!agencies || agencies.length === 0) {
+              console.log('Aucune agence trouvée, redirection vers create-agency')
+              // Utiliser la navigation programmatique via l'objet router
+              window.location.href = '/create-agency'
+            } else {
+              console.log('Agences trouvées, redirection vers dashboard')
+              window.location.href = '/'
+            }
+          } else {
+            console.log('Utilisateur non disponible, redirection vers create-agency')
+            window.location.href = '/create-agency'
+          }
+        } catch (error) {
+          console.error('Erreur lors de la redirection après connexion:', error)
+          // En cas d'erreur, rediriger vers la création d'agence
+          window.location.href = '/create-agency'
+        }
       } catch (error: unknown) {
         console.error('Erreur de login dans le composant:', error)
-        // Affichage de l'erreur spécifique provenant du service
+        // Notification d'erreur
         const errorMessage =
           error instanceof Error ? error.message : "Une erreur inattendue s'est produite"
-        this.errorMessage = errorMessage
-
-        // Notification d'erreur
         AuthNotificationService.notifyLoginError(errorMessage)
       } finally {
         this.isLoading = false
       }
     },
+
+    // La méthode goToForgotPassword n'est plus nécessaire, nous utilisons router-link directement
   },
 })
 </script>
