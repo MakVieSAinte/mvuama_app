@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import {
   AudioWaveform,
   Calendar,
@@ -180,7 +180,7 @@ const data = {
       icon: Trash2,
     },
     {
-      title: "Vous avez besoin d'aide ?",
+      title: 'Vous avez besoin d\'aide ?',
       url: '/aide',
       icon: MessageCircleQuestion,
     },
@@ -291,7 +291,10 @@ const data = {
                     </router-link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <router-link to="/corbeille" class="flex w-full items-center cursor-pointer">
+                    <router-link
+                      to="/corbeille"
+                      class="flex w-full items-center cursor-pointer"
+                    >
                       <Trash2 class="mr-2 h-4 w-4" />
                       <span>Éléments supprimés</span>
                     </router-link>

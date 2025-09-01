@@ -1,0 +1,573 @@
+<template>
+  <div class="space-y-8 min-h-screen bg-gradient-to-br from-background to-muted p-4 md:p-8">
+    <!-- En-tête avec titre et description -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight">Corbeille</h1>
+        <p class="text-muted-foreground">
+          Les éléments supprimés sont conservés ici pendant 30 jours avant d'être définitivement supprimés.
+        </p>
+      </div>
+    </div>
+    
+    <!-- Contenu principal -->
+    <Card>
+      <CardHeader class="flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
+        <div>
+          <CardTitle>Éléments supprimés</CardTitle>
+          <CardDescription>
+            Restaurez ou supprimez définitivement des éléments
+          </CardDescription>
+        </div>
+        
+        <!-- Barre de recherche -->
+        <div class="relative w-full md:w-auto">
+          <Search class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input 
+            v-model="searchQuery" 
+            placeholder="Rechercher un élément..." 
+            class="pl-10 w-full md:w-[300px] focus:outline-none focus:ring-0"
+          />
+        </div>
+      </CardHeader>
+      
+      <CardContent>
+        <!-- Tabs de filtrage par type -->
+        <Tabs v-model="activeTab" class="w-full mb-8">
+          <TabsList class="w-full md:w-auto custom-tabs">
+            <TabsTrigger value="all" class="flex-1 md:flex-none">
+              Tous
+            </TabsTrigger>
+            <TabsTrigger value="vehicle" class="flex-1 md:flex-none">
+              <Car class="mr-2 h-4 w-4" />
+              Véhicules
+            </TabsTrigger>
+            <TabsTrigger value="driver" class="flex-1 md:flex-none">
+              <User class="mr-2 h-4 w-4" />
+              Chauffeurs
+            </TabsTrigger>
+            <TabsTrigger value="receipt" class="flex-1 md:flex-none">
+              <FileText class="mr-2 h-4 w-4" />
+              Recettes
+            </TabsTrigger>
+            <TabsTrigger value="payment" class="flex-1 md:flex-none">
+              <CreditCard class="mr-2 h-4 w-4" />
+              Paiements
+            </TabsTrigger>
+            <TabsTrigger value="document" class="flex-1 md:flex-none">
+              <File class="mr-2 h-4 w-4" />
+              Documents
+            </TabsTrigger>
+          </TabsList>
+          
+          <!-- Contenu des tabs (commun à tous) -->
+          <TabsContent value="all" class="mt-6">
+            <div class="space-y-4">
+              <!-- Actions en masse -->
+              <div class="flex flex-col sm:flex-row justify-between gap-2">
+                <div class="flex gap-2">
+                  <Button 
+                    v-if="selectedItems.size > 0" 
+                    @click="confirmBulkAction('restore')" 
+                    variant="outline"
+                    class="flex items-center"
+                  >
+                    <RefreshCw class="mr-2 h-4 w-4" />
+                    Restaurer ({{ selectedItems.size }})
+                  </Button>
+                  <Button 
+                    v-if="selectedItems.size > 0" 
+                    @click="confirmBulkAction('delete')" 
+                    variant="destructive"
+                    class="flex items-center"
+                  >
+                    <Trash2 class="mr-2 h-4 w-4" />
+                    Supprimer ({{ selectedItems.size }})
+                  </Button>
+                </div>
+                
+                <Button 
+                  v-if="deletedItems.length > 0" 
+                  @click="permanentDeleteDialog = true" 
+                  variant="ghost"
+                  class="text-destructive hover:text-destructive hover:bg-destructive/10 flex items-center"
+                >
+                  <TrashIcon class="mr-2 h-4 w-4" />
+                  Vider la corbeille
+                </Button>
+              </div>
+              
+              <!-- Tableau des éléments supprimés -->
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead class="w-12">
+                      <Checkbox 
+                        :checked="selectAllItems" 
+                        @update:checked="toggleSelectAll" 
+                        aria-label="Sélectionner tous les éléments"
+                      />
+                    </TableHead>
+                    <TableHead>Élément</TableHead>
+                    <TableHead class="hidden md:table-cell">Type</TableHead>
+                    <TableHead class="hidden md:table-cell">Supprimé par</TableHead>
+                    <TableHead class="hidden md:table-cell">Date de suppression</TableHead>
+                    <TableHead class="hidden md:table-cell">Expiration</TableHead>
+                    <TableHead class="w-[100px]">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody v-if="filteredItems.length > 0">
+                  <TableRow v-for="item in filteredItems" :key="item.id" class="hover:bg-muted/50">
+                    <TableCell class="p-0 px-4">
+                      <Checkbox 
+                        :checked="selectedItems.has(item.id)" 
+                        @update:checked="toggleSelectItem(item.id)" 
+                        :aria-label="`Sélectionner ${item.name}`"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <div class="font-medium">{{ item.name }}</div>
+                    </TableCell>
+                    <TableCell class="hidden md:table-cell">
+                      <Badge :variant="getTypeVariant(item.type)">
+                        <component :is="getTypeIcon(item.type)" class="mr-1 h-3 w-3" />
+                        {{ getTypeLabel(item.type) }}
+                      </Badge>
+                    </TableCell>
+                    <TableCell class="hidden md:table-cell">{{ item.deleteBy }}</TableCell>
+                    <TableCell class="hidden md:table-cell whitespace-nowrap">{{ formatDateTime(item.deletedAt) }}</TableCell>
+                    <TableCell class="hidden md:table-cell">
+                      <div class="flex items-center">
+                        <Clock class="mr-1 h-3 w-3 text-yellow-600" />
+                        <span>{{ getRemainingDays(item.expiresAt) }} jours</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div class="flex items-center gap-2">
+                        <Button size="icon" variant="ghost" @click="confirmRestore(item)" title="Restaurer">
+                          <RefreshCw class="h-4 w-4" />
+                        </Button>
+                        <Button size="icon" variant="ghost" @click="confirmDelete(item)" class="text-destructive hover:text-destructive hover:bg-destructive/10" title="Supprimer définitivement">
+                          <Trash2 class="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+                <TableBody v-else>
+                  <TableRow>
+                    <TableCell colSpan="7" class="h-32 text-center">
+                      <div class="flex flex-col items-center justify-center text-muted-foreground">
+                        <TrashIcon class="h-10 w-10 mb-2" />
+                        <p>Aucun élément supprimé trouvé</p>
+                        <p class="text-sm">Les éléments supprimés apparaîtront ici</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
+          </TabsContent>
+          
+          <!-- Les autres onglets utilisent le même contenu -->
+          <TabsContent value="vehicle"><div class="space-y-4"><!-- Même contenu --></div></TabsContent>
+          <TabsContent value="driver"><div class="space-y-4"><!-- Même contenu --></div></TabsContent>
+          <TabsContent value="receipt"><div class="space-y-4"><!-- Même contenu --></div></TabsContent>
+          <TabsContent value="payment"><div class="space-y-4"><!-- Même contenu --></div></TabsContent>
+          <TabsContent value="document"><div class="space-y-4"><!-- Même contenu --></div></TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
+  </div>
+  
+  <!-- Modal de confirmation pour restauration -->
+  <AlertDialog v-model:open="restoreDialog">
+    <AlertDialogContent>
+      <AlertDialogHeader>
+        <AlertDialogTitle>Restaurer {{ selectedItemForAction?.name }}</AlertDialogTitle>
+        <AlertDialogDescription>
+          Cette action restaurera l'élément supprimé et le remettra à sa place d'origine.
+        </AlertDialogDescription>
+      </AlertDialogHeader>
+      <AlertDialogFooter>
+        <AlertDialogCancel @click="restoreDialog = false">Annuler</AlertDialogCancel>
+        <AlertDialogAction 
+          class="bg-primary text-primary-foreground hover:bg-primary/90"
+          @click="restoreItem(); restoreDialog = false"
+        >
+          Restaurer
+        </AlertDialogAction>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialog>
+  
+  <!-- Modal de confirmation pour suppression définitive -->
+  <AlertDialog v-model:open="permanentDeleteDialog">
+    <AlertDialogContent>
+      <AlertDialogHeader>
+        <AlertDialogTitle>Vider la corbeille</AlertDialogTitle>
+        <AlertDialogDescription>
+          Cette action supprimera définitivement tous les éléments de la corbeille.
+          Cette opération est irréversible.
+        </AlertDialogDescription>
+      </AlertDialogHeader>
+      <AlertDialogFooter>
+        <AlertDialogCancel @click="permanentDeleteDialog = false">Annuler</AlertDialogCancel>
+        <AlertDialogAction 
+          class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          @click="emptyTrash(); permanentDeleteDialog = false"
+        >
+          Vider la corbeille
+        </AlertDialogAction>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialog>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted, computed } from 'vue'
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardFooter, 
+  CardHeader, 
+  CardTitle 
+} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '@/components/ui/alert-dialog'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Checkbox } from '@/components/ui/checkbox'
+import { 
+  Search, 
+  MoreVertical, 
+  AlertCircle, 
+  Clock, 
+  Car, 
+  User, 
+  FileText, 
+  TrashIcon,
+  RefreshCw,
+  Trash2,
+  CreditCard,
+  File
+} from 'lucide-vue-next'
+import '@/assets/css/custom-tabs.css'
+import { useSonner } from '@/plugins/sonner'
+
+// Définition des types
+type ItemType = 'vehicle' | 'driver' | 'receipt' | 'payment' | 'document'
+
+interface DeletedItem {
+  id: string;
+  name: string;
+  type: ItemType;
+  deletedAt: Date;
+  deleteBy: string;
+  expiresAt: Date;
+  metadata: Record<string, any>;
+}
+
+// Initialiser le toast
+const { toastSuccess, toastError } = useSonner()
+
+// État des données
+const deletedItems = ref<DeletedItem[]>([])
+const isLoading = ref(false)
+const activeTab = ref<ItemType | 'all'>('all')
+const searchQuery = ref('')
+const selectedItems = ref<Set<string>>(new Set())
+const selectAllItems = ref(false)
+const permanentDeleteDialog = ref(false)
+const restoreDialog = ref(false)
+const selectedItemForAction = ref<DeletedItem | null>(null)
+const bulkActionType = ref<'restore' | 'delete' | null>(null)
+
+// Données de test pour simulation
+const generateMockData = () => {
+  const types: ItemType[] = ['vehicle', 'driver', 'receipt', 'payment', 'document']
+  const mockData: DeletedItem[] = []
+  
+  for (let i = 1; i <= 20; i++) {
+    const type = types[Math.floor(Math.random() * types.length)]
+    const deletedDate = new Date()
+    deletedDate.setDate(deletedDate.getDate() - Math.floor(Math.random() * 20))
+    
+    const expiresDate = new Date(deletedDate)
+    expiresDate.setDate(expiresDate.getDate() + 30)
+    
+    let name = ''
+    let metadata = {}
+    
+    switch (type) {
+      case 'vehicle':
+        name = `Véhicule ${i} - ${['Toyota', 'Peugeot', 'Renault', 'Mercedes'][Math.floor(Math.random() * 4)]}`
+        metadata = { 
+          licensePlate: `ABC-${i}${i+1}${i+2}`, 
+          model: `Modèle ${String.fromCharCode(65 + i % 26)}` 
+        }
+        break
+      case 'driver':
+        name = `Chauffeur ${i} - ${['Jean', 'Pierre', 'Marie', 'Sophie'][Math.floor(Math.random() * 4)]} ${['Durand', 'Martin', 'Bernard', 'Petit'][Math.floor(Math.random() * 4)]}`
+        metadata = { 
+          phone: `+243 9${i}${i+1} ${i+2}${i+3}${i+4} ${i+5}${i+6}${i+7}`, 
+          license: `P${i}${i+1}${i+2}${i+3}${i+4}` 
+        }
+        break
+      case 'receipt':
+        name = `Recette #R${i}${i+1}${i+2}-${Math.floor(Math.random() * 1000)}`
+        metadata = { 
+          amount: Math.floor(Math.random() * 500000) + 10000, 
+          vehicle: `Véhicule ${Math.floor(Math.random() * 10) + 1}` 
+        }
+        break
+      case 'payment':
+        name = `Paiement #P${i}${i+1}${i+2}-${Math.floor(Math.random() * 1000)}`
+        metadata = { 
+          amount: Math.floor(Math.random() * 300000) + 10000, 
+          method: ['Mobile Money', 'Espèces', 'Carte bancaire'][Math.floor(Math.random() * 3)] 
+        }
+        break
+      case 'document':
+        name = `Document #D${i}${i+1}${i+2}-${Math.floor(Math.random() * 1000)}`
+        metadata = { 
+          type: ['Contrat', 'Facture', 'Assurance', 'Carte grise'][Math.floor(Math.random() * 4)],
+          size: `${Math.floor(Math.random() * 10) + 1} MB`
+        }
+        break
+    }
+    
+    mockData.push({
+      id: `id-${type}-${i}`,
+      name,
+      type,
+      deletedAt: deletedDate,
+      deleteBy: ['Admin', 'Jean Dupont', 'Responsable Flotte', 'Support Technique'][Math.floor(Math.random() * 4)],
+      expiresAt: expiresDate,
+      metadata
+    })
+  }
+  
+  return mockData
+}
+
+// Charger les données au montage du composant
+onMounted(() => {
+  isLoading.value = true
+  try {
+    // Dans un cas réel, appel API ici
+    setTimeout(() => {
+      deletedItems.value = generateMockData()
+      isLoading.value = false
+    }, 500)
+  } catch (error) {
+    console.error('Erreur lors du chargement des éléments supprimés', error)
+    isLoading.value = false
+  }
+})
+
+// Filtrer les éléments selon l'onglet actif et la recherche
+const filteredItems = computed(() => {
+  let filtered = deletedItems.value
+  
+  // Filtrer par type si on n'est pas sur "all"
+  if (activeTab.value !== 'all') {
+    filtered = filtered.filter(item => item.type === activeTab.value)
+  }
+  
+  // Filtrer par recherche
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase()
+    filtered = filtered.filter(item => 
+      item.name.toLowerCase().includes(query) || 
+      item.deleteBy.toLowerCase().includes(query)
+    )
+  }
+  
+  return filtered
+})
+
+// Utilitaires d'affichage
+const getTypeLabel = (type: ItemType): string => {
+  const labels: Record<ItemType, string> = {
+    vehicle: 'Véhicule',
+    driver: 'Chauffeur',
+    receipt: 'Recette',
+    payment: 'Paiement',
+    document: 'Document'
+  }
+  return labels[type]
+}
+
+const getTypeIcon = (type: ItemType) => {
+  const icons: Record<ItemType, any> = {
+    vehicle: Car,
+    driver: User,
+    receipt: FileText,
+    payment: CreditCard,
+    document: File
+  }
+  return icons[type]
+}
+
+const getTypeVariant = (type: ItemType): 'outline' | 'secondary' | 'destructive' => {
+  const variants: Record<ItemType, 'outline' | 'secondary' | 'destructive'> = {
+    vehicle: 'secondary',
+    driver: 'outline',
+    receipt: 'secondary',
+    payment: 'secondary',
+    document: 'outline'
+  }
+  return variants[type]
+}
+
+// Formatage des dates
+const formatDateTime = (date: Date): string => {
+  return new Intl.DateTimeFormat('fr-FR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(date)
+}
+
+// Calcul des jours restants avant expiration
+const getRemainingDays = (expiresAt: Date): number => {
+  const now = new Date()
+  const diffTime = expiresAt.getTime() - now.getTime()
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+}
+
+// Gestion de la sélection
+const toggleSelectItem = (id: string) => {
+  if (selectedItems.value.has(id)) {
+    selectedItems.value.delete(id)
+    selectAllItems.value = false
+  } else {
+    selectedItems.value.add(id)
+    selectAllItems.value = selectedItems.value.size === filteredItems.value.length
+  }
+}
+
+const toggleSelectAll = () => {
+  selectAllItems.value = !selectAllItems.value
+  
+  if (selectAllItems.value) {
+    filteredItems.value.forEach(item => selectedItems.value.add(item.id))
+  } else {
+    selectedItems.value.clear()
+  }
+}
+
+// Actions sur les éléments
+const confirmRestore = (item: DeletedItem) => {
+  selectedItemForAction.value = item
+  restoreDialog.value = true
+}
+
+const confirmDelete = (item: DeletedItem) => {
+  selectedItemForAction.value = item
+  permanentDeleteDialog.value = true
+}
+
+const confirmBulkAction = (type: 'restore' | 'delete') => {
+  bulkActionType.value = type
+  if (type === 'restore') {
+    restoreDialog.value = true
+  } else {
+    permanentDeleteDialog.value = true
+  }
+}
+
+// Restaurer un élément
+const restoreItem = () => {
+  if (!selectedItemForAction.value && bulkActionType.value !== 'restore') {
+    return
+  }
+  
+  try {
+    // Si c'est une action en masse
+    if (bulkActionType.value === 'restore') {
+      const itemsToProcess = deletedItems.value.filter(item => selectedItems.value.has(item.id))
+      const count = itemsToProcess.length
+      
+      // Supprimer les éléments restaurés de la liste
+      deletedItems.value = deletedItems.value.filter(item => !selectedItems.value.has(item.id))
+      selectedItems.value.clear()
+      selectAllItems.value = false
+      
+      toastSuccess(`${count} élément${count > 1 ? 's' : ''} restauré${count > 1 ? 's' : ''}`)
+      
+      // Réinitialiser
+      bulkActionType.value = null
+      return
+    }
+    
+    // Si c'est une action sur un élément individuel
+    if (selectedItemForAction.value) {
+      // Supprimer l'élément restauré de la liste
+      deletedItems.value = deletedItems.value.filter(item => item.id !== selectedItemForAction.value!.id)
+      
+      // Si l'élément était sélectionné, le retirer de la sélection
+      if (selectedItems.value.has(selectedItemForAction.value.id)) {
+        selectedItems.value.delete(selectedItemForAction.value.id)
+      }
+      
+      toastSuccess(`"${selectedItemForAction.value.name}" a été restauré`)
+      
+      // Réinitialiser
+      selectedItemForAction.value = null
+    }
+  } catch (error) {
+    console.error('Erreur lors de la restauration', error)
+    toastError('Impossible de restaurer l\'élément')
+  }
+}
+
+// Supprimer définitivement un élément
+const emptyTrash = () => {
+  try {
+    const count = deletedItems.value.length
+    
+    // Vider la liste
+    deletedItems.value = []
+    selectedItems.value.clear()
+    
+    toastSuccess(`La corbeille a été vidée (${count} élément${count > 1 ? 's' : ''} supprimé${count > 1 ? 's' : ''})`)
+  } catch (error) {
+    console.error('Erreur lors du vidage de la corbeille', error)
+    toastError('Impossible de vider la corbeille')
+  }
+}
+</script>

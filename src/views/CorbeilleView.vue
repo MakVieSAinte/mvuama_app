@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import RecettesComponent from '../components/recettes/RecettesComponent.vue'
+import CorbeilleComponent from '../components/corbeille/CorbeilleComponent.vue'
 </script>
 
 <template>
   <main>
-    <RecettesComponent />
+    <CorbeilleComponent />
   </main>
 </template>

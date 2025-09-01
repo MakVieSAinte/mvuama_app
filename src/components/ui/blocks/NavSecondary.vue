@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { LucideIcon } from 'lucide-vue-next'
+import { RouterLink } from 'vue-router'
 
 import type { Component } from 'vue'
 import {
@@ -27,10 +28,10 @@ defineProps<{
       <SidebarMenu>
         <SidebarMenuItem v-for="item in items" :key="item.title">
           <SidebarMenuButton as-child>
-            <a :href="item.url">
+            <router-link :to="item.url">
               <component :is="item.icon" />
               <span>{{ item.title }}</span>
-            </a>
+            </router-link>
           </SidebarMenuButton>
           <SidebarMenuBadge v-if="item.badge">
             <component :is="item.badge" />

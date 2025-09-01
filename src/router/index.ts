@@ -170,6 +170,24 @@ const router = createRouter({
             title: 'Notifications',
           },
         },
+        {
+          path: '/corbeille',
+          name: 'corbeille',
+          component: () => import('../views/CorbeilleView.vue'),
+          meta: {
+            requiresAuth: true,
+            title: 'Éléments supprimés',
+          },
+        },
+        {
+          path: '/aide',
+          name: 'aide',
+          component: () => import('../views/AideView.vue'),
+          meta: {
+            requiresAuth: true,
+            title: "Centre d'aide",
+          },
+        },
       ],
     },
   ],
