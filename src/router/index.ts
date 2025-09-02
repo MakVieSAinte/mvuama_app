@@ -237,10 +237,6 @@ router.beforeEach(async (to, from, next) => {
             console.log("Aucune agence trouvée, redirection vers création d'agence")
             return next('/create-agency')
           }
-        } else if (to.path === '/create-agency') {
-          // Si l'utilisateur a déjà des agences et tente d'accéder à create-agency, le rediriger vers le dashboard
-          console.log("L'utilisateur a déjà des agences, redirection vers dashboard")
-          return next('/')
         }
       } catch (agencyError) {
         console.error('Erreur lors de la vérification des agences:', agencyError)

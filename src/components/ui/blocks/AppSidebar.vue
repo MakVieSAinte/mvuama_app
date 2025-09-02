@@ -290,12 +290,6 @@ const data = {
                       <span>Notifications</span>
                     </router-link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <router-link to="/corbeille" class="flex w-full items-center cursor-pointer">
-                      <Trash2 class="mr-2 h-4 w-4" />
-                      <span>Éléments supprimés</span>
-                    </router-link>
-                  </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem

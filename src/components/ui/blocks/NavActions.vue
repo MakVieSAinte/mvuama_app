@@ -16,6 +16,7 @@ import {
 import { useUserPrefs } from '@/composables/useUserPrefs'
 
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import {
@@ -64,8 +65,12 @@ const data = [
   ],
   [
     {
-      label: 'Import',
+      label: 'Ajouter agence',
       icon: ArrowUp,
+    },
+    {
+      label: 'Import',
+      icon: ArrowDown,
     },
     {
       label: 'Export',
@@ -76,6 +81,7 @@ const data = [
 
 const isOpen = ref(false)
 const { theme, toggleTheme } = useUserPrefs('user_prefs_mvuama')
+const router = useRouter()
 </script>
 
 <template>
@@ -109,7 +115,21 @@ const { theme, toggleTheme } = useUserPrefs('user_prefs_mvuama')
                 <SidebarMenu>
                   <SidebarMenuItem v-for="(item, index) in group" :key="index">
                     <SidebarMenuButton
-                      @click="item.action === 'toggleTheme' ? toggleTheme() : undefined"
+                      @click="
+                        item.label === 'Afficher les éléments supprimés'
+                          ? router.push('/corbeille')
+                          : item.label === 'Notifications'
+                            ? router.push('/notifications')
+                            : item.label === 'Historique des recettes'
+                              ? router.push('/historique')
+                              : item.label === 'Profil'
+                                ? router.push('/profile')
+                                : item.label === 'Ajouter agence'
+                                  ? router.push('/create-agency')
+                                  : item.action === 'toggleTheme'
+                                    ? toggleTheme()
+                                    : undefined
+                      "
                     >
                       <template v-if="item.action === 'toggleTheme'">
                         <component :is="theme === 'dark' ? Sun : Moon" class="mr-2" />
