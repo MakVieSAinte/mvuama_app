@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-5xl mx-auto">
+  <div class="max-w-full mx-auto">
     <!-- En-tête -->
     <div class="flex flex-col items-center text-center mb-10 max-w-lg mx-auto">
       <div class="w-12 h-12 mb-4 flex items-center justify-center rounded-lg bg-primary/10">
