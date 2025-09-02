@@ -19,7 +19,7 @@ export class Validator {
     return regex.test(email)
   }
 
-    /**
+  /**
    * Valide la complexité d'un mot de passe
    * @param {string} password - Le mot de passe à valider
    * @returns {boolean} - true si le mot de passe est valide, sinon false

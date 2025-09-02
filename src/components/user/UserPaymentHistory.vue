@@ -1,30 +1,30 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { 
+import {
   Select,
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select'
-import { 
-  Table, 
-  TableBody, 
-  TableCaption, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { useSonner } from '@/plugins/sonner'
@@ -50,7 +50,7 @@ const invoices = ref<Invoice[]>([
     amount: 49.99,
     planName: 'Standard',
     status: 'paid',
-    paymentMethod: 'Visa ••••4242'
+    paymentMethod: 'Visa ••••4242',
   },
   {
     id: 'INV-2024-0975',
@@ -58,7 +58,7 @@ const invoices = ref<Invoice[]>([
     amount: 49.99,
     planName: 'Standard',
     status: 'paid',
-    paymentMethod: 'Visa ••••4242'
+    paymentMethod: 'Visa ••••4242',
   },
   {
     id: 'INV-2024-0850',
@@ -66,7 +66,7 @@ const invoices = ref<Invoice[]>([
     amount: 24.99,
     planName: 'Basique',
     status: 'paid',
-    paymentMethod: 'Visa ••••4242'
+    paymentMethod: 'Visa ••••4242',
   },
   {
     id: 'INV-2024-0722',
@@ -74,7 +74,7 @@ const invoices = ref<Invoice[]>([
     amount: 24.99,
     planName: 'Basique',
     status: 'paid',
-    paymentMethod: 'Visa ••••4242'
+    paymentMethod: 'Visa ••••4242',
   },
   {
     id: 'INV-2024-0650',
@@ -82,7 +82,7 @@ const invoices = ref<Invoice[]>([
     amount: 24.99,
     planName: 'Basique',
     status: 'paid',
-    paymentMethod: 'Visa ••••4242'
+    paymentMethod: 'Visa ••••4242',
   },
   {
     id: 'INV-2024-0534',
@@ -90,8 +90,8 @@ const invoices = ref<Invoice[]>([
     amount: 24.99,
     planName: 'Basique',
     status: 'refunded',
-    paymentMethod: 'Visa ••••4242'
-  }
+    paymentMethod: 'Visa ••••4242',
+  },
 ])
 
 // Filtres
@@ -106,13 +106,29 @@ const perPage = ref(5)
 const getStatusBadge = (status: string) => {
   switch (status) {
     case 'paid':
-      return { label: 'Payée', class: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30' }
+      return {
+        label: 'Payée',
+        class:
+          'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30',
+      }
     case 'pending':
-      return { label: 'En attente', class: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400 hover:bg-yellow-100 dark:hover:bg-yellow-900/30' }
+      return {
+        label: 'En attente',
+        class:
+          'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400 hover:bg-yellow-100 dark:hover:bg-yellow-900/30',
+      }
     case 'failed':
-      return { label: 'Échouée', class: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30' }
+      return {
+        label: 'Échouée',
+        class:
+          'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30',
+      }
     case 'refunded':
-      return { label: 'Remboursée', class: 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30' }
+      return {
+        label: 'Remboursée',
+        class:
+          'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30',
+      }
     default:
       return { label: status, class: '' }
   }
@@ -123,7 +139,7 @@ const formatDate = (date: Date) => {
   return date.toLocaleDateString('fr-FR', {
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
   })
 }
 
@@ -151,26 +167,27 @@ const toggleSort = (field: string) => {
 // Factures filtrées et triées
 const filteredInvoices = computed(() => {
   let result = [...invoices.value]
-  
+
   // Recherche
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    result = result.filter(invoice => 
-      invoice.id.toLowerCase().includes(query) ||
-      invoice.planName.toLowerCase().includes(query) ||
-      invoice.paymentMethod.toLowerCase().includes(query)
+    result = result.filter(
+      (invoice) =>
+        invoice.id.toLowerCase().includes(query) ||
+        invoice.planName.toLowerCase().includes(query) ||
+        invoice.paymentMethod.toLowerCase().includes(query),
     )
   }
-  
+
   // Filtre par statut
   if (statusFilter.value !== 'all') {
-    result = result.filter(invoice => invoice.status === statusFilter.value)
+    result = result.filter((invoice) => invoice.status === statusFilter.value)
   }
-  
+
   // Tri
   result.sort((a, b) => {
     let comparison = 0
-    
+
     if (sortField.value === 'date') {
       comparison = a.date.getTime() - b.date.getTime()
     } else if (sortField.value === 'amount') {
@@ -178,10 +195,10 @@ const filteredInvoices = computed(() => {
     } else if (sortField.value === 'id') {
       comparison = a.id.localeCompare(b.id)
     }
-    
+
     return sortDirection.value === 'desc' ? -comparison : comparison
   })
-  
+
   return result
 })
 
@@ -222,23 +239,17 @@ const resetFilters = () => {
   <Card>
     <CardHeader>
       <CardTitle>Historique de paiements</CardTitle>
-      <CardDescription>
-        Consultez et téléchargez vos factures
-      </CardDescription>
+      <CardDescription> Consultez et téléchargez vos factures </CardDescription>
     </CardHeader>
-    
+
     <CardContent>
       <!-- Filtres -->
       <div class="flex flex-col sm:flex-row gap-4 mb-6">
         <div class="relative w-full sm:max-w-[300px]">
           <Search class="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input 
-            v-model="searchQuery"
-            placeholder="Rechercher une facture..." 
-            class="pl-8"
-          />
+          <Input v-model="searchQuery" placeholder="Rechercher une facture..." class="pl-8" />
         </div>
-        
+
         <Select v-model="statusFilter">
           <SelectTrigger class="w-full sm:w-[180px]">
             <SelectValue placeholder="Tous les statuts" />
@@ -251,9 +262,9 @@ const resetFilters = () => {
             <SelectItem value="refunded">Remboursée</SelectItem>
           </SelectContent>
         </Select>
-        
-        <Button 
-          variant="ghost" 
+
+        <Button
+          variant="ghost"
           class="ml-auto hidden sm:flex"
           @click="resetFilters"
           :disabled="!searchQuery && statusFilter === 'all'"
@@ -261,7 +272,7 @@ const resetFilters = () => {
           Réinitialiser les filtres
         </Button>
       </div>
-      
+
       <!-- Tableau des factures -->
       <div class="rounded-md border">
         <Table>
@@ -318,8 +329,8 @@ const resetFilters = () => {
               </TableCell>
               <TableCell>{{ invoice.paymentMethod }}</TableCell>
               <TableCell class="text-right">
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   size="sm"
                   @click="downloadInvoice(invoice.id)"
                   title="Télécharger la facture"
@@ -331,25 +342,20 @@ const resetFilters = () => {
           </TableBody>
         </Table>
       </div>
-      
+
       <!-- Pagination -->
       <div class="flex items-center justify-between mt-4">
         <p class="text-sm text-muted-foreground">
-          Affichage de {{ paginatedInvoices.length }} sur {{ filteredInvoices.length }} facture{{ filteredInvoices.length > 1 ? 's' : '' }}
+          Affichage de {{ paginatedInvoices.length }} sur {{ filteredInvoices.length }} facture{{
+            filteredInvoices.length > 1 ? 's' : ''
+          }}
         </p>
-        
+
         <div class="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            @click="prevPage"
-            :disabled="currentPage <= 1"
-          >
+          <Button variant="outline" size="sm" @click="prevPage" :disabled="currentPage <= 1">
             Précédent
           </Button>
-          <span class="text-sm">
-            Page {{ currentPage }} sur {{ totalPages }}
-          </span>
+          <span class="text-sm"> Page {{ currentPage }} sur {{ totalPages }} </span>
           <Button
             variant="outline"
             size="sm"
@@ -361,8 +367,10 @@ const resetFilters = () => {
         </div>
       </div>
     </CardContent>
-    
-    <CardFooter class="flex flex-col sm:flex-row gap-3 sm:justify-between items-center border-t pt-6">
+
+    <CardFooter
+      class="flex flex-col sm:flex-row gap-3 sm:justify-between items-center border-t pt-6"
+    >
       <p class="text-sm text-muted-foreground">
         Besoin d'une facture spécifique ? Contactez notre support.
       </p>

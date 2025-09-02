@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent } from 'vue'
 import { useSonner } from '@/plugins/sonner'
 
 export default defineComponent({

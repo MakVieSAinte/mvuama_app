@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -21,7 +28,7 @@ const profile = ref({
   state: '',
   zip: '',
   country: '',
-  bio: ''
+  bio: '',
 })
 
 const avatarUrl = ref('')
@@ -32,8 +39,8 @@ onMounted(async () => {
   try {
     // Simulation de chargement des données depuis une API
     // Dans un cas réel, appel à une API ou à Supabase
-    await new Promise(resolve => setTimeout(resolve, 500))
-    
+    await new Promise((resolve) => setTimeout(resolve, 500))
+
     profile.value = {
       full_name: 'John Doe',
       email: 'john.doe@example.com',
@@ -43,7 +50,7 @@ onMounted(async () => {
       state: '',
       zip: '12345',
       country: 'République Démocratique du Congo',
-      bio: 'Professionnel passionné par la technologie et la gestion de flotte automobile.'
+      bio: 'Professionnel passionné par la technologie et la gestion de flotte automobile.',
     }
   } catch (error) {
     console.error('Erreur lors du chargement du profil:', error)
@@ -54,10 +61,10 @@ onMounted(async () => {
 // Fonction pour obtenir les initiales pour l'avatar
 const getAvatarInitials = () => {
   if (!profile.value.full_name) return 'U'
-  
+
   const nameParts = profile.value.full_name.split(' ')
   if (nameParts.length === 1) return nameParts[0].substring(0, 2).toUpperCase()
-  
+
   return (nameParts[0].charAt(0) + nameParts[1].charAt(0)).toUpperCase()
 }
 
@@ -65,35 +72,35 @@ const getAvatarInitials = () => {
 const handleAvatarChange = async (event: Event) => {
   const input = event.target as HTMLInputElement
   if (!input.files || input.files.length === 0) return
-  
+
   const file = input.files[0]
-  
+
   // Validation du fichier
   if (!file.type.startsWith('image/')) {
     toastError('Veuillez sélectionner une image')
     return
   }
-  
+
   try {
     // Simulation d'upload d'image
     // Dans un cas réel, upload vers Supabase Storage par exemple
     avatarUrl.value = URL.createObjectURL(file)
     toastSuccess('Avatar mis à jour avec succès')
   } catch (error) {
-    console.error('Erreur lors du téléchargement de l\'avatar:', error)
-    toastError('Impossible de mettre à jour l\'avatar')
+    console.error("Erreur lors du téléchargement de l'avatar:", error)
+    toastError("Impossible de mettre à jour l'avatar")
   }
 }
 
 // Sauvegarde des modifications du profil
 const saveProfile = async () => {
   isSaving.value = true
-  
+
   try {
     // Simulation de sauvegarde des données
     // Dans un cas réel, envoi des données à une API ou à Supabase
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
     toastSuccess('Profil mis à jour avec succès')
   } catch (error) {
     console.error('Erreur lors de la sauvegarde du profil:', error)
@@ -115,25 +122,25 @@ const saveProfile = async () => {
         <div class="flex items-center space-x-4 mb-6">
           <div class="relative h-24 w-24">
             <Avatar class="h-24 w-24">
-              <AvatarImage 
-                :src="avatarUrl || '/src/assets/images/default-avatar.png'" 
-                alt="Photo de profil" 
+              <AvatarImage
+                :src="avatarUrl || '/src/assets/images/default-avatar.png'"
+                alt="Photo de profil"
               />
               <AvatarFallback>{{ getAvatarInitials() }}</AvatarFallback>
             </Avatar>
             <div class="absolute bottom-0 right-0">
-              <label 
-                for="avatar-upload" 
+              <label
+                for="avatar-upload"
                 class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm"
               >
                 <span class="sr-only">Changer la photo</span>
                 <Pencil class="h-4 w-4" />
               </label>
-              <input 
-                id="avatar-upload" 
-                type="file" 
-                accept="image/*" 
-                class="hidden" 
+              <input
+                id="avatar-upload"
+                type="file"
+                accept="image/*"
+                class="hidden"
                 @change="handleAvatarChange"
               />
             </div>
@@ -147,13 +154,9 @@ const saveProfile = async () => {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="space-y-2">
             <Label for="full_name">Nom complet</Label>
-            <Input
-              id="full_name"
-              v-model="profile.full_name"
-              placeholder="Votre nom complet"
-            />
+            <Input id="full_name" v-model="profile.full_name" placeholder="Votre nom complet" />
           </div>
-          
+
           <div class="space-y-2">
             <Label for="email">Email</Label>
             <Input
@@ -167,50 +170,30 @@ const saveProfile = async () => {
 
           <div class="space-y-2">
             <Label for="phone">Téléphone</Label>
-            <Input
-              id="phone"
-              v-model="profile.phone"
-              placeholder="+243 xxxxxxxx"
-            />
+            <Input id="phone" v-model="profile.phone" placeholder="+243 xxxxxxxx" />
           </div>
-          
+
           <div class="space-y-2">
             <Label for="country">Pays</Label>
-            <Input
-              id="country"
-              v-model="profile.country"
-              placeholder="Votre pays"
-            />
+            <Input id="country" v-model="profile.country" placeholder="Votre pays" />
           </div>
-          
+
           <div class="space-y-2 md:col-span-2">
             <Label for="address">Adresse</Label>
-            <Input
-              id="address"
-              v-model="profile.address"
-              placeholder="Votre adresse"
-            />
+            <Input id="address" v-model="profile.address" placeholder="Votre adresse" />
           </div>
-          
+
           <div class="space-y-2">
             <Label for="city">Ville</Label>
-            <Input
-              id="city"
-              v-model="profile.city"
-              placeholder="Votre ville"
-            />
+            <Input id="city" v-model="profile.city" placeholder="Votre ville" />
           </div>
-          
+
           <div class="space-y-2">
             <Label for="zip">Code postal</Label>
-            <Input
-              id="zip"
-              v-model="profile.zip"
-              placeholder="Code postal"
-            />
+            <Input id="zip" v-model="profile.zip" placeholder="Code postal" />
           </div>
         </div>
-        
+
         <div class="space-y-2">
           <Label for="bio">Biographie</Label>
           <textarea

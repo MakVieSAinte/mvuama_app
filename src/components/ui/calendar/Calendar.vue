@@ -1,15 +1,27 @@
 <script lang="ts" setup>
-import type { CalendarRootEmits, CalendarRootProps } from "reka-ui"
-import type { HTMLAttributes } from "vue"
-import { reactiveOmit } from "@vueuse/core"
-import { CalendarRoot, useForwardPropsEmits } from "reka-ui"
-import { cn } from "@/lib/utils"
-import { CalendarCell, CalendarCellTrigger, CalendarGrid, CalendarGridBody, CalendarGridHead, CalendarGridRow, CalendarHeadCell, CalendarHeader, CalendarHeading, CalendarNextButton, CalendarPrevButton } from "."
+import type { CalendarRootEmits, CalendarRootProps } from 'reka-ui'
+import type { HTMLAttributes } from 'vue'
+import { reactiveOmit } from '@vueuse/core'
+import { CalendarRoot, useForwardPropsEmits } from 'reka-ui'
+import { cn } from '@/lib/utils'
+import {
+  CalendarCell,
+  CalendarCellTrigger,
+  CalendarGrid,
+  CalendarGridBody,
+  CalendarGridHead,
+  CalendarGridRow,
+  CalendarHeadCell,
+  CalendarHeader,
+  CalendarHeading,
+  CalendarNextButton,
+  CalendarPrevButton,
+} from '.'
 
-const props = defineProps<CalendarRootProps & { class?: HTMLAttributes["class"] }>()
+const props = defineProps<CalendarRootProps & { class?: HTMLAttributes['class'] }>()
 const emits = defineEmits<CalendarRootEmits>()
 
-const delegatedProps = reactiveOmit(props, "class")
+const delegatedProps = reactiveOmit(props, 'class')
 
 const forwarded = useForwardPropsEmits(delegatedProps, emits)
 </script>
@@ -34,24 +46,19 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
       <CalendarGrid v-for="month in grid" :key="month.value.toString()">
         <CalendarGridHead>
           <CalendarGridRow>
-            <CalendarHeadCell
-              v-for="day in weekDays" :key="day"
-            >
+            <CalendarHeadCell v-for="day in weekDays" :key="day">
               {{ day }}
             </CalendarHeadCell>
           </CalendarGridRow>
         </CalendarGridHead>
         <CalendarGridBody>
-          <CalendarGridRow v-for="(weekDates, index) in month.rows" :key="`weekDate-${index}`" class="mt-2 w-full">
-            <CalendarCell
-              v-for="weekDate in weekDates"
-              :key="weekDate.toString()"
-              :date="weekDate"
-            >
-              <CalendarCellTrigger
-                :day="weekDate"
-                :month="month.value"
-              />
+          <CalendarGridRow
+            v-for="(weekDates, index) in month.rows"
+            :key="`weekDate-${index}`"
+            class="mt-2 w-full"
+          >
+            <CalendarCell v-for="weekDate in weekDates" :key="weekDate.toString()" :date="weekDate">
+              <CalendarCellTrigger :day="weekDate" :month="month.value" />
             </CalendarCell>
           </CalendarGridRow>
         </CalendarGridBody>

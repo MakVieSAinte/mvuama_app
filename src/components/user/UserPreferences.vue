@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
@@ -15,7 +22,7 @@ const preferences = ref({
   emailNotifications: true,
   smsNotifications: false,
   language: 'fr',
-  timezone: 'Africa/Kinshasa'
+  timezone: 'Africa/Kinshasa',
 })
 
 const isSaving = ref(false)
@@ -23,10 +30,10 @@ const isSaving = ref(false)
 // Sauvegarde des préférences
 const savePreferences = async () => {
   isSaving.value = true
-  
+
   try {
     // Simulation de sauvegarde
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 1000))
     toastSuccess('Préférences mises à jour avec succès')
   } catch (error) {
     console.error('Erreur lors de la sauvegarde des préférences:', error)
@@ -40,14 +47,14 @@ const savePreferences = async () => {
 const languages = [
   { value: 'fr', label: 'Français' },
   { value: 'en', label: 'English' },
-  { value: 'ln', label: 'Lingala' }
+  { value: 'ln', label: 'Lingala' },
 ]
 
 // Liste des fuseaux horaires disponibles
 const timezones = [
   { value: 'Africa/Kinshasa', label: 'Kinshasa (GMT+1)' },
   { value: 'Africa/Lubumbashi', label: 'Lubumbashi (GMT+2)' },
-  { value: 'Europe/Paris', label: 'Paris (GMT+1/GMT+2)' }
+  { value: 'Europe/Paris', label: 'Paris (GMT+1/GMT+2)' },
 ]
 </script>
 
@@ -63,35 +70,29 @@ const timezones = [
         <div class="flex items-center justify-between">
           <div class="space-y-0.5">
             <Label>Mode sombre</Label>
-            <p class="text-sm text-muted-foreground">
-              Activer le mode sombre pour l'interface
-            </p>
+            <p class="text-sm text-muted-foreground">Activer le mode sombre pour l'interface</p>
           </div>
           <Switch v-model="preferences.darkMode" />
         </div>
-        
+
         <!-- Notifications par email -->
         <div class="flex items-center justify-between">
           <div class="space-y-0.5">
             <Label>Notifications par email</Label>
-            <p class="text-sm text-muted-foreground">
-              Recevoir des notifications par email
-            </p>
+            <p class="text-sm text-muted-foreground">Recevoir des notifications par email</p>
           </div>
           <Switch v-model="preferences.emailNotifications" />
         </div>
-        
+
         <!-- Notifications par SMS -->
         <div class="flex items-center justify-between">
           <div class="space-y-0.5">
             <Label>Notifications par SMS</Label>
-            <p class="text-sm text-muted-foreground">
-              Recevoir des notifications par SMS
-            </p>
+            <p class="text-sm text-muted-foreground">Recevoir des notifications par SMS</p>
           </div>
           <Switch v-model="preferences.smsNotifications" />
         </div>
-        
+
         <!-- Sélection de la langue -->
         <div class="space-y-2">
           <Label for="language">Langue</Label>
@@ -105,7 +106,7 @@ const timezones = [
             </option>
           </select>
         </div>
-        
+
         <!-- Sélection du fuseau horaire -->
         <div class="space-y-2">
           <Label for="timezone">Fuseau horaire</Label>

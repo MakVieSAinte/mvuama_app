@@ -9,8 +9,12 @@
       <ViewSelector v-model:view-type="viewType" />
 
       <div class="flex flex-row gap-2">
-        <Button v-if="table.getFilteredSelectedRowModel().rows.length > 0" variant="destructive"
-          class="inline-flex items-center gap-2 text-amber-50" @click="deleteSelectedRows">
+        <Button
+          v-if="table.getFilteredSelectedRowModel().rows.length > 0"
+          variant="destructive"
+          class="inline-flex items-center gap-2 text-amber-50"
+          @click="deleteSelectedRows"
+        >
           <Trash class="h-5 w-5" />
           Supprimer
         </Button>
@@ -26,8 +30,13 @@
 
     <!-- Filtres -->
     <div class="mb-6">
-      <VehiculeFilters v-model:global-filter="globalFilter" v-model:type-filter="typeFilter"
-        v-model:status-filter="statusFilter" v-model:fuel-filter="fuelFilter" :table="table" />
+      <VehiculeFilters
+        v-model:global-filter="globalFilter"
+        v-model:type-filter="typeFilter"
+        v-model:status-filter="statusFilter"
+        v-model:fuel-filter="fuelFilter"
+        :table="table"
+      />
     </div>
 
     <!-- Tableau ou Cartes selon viewType -->

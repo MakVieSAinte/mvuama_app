@@ -199,7 +199,7 @@
                       size="icon"
                       title="Restaurer"
                       @click="
-                        selectedItemForAction = item;
+                        selectedItemForAction = item
                         restoreDialog = true
                       "
                     >
@@ -210,7 +210,7 @@
                       size="icon"
                       title="Supprimer définitivement"
                       @click="
-                        selectedItemForAction = item;
+                        selectedItemForAction = item
                         permanentDeleteDialog = true
                       "
                     >
@@ -230,7 +230,7 @@
         <Button
           variant="destructive"
           @click="
-            selectedItemForAction = null;
+            selectedItemForAction = null
             permanentDeleteDialog = true
           "
           :disabled="deletedItems.length === 0"
@@ -274,8 +274,8 @@
         <AlertDialogAction
           v-else-if="selectedItemForAction"
           @click="
-            restoreItem(selectedItemForAction);
-            restoreDialog = false;
+            restoreItem(selectedItemForAction)
+            restoreDialog = false
             selectedItemForAction = null
           "
         >
@@ -321,8 +321,8 @@
           v-else-if="selectedItemForAction"
           class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           @click="
-            permanentDeleteItem(selectedItemForAction);
-            permanentDeleteDialog = false;
+            permanentDeleteItem(selectedItemForAction)
+            permanentDeleteDialog = false
             selectedItemForAction = null
           "
         >
@@ -332,7 +332,7 @@
           v-else
           class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           @click="
-            emptyTrash();
+            emptyTrash()
             permanentDeleteDialog = false
           "
         >

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -36,7 +36,8 @@ const notifications = ref<Notification[]>([
   {
     id: 1,
     title: 'Mise à jour du système',
-    message: 'Une nouvelle mise à jour est disponible. Veuillez redémarrer l\'application pour appliquer les changements.',
+    message:
+      "Une nouvelle mise à jour est disponible. Veuillez redémarrer l'application pour appliquer les changements.",
     type: 'info',
     read: false,
     timestamp: new Date(Date.now() - 1000 * 60 * 10), // 10 minutes ago
@@ -44,7 +45,8 @@ const notifications = ref<Notification[]>([
   {
     id: 2,
     title: 'Maintenance prévue',
-    message: 'Une maintenance du système est prévue ce vendredi de 22h à 00h. Le service pourrait être momentanément indisponible.',
+    message:
+      'Une maintenance du système est prévue ce vendredi de 22h à 00h. Le service pourrait être momentanément indisponible.',
     type: 'warning',
     read: true,
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 3), // 3 hours ago
@@ -52,7 +54,7 @@ const notifications = ref<Notification[]>([
   {
     id: 3,
     title: 'Paiement réussi',
-    message: 'Votre paiement de 50€ pour l\'abonnement mensuel a été traité avec succès.',
+    message: "Votre paiement de 50€ pour l'abonnement mensuel a été traité avec succès.",
     type: 'success',
     read: false,
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
@@ -72,23 +74,23 @@ const notifications = ref<Notification[]>([
     type: 'info',
     read: true,
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3), // 3 days ago
-  }
+  },
 ])
 
 // Notifications filtrées
 const filteredNotifications = computed(() => {
   if (currentFilter.value === 'all') return notifications.value
-  if (currentFilter.value === 'unread') return notifications.value.filter(n => !n.read)
-  return notifications.value.filter(n => n.read)
+  if (currentFilter.value === 'unread') return notifications.value.filter((n) => !n.read)
+  return notifications.value.filter((n) => n.read)
 })
 
 // Compteurs
-const unreadCount = computed(() => notifications.value.filter(n => !n.read).length)
+const unreadCount = computed(() => notifications.value.filter((n) => !n.read).length)
 const totalCount = computed(() => notifications.value.length)
 
 // Marquer une notification comme lue
 const markAsRead = (id: number) => {
-  const notification = notifications.value.find(n => n.id === id)
+  const notification = notifications.value.find((n) => n.id === id)
   if (notification) {
     notification.read = true
     toastSuccess('Notification marquée comme lue')
@@ -99,23 +101,23 @@ const markAsRead = (id: number) => {
 const markAllAsRead = () => {
   if (unreadCount.value === 0) return
 
-  notifications.value.forEach(n => {
+  notifications.value.forEach((n) => {
     n.read = true
   })
-  
+
   toastSuccess('Toutes les notifications ont été marquées comme lues')
 }
 
 // Supprimer une notification
 const deleteNotification = (id: number) => {
-  notifications.value = notifications.value.filter(n => n.id !== id)
+  notifications.value = notifications.value.filter((n) => n.id !== id)
   toastSuccess('Notification supprimée')
 }
 
 // Supprimer toutes les notifications
 const clearAllNotifications = () => {
   if (notifications.value.length === 0) return
-  
+
   notifications.value = []
   toastSuccess('Toutes les notifications ont été supprimées')
 }
@@ -124,7 +126,7 @@ const clearAllNotifications = () => {
 const formatRelativeTime = (date: Date) => {
   const now = new Date()
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
-  
+
   if (diffInSeconds < 60) {
     return 'Il y a quelques secondes'
   } else if (diffInSeconds < 3600) {
@@ -144,22 +146,32 @@ const formatRelativeTime = (date: Date) => {
 // Icône en fonction du type de notification
 const getNotificationIcon = (type: NotificationType) => {
   switch (type) {
-    case 'info': return Info
-    case 'warning': return AlertTriangle
-    case 'success': return CheckCircle2
-    case 'error': return AlertTriangle
-    default: return Bell
+    case 'info':
+      return Info
+    case 'warning':
+      return AlertTriangle
+    case 'success':
+      return CheckCircle2
+    case 'error':
+      return AlertTriangle
+    default:
+      return Bell
   }
 }
 
 // Classes en fonction du type de notification
 const getNotificationClasses = (type: NotificationType) => {
   switch (type) {
-    case 'info': return 'text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/20'
-    case 'warning': return 'text-amber-600 bg-amber-100 dark:text-amber-400 dark:bg-amber-900/20'
-    case 'success': return 'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900/20'
-    case 'error': return 'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/20'
-    default: return 'text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/20'
+    case 'info':
+      return 'text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/20'
+    case 'warning':
+      return 'text-amber-600 bg-amber-100 dark:text-amber-400 dark:bg-amber-900/20'
+    case 'success':
+      return 'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900/20'
+    case 'error':
+      return 'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/20'
+    default:
+      return 'text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/20'
   }
 }
 </script>
@@ -169,22 +181,15 @@ const getNotificationClasses = (type: NotificationType) => {
     <CardHeader class="flex flex-row items-center justify-between">
       <div>
         <CardTitle>Centre de Notifications</CardTitle>
-        <CardDescription>
-          Consultez et gérez vos notifications
-        </CardDescription>
+        <CardDescription> Consultez et gérez vos notifications </CardDescription>
       </div>
-      
+
       <div class="flex items-center space-x-2">
-        <Button 
-          variant="outline" 
-          size="sm"
-          @click="markAllAsRead"
-          :disabled="unreadCount === 0"
-        >
+        <Button variant="outline" size="sm" @click="markAllAsRead" :disabled="unreadCount === 0">
           Tout marquer comme lu
         </Button>
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           size="sm"
           @click="clearAllNotifications"
           :disabled="notifications.length === 0"
@@ -193,7 +198,7 @@ const getNotificationClasses = (type: NotificationType) => {
         </Button>
       </div>
     </CardHeader>
-    
+
     <CardContent>
       <!-- Filtres -->
       <div class="flex items-center space-x-2 mb-6">
@@ -206,7 +211,7 @@ const getNotificationClasses = (type: NotificationType) => {
           Toutes
           <Badge v-if="totalCount > 0" class="ml-2 h-5 px-1.5">{{ totalCount }}</Badge>
         </Button>
-        
+
         <Button
           @click="currentFilter = 'unread'"
           :variant="currentFilter === 'unread' ? 'default' : 'outline'"
@@ -216,7 +221,7 @@ const getNotificationClasses = (type: NotificationType) => {
           Non lues
           <Badge v-if="unreadCount > 0" class="ml-2 h-5 px-1.5">{{ unreadCount }}</Badge>
         </Button>
-        
+
         <Button
           @click="currentFilter = 'read'"
           :variant="currentFilter === 'read' ? 'default' : 'outline'"
@@ -225,20 +230,22 @@ const getNotificationClasses = (type: NotificationType) => {
           Lues
         </Button>
       </div>
-      
+
       <!-- Liste des notifications -->
       <div class="space-y-3">
         <div v-if="filteredNotifications.length === 0" class="text-center py-8">
           <Bell class="mx-auto h-12 w-12 text-muted-foreground opacity-50" />
           <p class="mt-2 text-muted-foreground">
-            {{ 
-              currentFilter === 'all' ? 'Aucune notification' : 
-              currentFilter === 'unread' ? 'Aucune notification non lue' :
-              'Aucune notification lue'
+            {{
+              currentFilter === 'all'
+                ? 'Aucune notification'
+                : currentFilter === 'unread'
+                  ? 'Aucune notification non lue'
+                  : 'Aucune notification lue'
             }}
           </p>
         </div>
-        
+
         <div
           v-for="notification in filteredNotifications"
           :key="notification.id"
@@ -247,13 +254,13 @@ const getNotificationClasses = (type: NotificationType) => {
         >
           <div class="flex gap-3">
             <!-- Icône -->
-            <div 
+            <div
               class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center"
               :class="getNotificationClasses(notification.type)"
             >
               <component :is="getNotificationIcon(notification.type)" class="h-4 w-4" />
             </div>
-            
+
             <!-- Contenu -->
             <div class="flex-1 min-w-0">
               <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between">
@@ -262,11 +269,11 @@ const getNotificationClasses = (type: NotificationType) => {
                   {{ formatRelativeTime(notification.timestamp) }}
                 </span>
               </div>
-              
+
               <p class="text-sm text-muted-foreground mt-1 mb-2">
                 {{ notification.message }}
               </p>
-              
+
               <div class="flex items-center gap-2 mt-2">
                 <Button
                   v-if="!notification.read"
@@ -278,7 +285,7 @@ const getNotificationClasses = (type: NotificationType) => {
                   <Check class="mr-1 h-3 w-3" />
                   Marquer comme lu
                 </Button>
-                
+
                 <Button
                   size="sm"
                   variant="ghost"
@@ -294,9 +301,14 @@ const getNotificationClasses = (type: NotificationType) => {
         </div>
       </div>
     </CardContent>
-    
-    <CardFooter v-if="filteredNotifications.length > 0" class="flex justify-center text-xs text-muted-foreground">
-      Affichage de {{ filteredNotifications.length }} notification{{ filteredNotifications.length > 1 ? 's' : '' }}
+
+    <CardFooter
+      v-if="filteredNotifications.length > 0"
+      class="flex justify-center text-xs text-muted-foreground"
+    >
+      Affichage de {{ filteredNotifications.length }} notification{{
+        filteredNotifications.length > 1 ? 's' : ''
+      }}
     </CardFooter>
   </Card>
 </template>

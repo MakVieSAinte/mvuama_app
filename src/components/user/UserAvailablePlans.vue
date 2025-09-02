@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -41,11 +41,11 @@ const plans = ref<Plan[]>([
       'Suivi GPS basique',
       'Rapports mensuels',
       'Support par email',
-      'Contrôle d\'accès',
+      "Contrôle d'accès",
       'Application mobile',
     ],
     popular: false,
-    isCurrentPlan: false
+    isCurrentPlan: false,
   },
   {
     id: 'standard',
@@ -58,13 +58,13 @@ const plans = ref<Plan[]>([
       'Suivi GPS en temps réel',
       'Rapports hebdomadaires',
       'Support prioritaire',
-      'API d\'intégration',
+      "API d'intégration",
       'Alertes personnalisées',
-      'Contrôle d\'accès avancé',
-      'Application mobile premium'
+      "Contrôle d'accès avancé",
+      'Application mobile premium',
     ],
     popular: true,
-    isCurrentPlan: true
+    isCurrentPlan: true,
   },
   {
     id: 'premium',
@@ -82,11 +82,11 @@ const plans = ref<Plan[]>([
       'Intégration complète',
       'Sauvegarde des données',
       'Tableau de bord personnalisable',
-      'Accès multi-équipes'
+      'Accès multi-équipes',
     ],
     popular: false,
-    isCurrentPlan: false
-  }
+    isCurrentPlan: false,
+  },
 ])
 
 // Cycle de facturation
@@ -108,7 +108,7 @@ const getAdjustedPrice = (plan: Plan) => {
 // Ouvrir le dialogue de confirmation
 const confirmPlanChange = (plan: Plan) => {
   if (plan.isCurrentPlan) return
-  
+
   selectedPlan.value = plan
   showConfirmDialog.value = true
 }
@@ -116,22 +116,22 @@ const confirmPlanChange = (plan: Plan) => {
 // Changer de plan
 const changePlan = async () => {
   if (!selectedPlan.value) return
-  
+
   isChangingPlan.value = true
-  
+
   try {
     // Simulation d'une requête API
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
     // Mise à jour des plans
-    plans.value.forEach(plan => {
+    plans.value.forEach((plan) => {
       plan.isCurrentPlan = plan.id === selectedPlan.value?.id
     })
-    
+
     showConfirmDialog.value = false
     selectedPlan.value = null
-    
-    toastSuccess('Votre plan d\'abonnement a été mis à jour')
+
+    toastSuccess("Votre plan d'abonnement a été mis à jour")
   } catch (error) {
     console.error('Erreur lors du changement de plan:', error)
     toastError('Impossible de changer de plan')
@@ -161,30 +161,25 @@ const getSavingsPercentage = () => {
   <Card>
     <CardHeader>
       <CardTitle>Plans disponibles</CardTitle>
-      <CardDescription>
-        Choisissez le plan qui correspond le mieux à vos besoins
-      </CardDescription>
+      <CardDescription> Choisissez le plan qui correspond le mieux à vos besoins </CardDescription>
     </CardHeader>
-    
+
     <CardContent>
       <!-- Switch de cycle de facturation -->
       <div class="flex items-center justify-end mb-8">
         <div class="flex items-center space-x-2">
-          <span class="text-sm font-medium" :class="{ 'text-primary': billingCycle === 'monthly' }">Mensuel</span>
-          
-          <Button 
-            variant="outline" 
-            size="sm" 
-            class="relative px-6 h-8"
-            @click="toggleBillingCycle"
+          <span class="text-sm font-medium" :class="{ 'text-primary': billingCycle === 'monthly' }"
+            >Mensuel</span
           >
-            <span 
+
+          <Button variant="outline" size="sm" class="relative px-6 h-8" @click="toggleBillingCycle">
+            <span
               class="absolute inset-0 h-full w-1/2 bg-primary rounded-sm transition-all duration-200 transform"
               :class="billingCycle === 'yearly' ? 'translate-x-full' : ''"
             />
             <span class="sr-only">Toggle billing cycle</span>
           </Button>
-          
+
           <span class="text-sm font-medium" :class="{ 'text-primary': billingCycle === 'yearly' }">
             Annuel
             <Badge v-if="billingCycle === 'yearly'" variant="secondary" class="ml-1">
@@ -193,7 +188,7 @@ const getSavingsPercentage = () => {
           </span>
         </div>
       </div>
-      
+
       <!-- Grille de plans -->
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Card
@@ -202,7 +197,7 @@ const getSavingsPercentage = () => {
           class="border transition-all duration-200"
           :class="{
             'border-primary shadow-sm': plan.popular,
-            'ring-2 ring-primary': plan.isCurrentPlan
+            'ring-2 ring-primary': plan.isCurrentPlan,
           }"
         >
           <CardHeader>
@@ -211,11 +206,11 @@ const getSavingsPercentage = () => {
                 <CardTitle>{{ plan.name }}</CardTitle>
                 <CardDescription>{{ plan.description }}</CardDescription>
               </div>
-              
+
               <Badge v-if="plan.popular" variant="secondary">Populaire</Badge>
             </div>
           </CardHeader>
-          
+
           <CardContent class="space-y-4">
             <!-- Prix -->
             <div>
@@ -225,15 +220,15 @@ const getSavingsPercentage = () => {
                   /{{ billingCycle === 'monthly' ? 'mois' : 'an' }}
                 </span>
               </div>
-              
+
               <p v-if="billingCycle === 'yearly'" class="text-xs text-muted-foreground mt-1">
                 Soit {{ plan.price.toFixed(2) }} € par mois (2 mois offerts)
               </p>
             </div>
-            
+
             <!-- Nombre de véhicules -->
             <p class="font-medium">{{ getVehiclesText(plan.maxVehicles) }}</p>
-            
+
             <!-- Liste des fonctionnalités -->
             <ul class="space-y-2 mt-4">
               <li
@@ -246,7 +241,7 @@ const getSavingsPercentage = () => {
               </li>
             </ul>
           </CardContent>
-          
+
           <CardFooter>
             <Button
               class="w-full"
@@ -260,52 +255,50 @@ const getSavingsPercentage = () => {
           </CardFooter>
         </Card>
       </div>
-      
+
       <!-- Note sur les fonctionnalités communes -->
       <p class="text-sm text-muted-foreground mt-8">
-        * Tous les plans incluent l'accès de base au tableau de bord, le stockage des données pendant 3 mois et l'assistance technique par email.
+        * Tous les plans incluent l'accès de base au tableau de bord, le stockage des données
+        pendant 3 mois et l'assistance technique par email.
       </p>
     </CardContent>
   </Card>
-  
+
   <!-- Dialog de confirmation de changement de plan -->
   <Dialog v-model:open="showConfirmDialog">
     <DialogContent>
       <DialogHeader>
         <DialogTitle>Changer de plan</DialogTitle>
         <DialogDescription>
-          Vous êtes sur le point de passer au plan {{ selectedPlan?.name }}. Les modifications seront effectives immédiatement.
+          Vous êtes sur le point de passer au plan {{ selectedPlan?.name }}. Les modifications
+          seront effectives immédiatement.
         </DialogDescription>
       </DialogHeader>
-      
+
       <div class="space-y-4 py-2">
         <div class="flex items-center justify-between">
           <span class="font-medium">Nouveau plan</span>
           <span>{{ selectedPlan?.name }}</span>
         </div>
-        
+
         <div class="flex items-center justify-between">
           <span class="font-medium">Prix</span>
           <span>
-            {{ selectedPlan ? getAdjustedPrice(selectedPlan) : '0.00' }} €
-            /{{ billingCycle === 'monthly' ? 'mois' : 'an' }}
+            {{ selectedPlan ? getAdjustedPrice(selectedPlan) : '0.00' }} € /{{
+              billingCycle === 'monthly' ? 'mois' : 'an'
+            }}
           </span>
         </div>
-        
+
         <div class="flex items-center justify-between">
           <span class="font-medium">Facturation</span>
           <span>{{ billingCycle === 'monthly' ? 'Mensuelle' : 'Annuelle' }}</span>
         </div>
       </div>
-      
+
       <DialogFooter>
-        <Button variant="outline" @click="showConfirmDialog = false">
-          Annuler
-        </Button>
-        <Button 
-          @click="changePlan"
-          :disabled="isChangingPlan"
-        >
+        <Button variant="outline" @click="showConfirmDialog = false"> Annuler </Button>
+        <Button @click="changePlan" :disabled="isChangingPlan">
           {{ isChangingPlan ? 'Changement en cours...' : 'Confirmer le changement' }}
         </Button>
       </DialogFooter>

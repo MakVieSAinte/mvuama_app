@@ -178,6 +178,12 @@
             <SelectContent>
               <SelectGroup>
                 <SelectItem v-for="country in countries" :key="country.code" :value="country.code">
+                  <img
+                        :src="`https://flagcdn.com/24x18/${country.code.toLowerCase()}.png`"
+                        width="15"
+                        height="9"
+                      />
+                      <span>{{ countryCodeToFlag(country.code) }}</span>
                   {{ country.name }}
                 </SelectItem>
               </SelectGroup>
@@ -206,7 +212,7 @@
                   :key="currency.code"
                   :value="currency.code"
                 >
-                  {{ currency.name }} ({{ currency.symbol }})
+                  <span class="text-bold">{{ currency.symbol }}</span> {{ currency.name }} ({{ currency.code }})
                 </SelectItem>
               </SelectGroup>
             </SelectContent>
@@ -527,6 +533,8 @@ import { formatAsYouType } from '@/lib/phone'
 import { countries } from '@/lib/countries'
 import { supabase } from '@/services/config/supabaseClient'
 import { currency as currencyData } from '@/lib/currency'
+import { countryCodeToFlag } from '@/lib/codeToFlags'
+import { currencies } from '@/lib/currency'
 
 export default {
   name: 'AgencyForm',
@@ -545,6 +553,12 @@ export default {
     ChevronLeftIcon,
     ChevronRightIcon,
     CheckIcon,
+  },
+  data() {
+    return {
+      countryCodeToFlag: countryCodeToFlag,
+      currencies: currencies,
+    }
   },
   emits: ['created', 'cancel'],
   setup(props, { emit }) {
@@ -573,15 +587,6 @@ export default {
       { value: 'autre', label: 'Autre' },
     ])
 
-    // Liste des devises
-    const currencies = ref([
-      { code: 'XAF', name: 'Franc CFA BEAC', symbol: 'FCFA' },
-      { code: 'CDF', name: 'Franc Congolais', symbol: 'FC' },
-      { code: 'USD', name: 'Dollar américain', symbol: '$' },
-      { code: 'EUR', name: 'Euro', symbol: '€' },
-      { code: 'AOA', name: 'Kwanza angolais', symbol: 'Kz' },
-      { code: 'XOF', name: 'Franc CFA BCEAO', symbol: 'FCFA' },
-    ])
 
     // Villes par pays
     const citiesByCountry = ref([])
