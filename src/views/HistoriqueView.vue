@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import HistoriqueComponent from '../components/historique/HistoriqueComponent.vue'
+import HistoriqueComponent from '../components/historiques/HistoriqueComponent.vue'
 </script>
 
 <template>

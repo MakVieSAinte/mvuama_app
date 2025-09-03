@@ -1,5 +1,5 @@
-import { Validator } from './../../services/libs/validator'
-import type { IVehicleModel, IVehicleBuilder } from '../../interfaces/vehiculesInterface'
+import { Validator } from '../../services/libs/validator'
+import type { IVehicleModel, IVehicleBuilder } from '../../interfaces/vehiclesInterface'
 
 export class VehiculeForm {
   // Propriétés obligatoires et erreurs associées

@@ -50,7 +50,6 @@
 <script setup lang="ts">
 import { ref, computed, type Ref } from 'vue'
 import { Button } from '@/components/ui/button'
-import { Plus, Trash } from 'lucide-vue-next'
 import ViewSelector from '@/components/ui/ViewSelector.vue'
 import { config } from '@/services/config/config'
 import { useUserPrefs } from '@/composables/useUserPrefs'
@@ -59,11 +58,11 @@ import { useUserPrefs } from '@/composables/useUserPrefs'
 const { viewType } = useUserPrefs(config.user_prefs)
 
 // Composants modulaires
-import AjoutVehiculesModal from './modal/AjoutVehiculesModal.vue'
+import AjoutVehiculesModal from './modal/AddVehiclesModal.vue'
 import MiniDash from './base/MiniDashComponent.vue'
-import VehiculeFilters from './base/VehiculeFiltersComponent.vue'
-import VehiculeTable from './base/VehiculeTableComponent.vue'
-import VehiculeCards from './base/VehiculeCardsComponent.vue'
+import VehiculeFilters from './base/VehicleFiltersComponent.vue'
+import VehiculeTable from './base/VehicleTableComponent.vue'
+import VehiculeCards from './base/VehicleCardsComponent.vue'
 
 // Fonction pour supprimer les lignes sélectionnées
 function deleteSelectedRows() {
@@ -92,7 +91,7 @@ import {
 } from '@tanstack/vue-table'
 
 // Types et données
-import { vehiclesData, createVehicleColumns, type Vehicle } from './base/vehicleTableConfig'
+import { vehiclesData, createVehicleColumns, type Vehicle } from './base/TableConfig'
 
 const openAddModal = ref(false)
 

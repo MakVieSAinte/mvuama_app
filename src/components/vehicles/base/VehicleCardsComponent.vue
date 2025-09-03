@@ -199,7 +199,7 @@ import {
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
-import type { Vehicle } from './vehicleTableConfig'
+import type { Vehicle } from './TableConfig'
 
 interface Props {
   table: VueTable<Vehicle>

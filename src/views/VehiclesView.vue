@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import VehiclesComponent from '../components/vehicules/VehiculesComponent.vue'
+import VehiclesComponent from '../components/vehicles/VehiclesComponent.vue'
 </script>
 
 <template>

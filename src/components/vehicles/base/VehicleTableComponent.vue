@@ -117,7 +117,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import type { Vehicle } from './vehicleTableConfig'
+import type { Vehicle } from './TableConfig'
 
 interface Props {
   table: VueTable<Vehicle>

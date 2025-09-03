@@ -54,12 +54,6 @@ const router = createRouter({
           name: 'auth-callback',
           component: () => import('../views/auth/AuthCallbackView.vue'),
         },
-        {
-          path: 'onboarding/agency',
-          name: 'onboarding-agency',
-          component: () => import('../views/auth/OnboardingAgencyView.vue'),
-          meta: { requiresAuth: true },
-        },
       ],
     },
     {
@@ -82,7 +76,7 @@ const router = createRouter({
         {
           path: 'vehicles',
           name: 'vehicles',
-          component: () => import('../views/VehiculesView.vue'),
+          component: () => import('../views/VehiclesView.vue'),
         },
         {
           path: '/maintenance',
@@ -127,7 +121,7 @@ const router = createRouter({
         {
           path: '/conducteurs',
           name: 'conducteurs',
-          component: () => import('../views/ConducteursView.vue'),
+          component: () => import('../views/DriversView.vue'),
         },
         {
           path: '/chauffeurs',
@@ -141,12 +135,12 @@ const router = createRouter({
         {
           path: '/paiements',
           name: 'paiements',
-          component: () => import('../views/PaiementsView.vue'),
+          component: () => import('../views/PaymentView.vue'),
         },
         {
           path: '/profile',
           name: 'profile',
-          component: () => import('../views/user/ProfileView.vue'),
+          component: () => import('../views/user/ProfilView.vue'),
           meta: {
             requiresAuth: true,
             title: 'Profil Utilisateur',
@@ -173,7 +167,7 @@ const router = createRouter({
         {
           path: '/corbeille',
           name: 'corbeille',
-          component: () => import('../views/CorbeilleView.vue'),
+          component: () => import('../views/TrashView.vue'),
           meta: {
             requiresAuth: true,
             title: 'Éléments supprimés',
@@ -182,7 +176,7 @@ const router = createRouter({
         {
           path: '/aide',
           name: 'aide',
-          component: () => import('../views/AideView.vue'),
+          component: () => import('../views/HelpView.vue'),
           meta: {
             requiresAuth: true,
             title: "Centre d'aide",

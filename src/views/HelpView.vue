@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AideComponent from '../components/aide/AideComponent.vue'
+import AideComponent from '../components/help/HelpComponent.vue'
 </script>
 
 <template>

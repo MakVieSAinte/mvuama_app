@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CorbeilleComponent from '../components/corbeille/CorbeilleComponent.vue'
+import CorbeilleComponent from '../components/trash/TrashComponent.vue'
 </script>
 
 <template>

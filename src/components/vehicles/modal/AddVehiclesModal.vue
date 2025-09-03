@@ -857,7 +857,7 @@ import {
   generateInitials,
   getInitialsColor,
   type ChauffeurConfig,
-} from '@/config/vehiculeConfig'
+} from '@/config/vehicleConfig'
 
 // Import des icônes
 import {

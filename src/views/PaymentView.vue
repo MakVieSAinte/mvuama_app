@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import PaiementsComponent from '../components/paiements/PaiementsComponent.vue'
+import PaiementsComponent from '../components/payments/PaymentComponent.vue'
 </script>
 
 <template>

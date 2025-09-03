@@ -122,7 +122,7 @@
 
 <script setup lang="ts">
 import type { Table as VueTable } from '@tanstack/vue-table'
-import type { Vehicle } from './vehicleTableConfig'
+import type { Vehicle } from './TableConfig'
 import { Input } from '@/components/ui/input'
 import {
   Select,

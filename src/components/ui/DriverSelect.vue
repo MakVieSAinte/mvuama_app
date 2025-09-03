@@ -69,7 +69,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import type { ChauffeurConfig } from '@/config/vehiculeConfig'
+import type { ChauffeurConfig } from '@/config/vehicleConfig'
 
 interface Props {
   modelValue?: string
