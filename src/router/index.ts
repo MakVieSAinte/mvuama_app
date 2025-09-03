@@ -193,63 +193,63 @@ const router = createRouter({
   ],
 })
 
-// Navigation guard global : vérifie l'authentification sur toutes les routes
-router.beforeEach(async (to, from, next) => {
-  console.log(`Navigation de ${from.path} vers ${to.path}`)
+// // Navigation guard global : vérifie l'authentification sur toutes les routes
+// router.beforeEach(async (to, from, next) => {
+//   console.log(`Navigation de ${from.path} vers ${to.path}`)
 
-  // Autoriser l'accès aux routes d'authentification sans être connecté
-  if (
-    to.path.startsWith('/auth/login') ||
-    to.path.startsWith('/auth/register') ||
-    to.path.startsWith('/auth/callback') ||
-    to.path.startsWith('/auth/forgot-password') ||
-    to.path.startsWith('/auth/forgot-password-confirmation') ||
-    to.path.startsWith('/auth/reset-password') ||
-    to.path.startsWith('/auth/handler')
-  ) {
-    console.log("Accès à une route d'authentification autorisé")
-    return next()
-  }
+//   // Autoriser l'accès aux routes d'authentification sans être connecté
+//   if (
+//     to.path.startsWith('/auth/login') ||
+//     to.path.startsWith('/auth/register') ||
+//     to.path.startsWith('/auth/callback') ||
+//     to.path.startsWith('/auth/forgot-password') ||
+//     to.path.startsWith('/auth/forgot-password-confirmation') ||
+//     to.path.startsWith('/auth/reset-password') ||
+//     to.path.startsWith('/auth/handler')
+//   ) {
+//     console.log("Accès à une route d'authentification autorisé")
+//     return next()
+//   }
 
-  // Vérifier si l'utilisateur est authentifié via Supabase
-  try {
-    const { data } = await supabase.auth.getSession()
-    console.log('Session Supabase vérifiée:', data?.session ? 'Active' : 'Inactive')
+//   // Vérifier si l'utilisateur est authentifié via Supabase
+//   try {
+//     const { data } = await supabase.auth.getSession()
+//     console.log('Session Supabase vérifiée:', data?.session ? 'Active' : 'Inactive')
 
-    // Si l'utilisateur n'est pas authentifié, rediriger vers login
-    if (!data.session) {
-      console.log('Aucune session active, redirection vers login')
-      return next('/auth/login')
-    }
+//     // Si l'utilisateur n'est pas authentifié, rediriger vers login
+//     if (!data.session) {
+//       console.log('Aucune session active, redirection vers login')
+//       return next('/auth/login')
+//     }
 
-    // Si l'utilisateur vient de se connecter, vérifier s'il a une agence
-    if (from.path === '/auth/login' || to.path === '/create-agency') {
-      console.log("Vérification des agences de l'utilisateur après connexion")
+//     // Si l'utilisateur vient de se connecter, vérifier s'il a une agence
+//     if (from.path === '/auth/login' || to.path === '/create-agency') {
+//       console.log("Vérification des agences de l'utilisateur après connexion")
 
-      try {
-        const { AgencyService } = await import('../services/agencies/agencyService')
-        const { data: agencies } = await AgencyService.getUserAgencies(data.session.user.id)
-        console.log('Agences trouvées:', agencies)
+//       try {
+//         const { AgencyService } = await import('../services/agencies/agencyService')
+//         const { data: agencies } = await AgencyService.getUserAgencies(data.session.user.id)
+//         console.log('Agences trouvées:', agencies)
 
-        // Si l'utilisateur n'a pas d'agence, le rediriger vers create-agency
-        if (!agencies || agencies.length === 0) {
-          if (to.path !== '/create-agency') {
-            console.log("Aucune agence trouvée, redirection vers création d'agence")
-            return next('/create-agency')
-          }
-        }
-      } catch (agencyError) {
-        console.error('Erreur lors de la vérification des agences:', agencyError)
-      }
-    }
+//         // Si l'utilisateur n'a pas d'agence, le rediriger vers create-agency
+//         if (!agencies || agencies.length === 0) {
+//           if (to.path !== '/create-agency') {
+//             console.log("Aucune agence trouvée, redirection vers création d'agence")
+//             return next('/create-agency')
+//           }
+//         }
+//       } catch (agencyError) {
+//         console.error('Erreur lors de la vérification des agences:', agencyError)
+//       }
+//     }
 
-    // Si l'utilisateur est connecté, permettre l'accès à la route demandée
-    console.log('Navigation autorisée')
-    return next()
-  } catch (error) {
-    console.error("Erreur lors de la vérification de l'authentification:", error)
-    return next('/auth/login')
-  }
-})
+//     // Si l'utilisateur est connecté, permettre l'accès à la route demandée
+//     console.log('Navigation autorisée')
+//     return next()
+//   } catch (error) {
+//     console.error("Erreur lors de la vérification de l'authentification:", error)
+//     return next('/auth/login')
+//   }
+// })
 
 export default router
