@@ -1,0 +1,818 @@
+<template>
+  <div class="space-y-8">
+    <!-- En-tête avec actions -->
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div>
+        <h2 class="text-3xl font-bold tracking-tight">Gestion du Parking</h2>
+        <p class="text-muted-foreground">
+          Gérez les sorties et entrées des véhicules du parc automobile
+        </p>
+      </div>
+      <div class="flex items-center gap-2">
+        <Button variant="outline" @click="openStatsDialog">
+          <BarChart3 class="mr-2 h-4 w-4" />
+          Statistiques
+        </Button>
+        <Button @click="showAddForm = true">
+          <Plus class="mr-2 h-4 w-4" />
+          Nouvelle sortie
+        </Button>
+      </div>
+    </div>
+
+    <!-- Vue principale ou formulaire d'ajout -->
+    <div v-if="!showAddForm">
+      <!-- Onglets -->
+      <Tabs default-value="active" class="w-full">
+        <TabsList class="grid w-full grid-cols-4 md:w-auto">
+          <TabsTrigger value="active" class="flex items-center gap-2">
+            <Car class="h-4 w-4" />
+            <span class="hidden sm:inline">Véhicules sortis</span>
+            <Badge v-if="activeEntries.length > 0" variant="secondary">{{ activeEntries.length }}</Badge>
+          </TabsTrigger>
+          <TabsTrigger value="alerts" class="flex items-center gap-2">
+            <AlertCircle class="h-4 w-4" />
+            <span class="hidden sm:inline">Alertes</span>
+            <Badge v-if="parkingAlerts.length > 0" variant="destructive">{{ parkingAlerts.length }}</Badge>
+          </TabsTrigger>
+          <TabsTrigger value="history" class="flex items-center gap-2">
+            <History class="h-4 w-4" />
+            <span class="hidden sm:inline">Historique</span>
+          </TabsTrigger>
+          <TabsTrigger value="map" class="flex items-center gap-2">
+            <Map class="h-4 w-4" />
+            <span class="hidden sm:inline">Plan du parking</span>
+          </TabsTrigger>
+        </TabsList>
+
+        <!-- Contenu des onglets -->
+        <TabsContent value="active" class="space-y-6">
+          <!-- Véhicules actuellement sortis -->
+          <div v-if="activeEntries.length > 0">
+            <div class="mb-4 flex items-center gap-2">
+              <Search class="h-4 w-4 text-muted-foreground" />
+              <Input 
+                v-model="activeSearchQuery" 
+                placeholder="Rechercher par immatriculation, conducteur..." 
+                class="max-w-sm"
+              />
+            </div>
+            
+            <div class="grid gap-4">
+              <Card 
+                v-for="entry in filteredActiveEntries" 
+                :key="entry.id"
+                :class="[
+                  entry.alertStatus?.level === 'expired' ? 'border-red-300' : 
+                  entry.alertStatus?.level === 'urgent' ? 'border-orange-300' : '',
+                ]"
+              >
+                <CardHeader>
+                  <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                    <div class="flex items-center gap-2">
+                      <Avatar class="border border-border">
+                        <Car class="h-5 w-5" />
+                        <AvatarFallback>VH</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <CardTitle class="text-base">
+                          {{ getVehicleInfo(entry.vehiculeId)?.immatriculation || 'Véhicule inconnu' }}
+                        </CardTitle>
+                        <CardDescription>
+                          {{ getVehicleInfo(entry.vehiculeId)?.marque }} 
+                          {{ getVehicleInfo(entry.vehiculeId)?.modele }}
+                        </CardDescription>
+                      </div>
+                      <AlertTriangle
+                        v-if="entry.alertStatus"
+                        :class="[
+                          'h-4 w-4 ml-2',
+                          entry.alertStatus.level === 'expired' ? 'text-destructive' : 'text-orange-500',
+                        ]"
+                      />
+                    </div>
+                    <Badge variant="secondary" class="w-fit">En cours</Badge>
+                  </div>
+                  <div v-if="entry.alertStatus" class="mt-2 text-sm font-medium" :class="entry.alertStatus.color">
+                    ⚠️ {{ entry.alertStatus.message }}
+                  </div>
+                </CardHeader>
+
+                <CardContent>
+                  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="flex flex-col space-y-1">
+                      <span class="text-xs text-muted-foreground">Place de parking</span>
+                      <span class="flex items-center gap-1">
+                        <MapPin class="h-3.5 w-3.5 text-muted-foreground" />
+                        {{ entry.place }}
+                      </span>
+                    </div>
+                    <div class="flex flex-col space-y-1">
+                      <span class="text-xs text-muted-foreground">Conducteur</span>
+                      <span class="flex items-center gap-1">
+                        <User class="h-3.5 w-3.5 text-muted-foreground" />
+                        {{ entry.conducteur }}
+                      </span>
+                    </div>
+                    <div class="flex flex-col space-y-1">
+                      <span class="text-xs text-muted-foreground">Date de sortie</span>
+                      <span class="flex items-center gap-1">
+                        <Calendar class="h-3.5 w-3.5 text-muted-foreground" />
+                        {{ formatDateTime(entry.dateEntree).date }}
+                      </span>
+                    </div>
+                    <div class="flex flex-col space-y-1">
+                      <span class="text-xs text-muted-foreground">Durée</span>
+                      <span class="flex items-center gap-1">
+                        <Clock class="h-3.5 w-3.5 text-muted-foreground" />
+                        {{ calculateUsageDuration(entry.dateEntree) }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <Separator class="my-4" />
+
+                  <div class="grid grid-cols-2 gap-4">
+                    <div class="flex flex-col space-y-1">
+                      <span class="text-xs text-muted-foreground">Échéance parking</span>
+                      <span 
+                        class="flex items-center gap-1"
+                        :class="entry.alertStatus ? entry.alertStatus.color : ''"
+                      >
+                        <AlertCircle class="h-3.5 w-3.5" />
+                        {{ formatDateTime(entry.dateEcheance).date }}
+                      </span>
+                    </div>
+                    <div v-if="entry.destination" class="flex flex-col space-y-1">
+                      <span class="text-xs text-muted-foreground">Destination</span>
+                      <span class="flex items-center gap-1">
+                        <Navigation class="h-3.5 w-3.5 text-muted-foreground" />
+                        {{ entry.destination }}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+
+                <CardFooter>
+                  <div class="flex justify-end gap-2">
+                    <Button variant="outline" @click="openDetailDialog(entry)">
+                      <Eye class="mr-2 h-4 w-4" />
+                      Détails
+                    </Button>
+                    <Button @click="openReturnDialog(entry)">
+                      <CornerDownLeft class="mr-2 h-4 w-4" />
+                      Marquer le retour
+                    </Button>
+                  </div>
+                </CardFooter>
+              </Card>
+            </div>
+          </div>
+
+          <!-- Message si aucun véhicule sorti -->
+          <EmptyState 
+            v-else
+            title="Aucun véhicule en cours d'utilisation"
+            description="Tous les véhicules sont actuellement dans le parking"
+            :icon="Car"
+          >
+            <Button @click="showAddForm = true">
+              <Plus class="mr-2 h-4 w-4" />
+              Nouvelle sortie
+            </Button>
+          </EmptyState>
+        </TabsContent>
+
+        <!-- Onglet Alertes -->
+        <TabsContent value="alerts" class="space-y-6">
+          <div v-if="parkingAlerts.length > 0">
+            <Alert variant="destructive" class="mb-4">
+              <AlertCircle class="h-4 w-4" />
+              <AlertTitle>Attention</AlertTitle>
+              <AlertDescription>
+                {{ parkingAlerts.length }} véhicule(s) ont dépassé ou vont bientôt dépasser leur durée autorisée.
+              </AlertDescription>
+            </Alert>
+
+            <div class="grid gap-4">
+              <Card 
+                v-for="alert in parkingAlerts" 
+                :key="alert.id"
+                :class="alert.alert?.level === 'expired' ? 'border-destructive' : 'border-orange-300'"
+              >
+                <CardHeader class="pb-2">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <AlertTriangle 
+                        :class="[
+                          'h-4 w-4',
+                          alert.alert?.level === 'expired' ? 'text-destructive' : 'text-orange-500'
+                        ]" 
+                      />
+                      <CardTitle class="text-base">
+                        {{ getVehicleInfo(alert.vehiculeId)?.immatriculation }}
+                      </CardTitle>
+                    </div>
+                    <Badge 
+                      :variant="alert.alert?.level === 'expired' ? 'destructive' : 'outline'"
+                      class="ml-2"
+                    >
+                      {{ alert.alert?.level === 'expired' ? 'Dépassé' : 'Urgent' }}
+                    </Badge>
+                  </div>
+                  <CardDescription class="font-medium mt-1" :class="alert.alert?.level === 'expired' ? 'text-destructive' : 'text-orange-500'">
+                    {{ alert.alert?.message }}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent class="pb-2">
+                  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div class="flex flex-col">
+                      <span class="text-xs text-muted-foreground">Place</span>
+                      <span>{{ alert.place }}</span>
+                    </div>
+                    <div class="flex flex-col">
+                      <span class="text-xs text-muted-foreground">Conducteur</span>
+                      <span>{{ alert.conducteur }}</span>
+                    </div>
+                    <div class="flex flex-col">
+                      <span class="text-xs text-muted-foreground">Sortie</span>
+                      <span>{{ formatDateTime(alert.dateEntree).date }}</span>
+                    </div>
+                    <div class="flex flex-col">
+                      <span class="text-xs text-muted-foreground">Échéance</span>
+                      <span :class="alert.alert?.level === 'expired' ? 'text-destructive' : 'text-orange-500'">
+                        {{ formatDateTime(alert.dateEcheance).date }}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <div class="flex justify-end gap-2">
+                    <Button @click="openReturnDialog(alert)">
+                      <CornerDownLeft class="mr-2 h-4 w-4" />
+                      Marquer le retour
+                    </Button>
+                  </div>
+                </CardFooter>
+              </Card>
+            </div>
+          </div>
+          
+          <EmptyState 
+            v-else
+            title="Aucune alerte en cours"
+            description="Tous les véhicules sont dans les délais autorisés"
+            :icon="CheckCircle"
+            variant="success"
+          />
+        </TabsContent>
+
+        <!-- Onglet Historique -->
+        <TabsContent value="history" class="space-y-6">
+          <div class="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
+            <div class="flex items-center gap-2 w-full sm:max-w-sm">
+              <Search class="h-4 w-4 text-muted-foreground" />
+              <Input 
+                v-model="historySearchQuery" 
+                placeholder="Rechercher dans l'historique..." 
+                class="w-full sm:max-w-sm"
+              />
+            </div>
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+              <Popover>
+                <PopoverTrigger as-child>
+                  <Button variant="outline" class="w-full sm:w-auto justify-start">
+                    <CalendarRange class="mr-2 h-4 w-4" />
+                    <span>Filtrer par date</span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent class="w-auto p-0">
+                  <CalendarComp
+                    mode="range"
+                    :selected-range="dateRange"
+                    @update:selected-range="updateDateRange"
+                    class="border-none"
+                  />
+                  <div class="flex items-center justify-between p-3 border-t">
+                    <Button variant="ghost" size="sm" @click="clearDateRange">
+                      Réinitialiser
+                    </Button>
+                    <Button size="sm" @click="applyDateRange">
+                      Appliquer
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger as-child>
+                  <Button variant="outline" class="w-full sm:w-auto">
+                    <ListFilter class="mr-2 h-4 w-4" />
+                    <span class="hidden sm:inline">Filtrer</span>
+                    <ChevronDown class="ml-2 h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Filtrer par</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuCheckboxItem v-model="filters.showShortTrips">
+                    Trajets courts (&lt; 10km)
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem v-model="filters.showLongTrips">
+                    Trajets longs (&gt; 100km)
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuCheckboxItem v-model="filters.showLatestMonth">
+                    Dernier mois seulement
+                  </DropdownMenuCheckboxItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+
+          <!-- Tableau d'historique -->
+          <div v-if="filteredHistoryEntries.length > 0" class="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Véhicule</TableHead>
+                  <TableHead>Conducteur</TableHead>
+                  <TableHead>Date sortie</TableHead>
+                  <TableHead>Date retour</TableHead>
+                  <TableHead>Durée</TableHead>
+                  <TableHead>Distance</TableHead>
+                  <TableHead></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow v-for="entry in paginatedHistoryEntries" :key="entry.id">
+                  <TableCell class="font-medium">
+                    <div class="flex items-center gap-2">
+                      <Badge variant="outline" class="rounded-sm font-mono text-xs">
+                        {{ getVehicleInfo(entry.vehiculeId)?.immatriculation || '???' }}
+                      </Badge>
+                      <span class="text-xs text-muted-foreground">
+                        {{ getVehicleInfo(entry.vehiculeId)?.marque }} {{ getVehicleInfo(entry.vehiculeId)?.modele }}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell>{{ entry.conducteur }}</TableCell>
+                  <TableCell>
+                    <div class="flex flex-col">
+                      <span>{{ formatDateTime(entry.dateEntree).date }}</span>
+                      <span class="text-xs text-muted-foreground">{{ formatDateTime(entry.dateEntree).time }}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div class="flex flex-col">
+                      <span>{{ formatDateTime(entry.dateSortie).date }}</span>
+                      <span class="text-xs text-muted-foreground">{{ formatDateTime(entry.dateSortie).time }}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>{{ calculateUsageDuration(entry.dateEntree, entry.dateSortie) }}</TableCell>
+                  <TableCell>
+                    <Badge variant="secondary" class="whitespace-nowrap">
+                      {{ getKmDifference(entry) > 0 ? `${getKmDifference(entry)} km` : '-' }}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Button variant="ghost" size="icon" @click="openDetailDialog(entry)">
+                      <Eye class="h-4 w-4" />
+                      <span class="sr-only">Détails</span>
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+
+            <div class="flex items-center justify-center space-x-6 border-t px-4 py-4">
+              <div class="flex-1 text-sm text-muted-foreground">
+                {{ filteredHistoryEntries.length }} résultat(s) sur {{ completedEntries.length }} entrées
+              </div>
+              <div class="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  :disabled="currentPage === 1"
+                  @click="currentPage--"
+                >
+                  <ChevronLeft class="h-4 w-4" />
+                </Button>
+                <div class="flex w-[100px] items-center justify-center text-sm font-medium">
+                  Page {{ currentPage }} sur {{ totalPages }}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  :disabled="currentPage === totalPages"
+                  @click="currentPage++"
+                >
+                  <ChevronRight class="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <EmptyState 
+            v-else
+            title="Aucun enregistrement"
+            description="L'historique est vide ou aucun résultat ne correspond à vos critères"
+            :icon="History"
+          />
+        </TabsContent>
+
+        <!-- Onglet Plan du parking -->
+        <TabsContent value="map" class="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Plan interactif du parking</CardTitle>
+              <CardDescription>
+                Visualisez l'état actuel des places de parking et gérez l'attribution
+              </CardDescription>
+            </CardHeader>
+            <CardContent class="pt-6">
+              <ParkingMapComponent 
+                :active-entries="activeEntries"
+                :completed-entries="completedEntries"
+                @place-clicked="handleParkingPlaceClicked"
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+
+    <!-- Formulaire d'ajout d'une sortie -->
+    <AddParkingEntryForm 
+      v-else 
+      :vehicles="availableVehicles"
+      @submit="handleEntrySubmit"
+      @cancel="showAddForm = false"
+    />
+
+    <!-- Dialogs -->
+    <ParkingEntryDetailsDialog
+      v-model:open="showDetailDialog"
+      :entry="selectedEntry"
+      :vehicle="selectedEntry && getVehicleInfo(selectedEntry.vehiculeId) ? getVehicleInfo(selectedEntry.vehiculeId) : null"
+    />
+
+    <ReturnVehicleDialog 
+      v-model:open="showReturnDialog"
+      :entry="selectedEntry"
+      :vehicle="selectedEntry && getVehicleInfo(selectedEntry.vehiculeId) ? getVehicleInfo(selectedEntry.vehiculeId) : null"
+      @confirm="handleReturn"
+    />
+
+    <ParkingStatsDialog
+      v-model:open="showStatsDialog"
+      :parking-entries="parkingEntries"
+      :vehicles="mockVehicles"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, watch } from 'vue'
+import { format, parseISO, addMonths, isBefore, isAfter, differenceInDays } from 'date-fns'
+import { fr } from 'date-fns/locale'
+import { mockParkingEntries, mockVehicles } from '../../data/mockData'
+import type { ParkingEntry, Vehicle } from '../../types/fleet'
+import { 
+  AlertCircle, AlertTriangle, BarChart3, Calendar, CalendarRange, Car, CheckCircle,
+  ChevronDown, ChevronLeft, ChevronRight, Clock, CornerDownLeft, Eye, History, ListFilter,
+  Map, MapPin, Navigation, Plus, Search, User
+} from 'lucide-vue-next'
+
+// Components
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Separator } from '@/components/ui/separator'
+import { 
+  DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel,
+  DropdownMenuSeparator, DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+// Import pour le composant Calendar
+import { Calendar as CalendarComp } from '@/components/ui/calendar'
+
+// Custom components
+import AddParkingEntryForm from './AddParkingEntryForm.vue'
+import ParkingEntryDetailsDialog from './dialogs/ParkingEntryDetailsDialog.vue'
+import ReturnVehicleDialog from './dialogs/ReturnVehicleDialog.vue'
+import ParkingStatsDialog from './dialogs/ParkingStatsDialog.vue'
+import ParkingMapComponent from './ParkingMapComponent.vue'
+import EmptyState from '../utils/EmptyState.vue'
+
+// Types
+interface ParkingAlertStatus {
+  level: 'expired' | 'urgent' | 'warning'
+  message: string
+  color: string
+}
+
+interface ActiveEntry extends ParkingEntry {
+  alertStatus: ParkingAlertStatus | null
+}
+
+interface ParkingAlertEntry extends ParkingEntry {
+  alert: ParkingAlertStatus | null
+}
+
+interface DateTimeFormat {
+  date: string
+  time: string
+}
+
+// State
+const showAddForm = ref<boolean>(false)
+const parkingEntries = ref<ParkingEntry[]>([...mockParkingEntries])
+const showDetailDialog = ref<boolean>(false)
+const showReturnDialog = ref<boolean>(false)
+const showStatsDialog = ref<boolean>(false)
+const selectedEntry = ref<ParkingEntry | null>(null)
+
+// Search and Filters
+const activeSearchQuery = ref('')
+const historySearchQuery = ref('')
+const dateRange = ref<[Date | null, Date | null]>([null, null])
+const appliedDateRange = ref<[Date | null, Date | null]>([null, null])
+const filters = ref({
+  showShortTrips: false,
+  showLongTrips: false,
+  showLatestMonth: false
+})
+
+// Pagination
+const itemsPerPage = 10
+const currentPage = ref(1)
+
+// Computed properties
+const availableVehicles = computed((): Vehicle[] => {
+  return mockVehicles.filter(v => v.statut === 'Disponible')
+})
+
+const activeEntries = computed((): ActiveEntry[] => {
+  return parkingEntries.value
+    .filter(entry => !entry.dateSortie)
+    .map(entry => ({
+      ...entry,
+      alertStatus: getParkingAlertStatus(entry)
+    }))
+})
+
+const filteredActiveEntries = computed((): ActiveEntry[] => {
+  if (!activeSearchQuery.value) return activeEntries.value
+  
+  const query = activeSearchQuery.value.toLowerCase()
+  return activeEntries.value.filter(entry => {
+    const vehicle = getVehicleInfo(entry.vehiculeId)
+    return (
+      vehicle?.immatriculation.toLowerCase().includes(query) ||
+      vehicle?.marque.toLowerCase().includes(query) ||
+      vehicle?.modele.toLowerCase().includes(query) ||
+      entry.conducteur.toLowerCase().includes(query) ||
+      entry.place.toLowerCase().includes(query) ||
+      (entry.destination && entry.destination.toLowerCase().includes(query))
+    )
+  })
+})
+
+const completedEntries = computed((): ParkingEntry[] => {
+  return parkingEntries.value.filter(entry => entry.dateSortie)
+})
+
+const filteredHistoryEntries = computed((): ParkingEntry[] => {
+  let filtered = completedEntries.value
+
+  // Search query
+  if (historySearchQuery.value) {
+    const query = historySearchQuery.value.toLowerCase()
+    filtered = filtered.filter(entry => {
+      const vehicle = getVehicleInfo(entry.vehiculeId)
+      return (
+        vehicle?.immatriculation.toLowerCase().includes(query) ||
+        vehicle?.marque.toLowerCase().includes(query) ||
+        vehicle?.modele.toLowerCase().includes(query) ||
+        entry.conducteur.toLowerCase().includes(query) ||
+        entry.place.toLowerCase().includes(query) ||
+        (entry.destination && entry.destination.toLowerCase().includes(query))
+      )
+    })
+  }
+
+  // Date range filter
+  if (appliedDateRange.value[0] && appliedDateRange.value[1]) {
+    filtered = filtered.filter(entry => {
+      const entryDate = parseISO(entry.dateEntree)
+      return (
+        isAfter(entryDate, appliedDateRange.value[0]!) && 
+        isBefore(entryDate, appliedDateRange.value[1]!)
+      )
+    })
+  }
+
+  // Short trips filter
+  if (filters.value.showShortTrips) {
+    filtered = filtered.filter(entry => {
+      const distance = getKmDifference(entry)
+      return distance > 0 && distance < 10
+    })
+  }
+
+  // Long trips filter
+  if (filters.value.showLongTrips) {
+    filtered = filtered.filter(entry => {
+      const distance = getKmDifference(entry)
+      return distance >= 100
+    })
+  }
+
+  // Latest month filter
+  if (filters.value.showLatestMonth) {
+    const oneMonthAgo = new Date()
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1)
+    
+    filtered = filtered.filter(entry => {
+      const entryDate = parseISO(entry.dateEntree)
+      return isAfter(entryDate, oneMonthAgo)
+    })
+  }
+
+  return filtered
+})
+
+// Pagination for history
+const paginatedHistoryEntries = computed(() => {
+  const startIndex = (currentPage.value - 1) * itemsPerPage
+  return filteredHistoryEntries.value.slice(startIndex, startIndex + itemsPerPage)
+})
+
+const totalPages = computed(() => {
+  return Math.ceil(filteredHistoryEntries.value.length / itemsPerPage)
+})
+
+const parkingAlerts = computed((): ParkingAlertEntry[] => {
+  return activeEntries.value
+    .map(entry => ({
+      ...entry,
+      alert: entry.alertStatus
+    }))
+    .filter(entry => 
+      entry.alert && 
+      (entry.alert.level === 'urgent' || entry.alert.level === 'expired')
+    )
+})
+
+// Watch for changes that should reset pagination
+watch([historySearchQuery, filters, appliedDateRange], () => {
+  currentPage.value = 1
+})
+
+// Methods
+const formatDateTime = (dateString?: string): DateTimeFormat => {
+  if (!dateString) {
+    return { date: '-', time: '-' }
+  }
+  
+  const date = parseISO(dateString)
+  return {
+    date: format(date, 'PPP', { locale: fr }),
+    time: format(date, 'HH:mm', { locale: fr })
+  }
+}
+
+const calculateUsageDuration = (dateEntree: string, dateSortie?: string): string => {
+  const start = parseISO(dateEntree)
+  const end = dateSortie ? parseISO(dateSortie) : new Date()
+  
+  const diffMs = end.getTime() - start.getTime()
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+  const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+  const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
+  
+  if (diffDays > 0) {
+    return `${diffDays}j ${diffHours}h ${diffMinutes}min`
+  } else if (diffHours > 0) {
+    return `${diffHours}h ${diffMinutes}min`
+  } else {
+    return `${diffMinutes}min`
+  }
+}
+
+const getKmDifference = (entry: ParkingEntry): number => {
+  return entry.kilometrageRetour && entry.kilometrageSortie
+    ? entry.kilometrageRetour - entry.kilometrageSortie
+    : 0
+}
+
+const getVehicleInfo = (vehiculeId: string): Vehicle | undefined => {
+  return mockVehicles.find(v => v.id === vehiculeId)
+}
+
+const getParkingAlertStatus = (entry: ParkingEntry): ParkingAlertStatus | null => {
+  if (!entry.dateEcheance) return null
+  
+  const today = new Date()
+  const expiryDate = parseISO(entry.dateEcheance)
+  const daysUntilExpiry = differenceInDays(expiryDate, today)
+  
+  if (daysUntilExpiry < 0) {
+    return {
+      level: 'expired',
+      message: `Dépassement de la durée autorisée (${Math.abs(daysUntilExpiry)} jours de retard)`,
+      color: 'text-destructive'
+    }
+  } else if (daysUntilExpiry <= 10) {
+    return {
+      level: 'urgent',
+      message: `Échéance imminente dans ${daysUntilExpiry} jour(s)`,
+      color: 'text-orange-500'
+    }
+  } else if (daysUntilExpiry <= 30) {
+    return {
+      level: 'warning',
+      message: `Échéance dans ${daysUntilExpiry} jours`,
+      color: 'text-amber-500'
+    }
+  }
+  
+  return null
+}
+
+const handleEntrySubmit = (formData: {
+  vehiculeId: string;
+  place: string;
+  conducteur: string;
+  destination?: string;
+  kilometrageSortie: number;
+}): void => {
+  const entryDate = new Date()
+  const expiryDate = addMonths(entryDate, 3)
+  
+  const entry: ParkingEntry = {
+    id: Date.now().toString(),
+    dateEntree: entryDate.toISOString(),
+    dateEcheance: expiryDate.toISOString(),
+    vehiculeId: formData.vehiculeId,
+    place: formData.place,
+    conducteur: formData.conducteur,
+    destination: formData.destination,
+    kilometrageSortie: formData.kilometrageSortie
+  }
+  
+  parkingEntries.value.unshift(entry)
+  showAddForm.value = false
+}
+
+const handleReturn = (returnData: { entryId: string, kilometrageRetour: number, notes?: string }): void => {
+  const index = parkingEntries.value.findIndex(entry => entry.id === returnData.entryId)
+  
+  if (index !== -1) {
+    parkingEntries.value[index] = {
+      ...parkingEntries.value[index],
+      dateSortie: new Date().toISOString(),
+      kilometrageRetour: returnData.kilometrageRetour
+    }
+    showReturnDialog.value = false
+  }
+}
+
+const openDetailDialog = (entry: ParkingEntry): void => {
+  selectedEntry.value = entry
+  showDetailDialog.value = true
+}
+
+const openReturnDialog = (entry: ParkingEntry): void => {
+  selectedEntry.value = entry
+  showReturnDialog.value = true
+}
+
+const openStatsDialog = (): void => {
+  showStatsDialog.value = true
+}
+
+const updateDateRange = (range: [Date | null, Date | null]): void => {
+  dateRange.value = range
+}
+
+const applyDateRange = (): void => {
+  appliedDateRange.value = [...dateRange.value]
+}
+
+const clearDateRange = (): void => {
+  dateRange.value = [null, null]
+  appliedDateRange.value = [null, null]
+}
+
+const handleParkingPlaceClicked = (placeId: string): void => {
+  // Cette fonction sera implémentée dans le composant de plan de parking
+  console.log(`Place de parking cliquée: ${placeId}`)
+}
+</script>
