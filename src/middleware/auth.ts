@@ -8,8 +8,6 @@ export async function authMiddleware(
   from: RouteLocationNormalized,
   next: NavigationGuardNext,
 ) {
-  console.log(`Navigation de ${from.path} vers ${to.path}`)
-
   // Autoriser l'accès aux routes d'authentification pour tous les utilisateurs
   if (
     to.path.startsWith('/auth/login') ||
@@ -19,16 +17,13 @@ export async function authMiddleware(
     to.path.startsWith('/auth/reset-password') ||
     to.path.startsWith('/auth/handler')
   ) {
-    console.log("Route d'authentification, accès autorisé")
     return next()
   }
 
   // Vérification asynchrone de l'authentification
   try {
     const isAuth = await AuthService.checkAuth()
-    console.log("Statut d'authentification:", isAuth)
 
-    // Si l'utilisateur n'est pas authentifié, rediriger vers login
     if (!isAuth) {
       console.log('Utilisateur non authentifié, redirection vers login')
       return next('/auth/login')
@@ -36,7 +31,6 @@ export async function authMiddleware(
 
     // Si l'utilisateur est authentifié et qu'il essaie d'accéder à /create-agency, vérifier s'il a déjà une agence
     if (to.path === '/create-agency') {
-      console.log('Accès à /create-agency, vérification des agences existantes')
       const { data: user } = await supabase.auth.getUser()
 
       if (user && user.user) {
@@ -45,7 +39,6 @@ export async function authMiddleware(
 
         // Si l'utilisateur a déjà des agences, le rediriger vers le dashboard
         if (agencies && agencies.length > 0) {
-          console.log("L'utilisateur a déjà des agences, redirection vers le dashboard")
           return next('/')
         }
       }
@@ -54,7 +47,6 @@ export async function authMiddleware(
     // Protection admin : doit être authentifié ET admin
     if (to.path.startsWith('/admin')) {
       if (!AuthService.isAdmin()) {
-        console.log("Accès admin refusé, redirection vers l'accueil")
         return next('/')
       }
     }

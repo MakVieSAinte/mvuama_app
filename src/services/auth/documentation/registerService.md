@@ -73,21 +73,6 @@ async save()
 - Les erreurs d'API Supabase sont également capturées et journalisées
 - Un message générique est retourné en cas d'échec
 
-### Récupération des utilisateurs
-
-```typescript
-async getAll()
-```
-
-**Description :** Récupère la liste de tous les utilisateurs enregistrés.
-
-**Fonctionnement :**
-
-- Effectue une requête SELECT sur la table `users`
-- Retourne l'ensemble des données utilisateurs
-- Gère les erreurs potentielles
-
-**Utilisation :** Cette méthode peut être utilisée dans des interfaces administratives pour afficher ou gérer les utilisateurs.
 
 ## Intégration avec Supabase
 

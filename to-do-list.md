@@ -1,6 +1,8 @@
 ### To-do List
 
 - Mettre Logique dans les composant auth et user view
+- Regler le problème de error succes
+
 - Ajouter un KPI pour la consommation de carburant
 - Ajouter la possibilité de faire des acquisition ou du leasing (louer)
 - Ajouter le suivi en GPS

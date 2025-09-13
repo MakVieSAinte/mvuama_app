@@ -37,7 +37,6 @@ export default class RegisterService {
         throw new Error('Email et mot de passe sont requis')
       }
 
-      // Vérification des mots de passe
       if (this.password !== this.confirm_password) {
         throw new Error('Les mots de passe ne correspondent pas')
       }
@@ -82,17 +81,6 @@ export default class RegisterService {
       return authData
     } catch (error) {
       console.error("Erreur lors de l'enregistrement:", error)
-      return 'Erreur'
-    }
-  }
-
-  async getAll() {
-    try {
-      const { data, error } = await supabase.from('users').select('*')
-      if (error) throw error
-      return data
-    } catch (error) {
-      console.error('Erreur lors de la récupération des utilisateurs:', error)
       return 'Erreur'
     }
   }

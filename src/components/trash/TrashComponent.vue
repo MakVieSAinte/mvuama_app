@@ -198,10 +198,7 @@
                       variant="ghost"
                       size="icon"
                       title="Restaurer"
-                      @click="
-                        selectedItemForAction = item
-                        restoreDialog = true
-                      "
+                      @click="((selectedItemForAction = item), (restoreDialog = true))"
                     >
                       <RefreshCw class="h-4 w-4" />
                     </Button>
@@ -209,10 +206,7 @@
                       variant="ghost"
                       size="icon"
                       title="Supprimer définitivement"
-                      @click="
-                        selectedItemForAction = item
-                        permanentDeleteDialog = true
-                      "
+                      @click="((selectedItemForAction = item), (permanentDeleteDialog = true))"
                     >
                       <Trash2 class="h-4 w-4 text-destructive" />
                     </Button>
@@ -229,10 +223,7 @@
       >
         <Button
           variant="destructive"
-          @click="
-            selectedItemForAction = null
-            permanentDeleteDialog = true
-          "
+          @click="((selectedItemForAction = null), (permanentDeleteDialog = true))"
           :disabled="deletedItems.length === 0"
         >
           <Trash2 class="mr-2 h-4 w-4" />
@@ -274,9 +265,9 @@
         <AlertDialogAction
           v-else-if="selectedItemForAction"
           @click="
-            restoreItem(selectedItemForAction)
-            restoreDialog = false
-            selectedItemForAction = null
+            (restoreItem(selectedItemForAction),
+            (restoreDialog = false),
+            (selectedItemForAction = null))
           "
         >
           Restaurer
@@ -321,9 +312,9 @@
           v-else-if="selectedItemForAction"
           class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           @click="
-            permanentDeleteItem(selectedItemForAction)
-            permanentDeleteDialog = false
-            selectedItemForAction = null
+            (permanentDeleteItem(selectedItemForAction),
+            (permanentDeleteDialog = false),
+            (selectedItemForAction = null))
           "
         >
           Supprimer définitivement
@@ -331,10 +322,7 @@
         <AlertDialogAction
           v-else
           class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-          @click="
-            emptyTrash()
-            permanentDeleteDialog = false
-          "
+          @click="(emptyTrash(), (permanentDeleteDialog = false))"
         >
           Vider la corbeille
         </AlertDialogAction>

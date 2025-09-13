@@ -3,23 +3,11 @@ import type {
   IForgotPasswordModel,
   IResetPasswordModel,
 } from '@/interfaces/forgotPasswordInterface'
-import { AuthNotificationService } from './authNotificationService'
 
-/**
- * Service de gestion de la réinitialisation de mot de passe
- */
 export class ForgotPasswordService {
-  /**
-   * Envoie un email de réinitialisation de mot de passe
-   * @param data - Données du formulaire de demande de réinitialisation
-   * @returns Promise<boolean> - true si l'email a été envoyé avec succès
-   */
   static async sendResetPasswordEmail(data: IForgotPasswordModel): Promise<boolean> {
     try {
-      // Utiliser notre page de traitement d'authentification spécifique
       const redirectUrl = `${window.location.origin}/auth/handler`
-
-      console.log('URL de redirection configurée:', redirectUrl)
 
       const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
         redirectTo: redirectUrl,
@@ -37,11 +25,8 @@ export class ForgotPasswordService {
     }
   }
 
-  /**
-   * Réinitialise le mot de passe avec le token reçu par email
-   * @param data - Données du formulaire de réinitialisation
-   * @returns Promise<boolean> - true si le mot de passe a été réinitialisé avec succès
-   */
+  // Réinitialise le mot de passe avec le token reçu par email
+
   static async resetPassword(data: IResetPasswordModel): Promise<boolean> {
     try {
       // Vérifier d'abord que nous avons une session valide
@@ -52,7 +37,6 @@ export class ForgotPasswordService {
         throw new Error("Votre lien de réinitialisation a expiré ou n'est plus valide")
       }
 
-      // Le token est géré par Supabase en interne à partir de l'URL
       const { error } = await supabase.auth.updateUser({
         password: data.password,
       })
@@ -60,7 +44,6 @@ export class ForgotPasswordService {
       if (error) {
         console.error('Erreur lors de la réinitialisation du mot de passe:', error)
 
-        // Messages d'erreur plus explicites
         if (error.message.includes('expired')) {
           throw new Error(
             'Le lien de réinitialisation a expiré. Veuillez demander un nouveau lien.',
@@ -81,11 +64,6 @@ export class ForgotPasswordService {
     }
   }
 
-  /**
-   * Vérifie si un token de réinitialisation est valide
-   * Utilisé pour rediriger l'utilisateur vers la page appropriée
-   * @returns Promise<boolean> - true si le token est valide
-   */
   static async isValidResetToken(): Promise<boolean> {
     try {
       // Vérifier si nous avons une session valide

@@ -157,7 +157,7 @@ const data = {
     { id: 'home', title: 'Accueil', icon: Home, route: '/home' },
     { id: 'dashboard', title: 'Tableau de bord', icon: ChartArea, route: '/' },
     { id: 'vehicles', title: 'Parc automobile', icon: Car, route: '/vehicles' },
-    { id: 'conducteurs', title: 'Conducteurs', icon: Users, route: '/conducteurs' },
+    { id: 'conducteurs', title: 'Conducteurs', icon: Users, route: '/drivers' },
     { id: 'documents', title: 'Documents', icon: File, route: '/documents' },
     { id: 'recettes', title: 'Recettes', icon: Coins, route: '/recettes' },
     { id: 'carburant', title: 'Carburant', icon: Fuel, route: '/carburant' },
@@ -176,12 +176,12 @@ const data = {
     },
     {
       title: 'Corbeille',
-      url: '/corbeille',
+      url: '/trash',
       icon: Trash2,
     },
     {
       title: "Vous avez besoin d'aide ?",
-      url: '/aide',
+      url: '/help',
       icon: MessageCircleQuestion,
     },
   ],

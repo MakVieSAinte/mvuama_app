@@ -6,12 +6,12 @@ const supabaseAnonKey = config.base_anon_key
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-// export const setSupabaseToken = (token: string) => {
-//   // Pour un token pour les utilisateurs déjà authentifiés ailleurs
-//   supabase.auth.setSession({
-//     access_token: token,
-//     refresh_token: '',
-//   })
-// }
+export const setSupabaseToken = (token: string) => {
+  // Pour un token pour les utilisateurs déjà authentifiés ailleurs
+  supabase.auth.setSession({
+    access_token: token,
+    refresh_token: '',
+  })
+}
 
 export default supabase

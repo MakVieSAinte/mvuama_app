@@ -5,21 +5,12 @@ import { AuthService } from './auth'
 export class LoginService {
   private loginData: ILoginModel
 
-  /**
-   * Constructeur du service de connexion
-   * @param {ILoginModel} loginData - Les données de connexion de l'utilisateur
-   */
   constructor(loginData: ILoginModel) {
     this.loginData = loginData
   }
 
-  /**
-   * Authentifie un utilisateur avec email et mot de passe
-   * @returns {Promise<any>} - Les données de l'utilisateur ou une erreur
-   */
   async login() {
     try {
-      // Nettoyer l'email (supprimer les espaces inutiles)
       const cleanedEmail = this.loginData.email.trim().toLowerCase()
 
       console.log('Tentative de connexion avec:', {
@@ -27,10 +18,9 @@ export class LoginService {
         passwordLength: this.loginData.password.length,
       })
 
-      // Utiliser la méthode signIn de AuthService avec email nettoyé
       const result = await AuthService.signIn(cleanedEmail, this.loginData.password)
 
-      // Si l'option "se souvenir de moi" est activée, stocker les identifiants localement
+      // "se souvenir de moi", stocker les identifiants localement
       if (this.loginData.remember) {
         localStorage.setItem('remember_email', cleanedEmail)
       } else {
@@ -52,7 +42,6 @@ export class LoginService {
     } catch (error) {
       console.error('Erreur de connexion:', error)
 
-      // Gérer l'erreur de manière plus détaillée
       if (error instanceof Error) {
         if (error.message.includes('Invalid login')) {
           throw new Error('Email ou mot de passe incorrect')
@@ -65,18 +54,12 @@ export class LoginService {
 
       throw new Error('Erreur lors de la connexion')
     }
-  } /**
-   * Récupère l'email mémorisé s'il existe
-   * @returns {string|null} - L'email mémorisé ou null
-   */
+  }
+
   static getRememberedEmail(): string | null {
     return localStorage.getItem('remember_email')
   }
 
-  /**
-   * Vérifie si un utilisateur est actuellement connecté
-   * @returns {Promise<boolean>} - true si l'utilisateur est connecté
-   */
   static async isUserLoggedIn(): Promise<boolean> {
     try {
       const { data } = await supabase.auth.getSession()
@@ -87,10 +70,6 @@ export class LoginService {
     }
   }
 
-  /**
-   * Récupère les informations de l'utilisateur connecté
-   * @returns {Promise<any>} - Les données de l'utilisateur ou null
-   */
   static async getCurrentUser() {
     try {
       const { data } = await supabase.auth.getUser()

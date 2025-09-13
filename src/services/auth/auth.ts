@@ -12,7 +12,6 @@ export class AuthService {
         },
       })
 
-      // Ne pas envoyer de notification ici, laissons le composant le faire
       return { data, error }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Une erreur est survenue'
@@ -68,7 +67,6 @@ export class AuthService {
         throw new Error(error.message || 'Erreur lors de la connexion')
       }
 
-      // Ne pas envoyer de notification ici, laissons le composant s'en charger
       return data
     } catch (error) {
       console.error('Exception dans signIn:', error)
@@ -88,14 +86,11 @@ export class AuthService {
 
     console.log("Vérification de l'authentification:", { session, user })
 
-    // Si on a une session ou un utilisateur, on considère qu'on est authentifié
     return !!(session || user)
   }
 
-  /**
-   * Vérifie de manière asynchrone si l'utilisateur est authentifié
-   * @returns {Promise<boolean>} - true si l'utilisateur est authentifié
-   */
+  // Vérifie de manière asynchrone si l'utilisateur est authentifié
+
   static async checkAuth(): Promise<boolean> {
     try {
       const session = await this.getCurrentSession()
@@ -112,10 +107,6 @@ export class AuthService {
     return user && user.role === 'admin'
   }
 
-  /**
-   * Déconnecte l'utilisateur actuel
-   * @returns {Promise<boolean>} - true si la déconnexion est réussie
-   */
   static async signOut(): Promise<boolean> {
     try {
       const { error } = await supabase.auth.signOut()
@@ -130,10 +121,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Récupère la session courante
-   * @returns {Promise<Session|null>} - La session ou null
-   */
   static async getCurrentSession() {
     try {
       const { data, error } = await supabase.auth.getSession()
@@ -145,10 +132,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Récupère les informations de l'utilisateur connecté
-   * @returns {Promise<any>} - Les données de l'utilisateur ou null
-   */
   static async getCurrentUser() {
     try {
       const { data, error } = await supabase.auth.getUser()

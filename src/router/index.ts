@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import { authMiddleware } from '../middleware/auth'
 import { AuthService } from '../services/auth/auth'
 import { supabase } from '../services/config/supabaseClient'
@@ -119,13 +118,9 @@ const router = createRouter({
           component: () => import('../views/HistoriqueView.vue'),
         },
         {
-          path: '/conducteurs',
-          name: 'conducteurs',
+          path: '/drivers',
+          name: 'drivers',
           component: () => import('../views/DriversView.vue'),
-        },
-        {
-          path: '/chauffeurs',
-          redirect: '/conducteurs',
         },
         {
           path: '/recettes',
@@ -133,8 +128,8 @@ const router = createRouter({
           component: () => import('../views/RecettesView.vue'),
         },
         {
-          path: '/paiements',
-          name: 'paiements',
+          path: '/payment',
+          name: 'payment',
           component: () => import('../views/PaymentView.vue'),
         },
         {
@@ -165,8 +160,8 @@ const router = createRouter({
           },
         },
         {
-          path: '/corbeille',
-          name: 'corbeille',
+          path: '/trash',
+          name: 'trash',
           component: () => import('../views/TrashView.vue'),
           meta: {
             requiresAuth: true,
@@ -174,8 +169,8 @@ const router = createRouter({
           },
         },
         {
-          path: '/aide',
-          name: 'aide',
+          path: '/help',
+          name: 'help',
           component: () => import('../views/HelpView.vue'),
           meta: {
             requiresAuth: true,
@@ -189,9 +184,6 @@ const router = createRouter({
 
 // // Navigation guard global : vérifie l'authentification sur toutes les routes
 // router.beforeEach(async (to, from, next) => {
-//   console.log(`Navigation de ${from.path} vers ${to.path}`)
-
-//   // Autoriser l'accès aux routes d'authentification sans être connecté
 //   if (
 //     to.path.startsWith('/auth/login') ||
 //     to.path.startsWith('/auth/register') ||
