@@ -45,7 +45,7 @@ export interface ParkingEntry {
   vehiculeId: string
   dateEntree: string
   dateSortie?: string
-  dateEcheance: string // Date d'échéance (3 mois après l'entrée)
+  dateEcheance: string
   place: string
   conducteur: string
   destination?: string

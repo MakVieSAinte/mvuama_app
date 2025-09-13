@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import AideComponent from '../components/help/HelpComponent.vue'
+import HelpComponent from '../components/help/HelpComponent.vue'
 </script>
 
 <template>
   <main>
-    <AideComponent />
+    <HelpComponent />
   </main>
 </template>

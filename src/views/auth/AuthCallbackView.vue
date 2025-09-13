@@ -14,7 +14,6 @@ onMounted(async () => {
     return router.replace({ name: 'login' })
   }
   toastSuccess('Email vérifié. Connecté.')
-  // Nettoyé : plus de gestion d'agence après callback
 })
 </script>
 

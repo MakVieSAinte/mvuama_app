@@ -1,8 +1,5 @@
 import supabase from '../config/supabaseClient'
 
-/**
- * Service pour gérer les opérations liées aux utilisateurs
- */
 export class UserService {
   /**
    * Récupère les informations de l'utilisateur actuellement connecté
@@ -29,12 +26,11 @@ export class UserService {
 
       if (!user) return null
 
-      // Récupération du nom et prénom depuis les métadonnées
       const firstName = user.user_metadata?.first_name || ''
       const lastName = user.user_metadata?.last_name || ''
       const fullName = `${firstName} ${lastName}`.trim()
 
-      // Si le nom complet n'est pas disponible, utiliser l'email ou un nom par défaut
+      // Si le nom complet pas disponible, utiliser l'email ou un nom par défaut
       const displayName =
         fullName || user.user_metadata?.name || user.email?.split('@')[0] || 'Utilisateur'
 

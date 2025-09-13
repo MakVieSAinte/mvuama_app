@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import PaiementsComponent from '../components/payments/PaymentComponent.vue'
+import PaymentComponent from '../components/payments/PaymentComponent.vue'
 </script>
 
 <template>
   <main>
-    <PaiementsComponent />
+    <PaymentComponent />
   </main>
 </template>

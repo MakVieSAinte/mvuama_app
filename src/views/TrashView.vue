@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import CorbeilleComponent from '../components/trash/TrashComponent.vue'
+import TrashComponent from '../components/trash/TrashComponent.vue'
 </script>
 
 <template>
   <main>
-    <CorbeilleComponent />
+    <TrashComponent />
   </main>
 </template>

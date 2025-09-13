@@ -179,11 +179,11 @@
               <SelectGroup>
                 <SelectItem v-for="country in countries" :key="country.code" :value="country.code">
                   <img
-                        :src="`https://flagcdn.com/24x18/${country.code.toLowerCase()}.png`"
-                        width="15"
-                        height="9"
-                      />
-                      <span>{{ countryCodeToFlag(country.code) }}</span>
+                    :src="`https://flagcdn.com/24x18/${country.code.toLowerCase()}.png`"
+                    width="15"
+                    height="9"
+                  />
+                  <span>{{ countryCodeToFlag(country.code) }}</span>
                   {{ country.name }}
                 </SelectItem>
               </SelectGroup>
@@ -212,7 +212,9 @@
                   :key="currency.code"
                   :value="currency.code"
                 >
-                  <span class="text-bold">{{ currency.symbol }}</span> {{ currency.name }} ({{ currency.code }})
+                  <span class="text-bold">{{ currency.symbol }}</span> {{ currency.name }} ({{
+                    currency.code
+                  }})
                 </SelectItem>
               </SelectGroup>
             </SelectContent>
@@ -586,7 +588,6 @@ export default {
       { value: 'logistique', label: 'Logistique' },
       { value: 'autre', label: 'Autre' },
     ])
-
 
     // Villes par pays
     const citiesByCountry = ref([])
