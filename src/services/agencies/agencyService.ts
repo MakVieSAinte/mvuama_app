@@ -56,7 +56,11 @@ export class AgencyService {
     }
   }
 
-  static async getUserAgencies(userId?: string): any {
+  static async getUserAgencies(userId?: string): Promise<{
+    data: IAgencyModel[] | null
+    error: Error | null
+    success: boolean
+  }> {
     try {
       // Vérifier d'abord si l'utilisateur existe dans la table users
       const { data: userData, error: userError } = await supabase
@@ -64,13 +68,21 @@ export class AgencyService {
         .select('id')
         .eq('id', userId)
 
-      console.log("Vérification de l'utilisateur dans la table users:", { userData, userError })
+      const { data: agencies, error } = await supabase
+        .from('agencies')
+        .select('*')
+        .eq('created_by', userId)
+        .is('deleted_at', null)
 
-      const getAgencies = await AgencyService.getUserAgencies(userId)
+      if (error) {
+        console.error('Erreur lors de la récupération des agences:', error)
+        return { data: null, error, success: false }
+      }
 
-      return getAgencies
-    } catch (error) {
-      console.error('Exception lors de la récupération des agences:', error)
+      return { data: agencies, error: null, success: true }
+    } catch (err) {
+      console.error('Exception lors de la récupération des agences:', err)
+      const error = err instanceof Error ? err : new Error(String(err))
       return { data: null, error, success: false }
     }
   }

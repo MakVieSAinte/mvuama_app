@@ -23,10 +23,10 @@
             <Eye v-if="!showPassword" class="w-[17px]" />
             <EyeOff v-else class="w-[17px]" />
           </button>
+          </div>
           <span v-if="formErrors.errorPassword" class="text-xs text-red-500">
             {{ formErrors.errorPasswordMessage }}
           </span>
-        </div>
 
         <!-- Confirmer mot de passe -->
         <div class="grid gap-1 mt-2 relative">
@@ -49,10 +49,10 @@
             <Eye v-if="!showConfirmPassword" class="w-[17px]" />
             <EyeOff v-else class="w-[17px]" />
           </button>
+          </div>
           <span v-if="formErrors.errorConfirmPassword" class="text-xs text-red-500">
             {{ formErrors.errorConfirmPasswordMessage }}
           </span>
-        </div>
 
         <!-- Exigences de mot de passe -->
         <div class="bg-muted/50 p-3 rounded mt-2 text-xs text-muted-foreground">

@@ -46,9 +46,9 @@
         class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[550px] md:w-[650px] max-w-[95vw]"
       >
         <div class="flex flex-col space-y-2 text-left">
-          <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight">Créer une agence</h1>
+          <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight">Créer une entreprise</h1>
           <p class="text-sm sm:text-md text-muted-foreground">
-            Configurez votre nouvelle agence pour commencer à gérer votre flotte
+            Configurez votre nouvelle entre pour commencer à gérer votre flotte
           </p>
         </div>
 
