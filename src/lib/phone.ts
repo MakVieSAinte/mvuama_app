@@ -18,9 +18,8 @@ export function formatPhoneNumber(phoneNumber: string, countryCode: string = 'FR
   }
 }
 
-/**
- * Formate le numéro en direct au fur et à mesure de la saisie
- */
+// Formate le numéro en direct au fur et à mesure de la saisie
+
 export function formatAsYouType(phoneNumber: string, countryCode: string = 'FR') {
   const formatter = new AsYouType(countryCode as any)
   return formatter.input(phoneNumber)

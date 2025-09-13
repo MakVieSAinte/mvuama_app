@@ -1,45 +1,30 @@
-// src/plugins/sonner.ts
 import { Toaster as SonnerToaster, toast as sonnerToast } from 'vue-sonner'
 import 'vue-sonner/style.css'
 import { h } from 'vue'
 import { useUserPrefs } from '../composables/useUserPrefs'
 
-/**
- * Options avancées pour les toasts
- */
 interface ToastOptions {
-  /** Durée d'affichage en millisecondes */
-  duration?: number
-  /** Couleurs enrichies pour un meilleur contraste */
-  richColors?: boolean
-  /** Description supplémentaire */
-  description?: string
-  /** Action à effectuer (bouton dans le toast) */
+  duration?: number // Durée d'affichage en millisecondes
+  richColors?: boolean // Couleurs enrichies
+  description?: string // Description supplémentaire
   action?: {
     label: string
     onClick: () => void
-  }
-  /** Rendre le toast non rejetable */
-  important?: boolean
-  /** Position du toast */
+  } // Action à effectuer (bouton dans le toast)
+  important?: boolean // Rendre le toast non rejetable
   position?:
     | 'top-left'
     | 'top-center'
     | 'top-right'
     | 'bottom-left'
     | 'bottom-center'
-    | 'bottom-right'
+    | 'bottom-right' // Position du toast
 }
 
 // Position par défaut pour tous les toasts
 const DEFAULT_POSITION = 'bottom-right'
 
-/**
- * Composable pour centraliser l'utilisation des notifications toast
- * Adaptatif au thème de l'application (light/dark)
- */
 export function useSonner() {
-  // Toaster adaptatif qui suit le thème stocké (light/dark)
   const Toaster = {
     name: 'AppToaster',
     setup() {
@@ -56,11 +41,6 @@ export function useSonner() {
     },
   }
 
-  /**
-   * Toast de succès
-   * @param message Message principal
-   * @param options Options du toast
-   */
   function toastSuccess(message: string, options: ToastOptions = {}) {
     sonnerToast.success(message, {
       richColors: true,
@@ -70,11 +50,6 @@ export function useSonner() {
     })
   }
 
-  /**
-   * Toast d'erreur
-   * @param message Message d'erreur
-   * @param options Options du toast
-   */
   function toastError(message: string, options: ToastOptions = {}) {
     sonnerToast.error(message, {
       richColors: true,
@@ -84,11 +59,6 @@ export function useSonner() {
     })
   }
 
-  /**
-   * Toast d'avertissement
-   * @param message Message d'avertissement
-   * @param options Options du toast
-   */
   function toastWarning(message: string, options: ToastOptions = {}) {
     sonnerToast(message, {
       richColors: true,
@@ -103,26 +73,17 @@ export function useSonner() {
     })
   }
 
-  /**
-   * Toast d'information
-   * @param message Message informatif
-   * @param options Options du toast
-   */
   function toastInfo(message: string, options: ToastOptions = {}) {
     sonnerToast.info(message, {
       richColors: true,
       position: DEFAULT_POSITION,
-      duration: 3000,
+      duration: 4000,
       ...options,
     })
   }
 
-  /**
-   * Toast de chargement avec promesse
-   * @param message Message initial pendant le chargement
-   * @param promise Promesse à observer
-   * @param messages Messages pour chaque état (en attente, succès, erreur)
-   */
+  // Toast de chargement avec promesse
+
   function toastPromise<T>(
     promise: Promise<T>,
     messages: {
