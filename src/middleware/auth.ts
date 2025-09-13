@@ -1,4 +1,3 @@
-// middleware/auth.ts
 import type { RouteLocationNormalized, NavigationGuardNext } from 'vue-router'
 import { AuthService } from '../services/auth/auth'
 import { supabase } from '../services/config/supabaseClient'
@@ -8,49 +7,52 @@ export async function authMiddleware(
   from: RouteLocationNormalized,
   next: NavigationGuardNext,
 ) {
-  // Autoriser l'accès aux routes d'authentification pour tous les utilisateurs
   if (
     to.path.startsWith('/auth/login') ||
     to.path.startsWith('/auth/register') ||
     to.path.startsWith('/auth/callback') ||
     to.path.startsWith('/auth/forgot-password') ||
+    to.path.startsWith('/auth/forgot-password-confirmation') ||
     to.path.startsWith('/auth/reset-password') ||
     to.path.startsWith('/auth/handler')
   ) {
     return next()
   }
 
-  // Vérification asynchrone de l'authentification
   try {
-    const isAuth = await AuthService.checkAuth()
+    const { data } = await supabase.auth.getSession()
 
-    if (!isAuth) {
-      console.log('Utilisateur non authentifié, redirection vers login')
+    if (!data.session) {
+      console.log('Aucune session active, redirection vers login')
       return next('/auth/login')
     }
 
-    // Si l'utilisateur est authentifié et qu'il essaie d'accéder à /create-agency, vérifier s'il a déjà une agence
-    if (to.path === '/create-agency') {
-      const { data: user } = await supabase.auth.getUser()
-
-      if (user && user.user) {
+    if (from.path === '/auth/login' || to.path === '/create-agency') {
+      try {
         const { AgencyService } = await import('../services/agencies/agencyService')
-        const { data: agencies } = await AgencyService.getUserAgencies(user.user.id)
+        const { data: agencies } = await AgencyService.getUserAgencies(data.session.user.id)
 
-        // Si l'utilisateur a déjà des agences, le rediriger vers le dashboard
-        if (agencies && agencies.length > 0) {
+        // Si l'utilisateur n'a pas d'agence, le rediriger vers create-agency
+        if (!agencies || agencies.length === 0) {
+          if (to.path !== '/create-agency') {
+            return next('/create-agency')
+          }
+        } else if (to.path === '/create-agency') {
           return next('/')
         }
+      } catch (agencyError) {
+        console.error('Erreur lors de la vérification des agences:', agencyError)
       }
     }
 
-    // Protection admin : doit être authentifié ET admin
+    // Protection admin
     if (to.path.startsWith('/admin')) {
       if (!AuthService.isAdmin()) {
         return next('/')
       }
     }
 
+    // Si l'utilisateur est connecté, permettre l'accès à la route demandée
     console.log('Navigation autorisée')
     return next()
   } catch (error) {
