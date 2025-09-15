@@ -121,6 +121,30 @@ export interface RegisterData {
   prenom: string
   telephone: string
 }
+/**
+ * Remplit le premier step du formulaire d'inscription
+ * @param page Page Playwright
+ * @param user Données utilisateur
+ */
+export async function fillRegisterFormStep1(page: Page, user: RegisterData) {
+  await page.fill('input[name="email"]', user.email)
+  await page.fill('input[name="password"]', user.password)
+  await page.fill('input[name="nom"]', user.nom)
+  await page.fill('input[name="prenom"]', user.prenom)
+  await page.fill('input[name="telephone"]', user.telephone)
+}
+
+/**
+ * Remplit le deuxième step du formulaire d'inscription
+ * @param page Page Playwright
+ * @param user Données utilisateur
+ */
+export async function fillRegisterFormStep2(page: Page, user: RegisterData) {
+  // Exemple : suppose qu'il y a un champ adresse et un champ ville
+  await page.fill('input[name="adresse"]', user.adresse || '')
+  await page.fill('input[name="ville"]', user.ville || '')
+  // Ajoute ici les autres champs du step 2 si besoin
+}
 
 /**
  * Retourne un utilisateur de test avec des données valides

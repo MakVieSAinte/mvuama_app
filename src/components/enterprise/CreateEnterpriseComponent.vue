@@ -72,7 +72,7 @@
         </div>
 
         <!-- Formulaire -->
-        <AgencyForm @created="handleAgencyCreated" @cancel="handleCancel" />
+        <EnterpriseForm @created="handleEnterpriseCreated" @cancel="handleCancel" />
 
         <p class="px-1 text-center text-xs sm:text-sm text-muted-foreground">
           En cliquant sur continuer, vous acceptez nos
@@ -96,25 +96,25 @@ import { useSonner } from '@/plugins/sonner'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 import { ArrowLeft as ArrowLeftIcon } from 'lucide-vue-next'
-import AgencyForm from '@/components/agencies/AgencyForm.vue'
+import EnterpriseForm from '@/components/enterprise/enterpriseForm/EntrepriseForm.vue'
 
 export default defineComponent({
-  name: 'CreateAgencyComponent',
+  name: 'CreateEnterpriseComponent',
   components: {
-    AgencyForm,
+    EnterpriseForm,
     ArrowLeftIcon,
   },
   setup() {
     const router = useRouter()
     const { toast } = useSonner()
 
-    const handleAgencyCreated = (agency) => {
-      toast.success(`L'agence ${agency.name} a été créée avec succès !`)
-      // Stockage de l'ID de l'agence dans le localStorage pour y accéder facilement
-      localStorage.setItem('current_agency_id', agency.id)
-      localStorage.setItem('current_agency_name', agency.name)
-      // Redirection vers le dashboard avec l'ID de l'agence
-      router.push(`/agency/${agency.id}`)
+    const handleEnterpriseCreated = (enterprise) => {
+      toast.success(`L'entreprise ${enterprise.name} a été créée avec succès !`)
+      // Stockage de l'ID de l'entreprise dans le localStorage pour y accéder facilement
+      localStorage.setItem('current_enterprise_id', enterprise.id)
+      localStorage.setItem('current_enterprise_name', enterprise.name)
+      // Redirection vers le dashboard avec l'ID de l'entreprise
+      router.push(`/enterprise/${enterprise.id}`)
     }
 
     const handleCancel = () => {
@@ -122,7 +122,7 @@ export default defineComponent({
     }
 
     return {
-      handleAgencyCreated,
+      handleEnterpriseCreated,
       handleCancel,
       cn,
       buttonVariants,

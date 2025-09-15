@@ -84,7 +84,7 @@ import { LoginForm } from '@/formBuilder/auth/loginForm'
 import { LoginService } from '@/services/auth/loginService'
 import { AuthNotificationService } from '@/services/auth/authNotificationService'
 import { supabase } from '@/services/config/supabaseClient'
-import { AgencyService } from '@/services/agencies/agencyService'
+import { EnterpriseService } from '@/services/enterprise/enterpriseService'
 import type { ILoginBuilder } from '@/interfaces/loginInterface'
 
 export default defineComponent({
@@ -178,26 +178,28 @@ export default defineComponent({
 
           if (user && user.user) {
             console.log('Recherche des agences pour userId:', user.user.id)
-            const { data: agencies, error } = await AgencyService.getUserAgencies(user.user.id)
-            console.log("Résultat de la recherche d'agences:", { agencies, error })
+            const { data: enterprises, error } = await EnterpriseService.getUserEnterprises(
+              user.user.id,
+            )
+            console.log("Résultat de la recherche d'entreprises:", { enterprises, error })
 
             // Forcer la navigation vers la page appropriée
-            if (!agencies || agencies.length === 0) {
-              console.log('Aucune agence trouvée, redirection vers create-agency')
+            if (!enterprises || enterprises.length === 0) {
+              console.log('Aucune entreprise trouvée, redirection vers create-enterprise')
               // Utiliser la navigation programmatique via l'objet router
-              window.location.href = '/create-agency'
+              window.location.href = '/create-enterprise'
             } else {
-              console.log('Agences trouvées, redirection vers dashboard')
+              console.log('Entreprises trouvées, redirection vers dashboard')
               window.location.href = '/'
             }
           } else {
-            console.log('Utilisateur non disponible, redirection vers create-agency')
-            window.location.href = '/create-agency'
+            console.log('Utilisateur non disponible, redirection vers create-enterprise')
+            window.location.href = '/create-enterprise'
           }
         } catch (error) {
           console.error('Erreur lors de la redirection après connexion:', error)
-          // En cas d'erreur, rediriger vers la création d'agence
-          window.location.href = '/create-agency'
+          // En cas d'erreur, rediriger vers la création d'entreprise
+          window.location.href = '/create-enterprise'
         }
       } catch (error: unknown) {
         console.error('Erreur de login dans le composant:', error)

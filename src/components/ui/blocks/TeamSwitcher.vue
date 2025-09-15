@@ -21,7 +21,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 
-import { AgencyService } from '@/services/agencies/agencyService'
+import { EnterpriseService } from '@/services/enterprise/enterpriseService'
 
 // Accepte des équipes de test mais n'est pas obligatoire
 // Accepte des équipes pour rétrocompatibilité mais on n'utilisera pas ce prop
@@ -75,7 +75,7 @@ const activeTeam = computed(() => {
 onMounted(async () => {
   try {
     loading.value = true
-    const response = await AgencyService.getUserAgencies()
+    const response = await EnterpriseService.getUserEnterprises()
 
     if (response.data) {
       agencies.value = response.data

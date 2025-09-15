@@ -2,22 +2,20 @@
 
 export interface IAgencyModel {
   id?: string
-  name: string
-  code?: string
-  type?: string
-  status?: 'active' | 'inactive'
-  country: string
-  city?: string
-  address?: string
-  postal_code?: string
-  latitude?: number | null
-  longitude?: number | null
-  phone?: string | null
-  mobile_phone?: string | null
-  email?: string
-  website?: string | null
-  logo_url?: string | null
-  description?: string
+  enterprise_id: string // ID de l'entreprise parente
+  name: string // Nom de l'agence
+  code?: string // Code interne pour gestion dans l'app
+  status?: 'active' | 'closed' | 'suspended' // Statut dans l'app (active, fermée, suspendue)
+  description?: string // Description (ex: "Agence spécialisée dans le transport urbain")
+  country: string // Pays
+  city?: string // Ville
+  address?: string // Adresse complète
+  email?: string // Email de l'agence
+  phone?: string | null // Téléphone de l'agence
+  manager_name?: string // Responsable d'agence (nom)
+  manager_position?: string // Fonction du responsable
+  manager_phone?: string | null // Téléphone du responsable
+  manager_email?: string | null // Email du responsable
   created_at?: string
   updated_at?: string
   created_by: string
@@ -27,12 +25,12 @@ export interface IAgencyModel {
 // Interface pour la validation du formulaire d'agence
 
 export interface IAgencyBuilder {
+  errorEnterpriseId: boolean
+  errorEnterpriseIdMessage: string
   errorName: boolean
   errorNameMessage: string
   errorCode: boolean
   errorCodeMessage: string
-  errorType: boolean
-  errorTypeMessage: string
   errorStatus: boolean
   errorStatusMessage: string
   errorCountry: boolean
@@ -41,32 +39,25 @@ export interface IAgencyBuilder {
   errorCityMessage: string
   errorAddress: boolean
   errorAddressMessage: string
-  errorPostalCode: boolean
-  errorPostalCodeMessage: string
-  errorLatitude: boolean
-  errorLatitudeMessage: string
-  errorLongitude: boolean
-  errorLongitudeMessage: string
   errorPhone: boolean
   errorPhoneMessage: string
-  errorMobilePhone: boolean
-  errorMobilePhoneMessage: string
   errorEmail: boolean
   errorEmailMessage: string
-  errorWebsite: boolean
-  errorWebsiteMessage: string
-  errorLogo: boolean
-  errorLogoMessage: string
   errorDescription: boolean
   errorDescriptionMessage: string
+  errorManagerName: boolean
+  errorManagerNameMessage: string
+  errorManagerPosition: boolean
+  errorManagerPositionMessage: string
+  errorManagerPhone: boolean
+  errorManagerPhoneMessage: string
+  errorManagerEmail: boolean
+  errorManagerEmailMessage: string
 }
 
-// Types d'agences disponibles
-export const AGENCY_TYPES = [
-  { value: 'headquarters', label: 'Siège social' },
-  { value: 'branch', label: 'Succursale' },
-  { value: 'franchise', label: 'Franchise' },
-  { value: 'partner', label: 'Partenaire' },
-  { value: 'dealer', label: 'Concessionnaire' },
-  { value: 'other', label: 'Autre' },
+// Statuts possibles pour les agences
+export const AGENCY_STATUS = [
+  { value: 'active', label: 'Active' },
+  { value: 'closed', label: 'Fermée' },
+  { value: 'suspended', label: 'Suspendue' },
 ]

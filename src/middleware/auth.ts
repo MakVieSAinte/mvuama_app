@@ -27,22 +27,34 @@ export async function authMiddleware(
       return next('/auth/login')
     }
 
-    if (from.path === '/auth/login' || to.path === '/create-agency') {
-      try {
-        const { AgencyService } = await import('../services/agencies/agencyService')
-        const { data: agencies } = await AgencyService.getUserAgencies(data.session.user.id)
+    // Vérifier si l'utilisateur a déjà une entreprise
+    try {
+      const { EnterpriseService } = await import('../services/enterprise/enterpriseService')
+      const { data: enterprises } = await EnterpriseService.getUserEnterprises(data.session.user.id)
 
-        // Si l'utilisateur n'a pas d'agence, le rediriger vers create-agency
+      // Si l'utilisateur n'a pas d'entreprise, le rediriger vers create-enterprise
+      if (!enterprises || enterprises.length === 0) {
+        if (to.path !== '/create-enterprise') {
+          console.log("Aucune entreprise trouvée, redirection vers création d'entreprise")
+          return next('/create-enterprise')
+        }
+      } else if (to.path === '/create-enterprise') {
+        // Si l'utilisateur a déjà une entreprise et essaie d'accéder à create-enterprise,
+        // vérifier s'il a une agence
+        const { AgencyService } = await import('../services/agencies/agencyService')
+        const { data: agencies } = await AgencyService.getAgenciesByEnterpriseId(enterprises[0].id)
+
         if (!agencies || agencies.length === 0) {
-          if (to.path !== '/create-agency') {
-            return next('/create-agency')
-          }
-        } else if (to.path === '/create-agency') {
+          // L'utilisateur a une entreprise mais pas d'agence, on l'envoie au dashboard
+          // où il verra l'overlay pour créer une agence
+          return next('/')
+        } else {
+          // L'utilisateur a déjà une entreprise et au moins une agence
           return next('/')
         }
-      } catch (agencyError) {
-        console.error('Erreur lors de la vérification des agences:', agencyError)
       }
+    } catch (error) {
+      console.error("Erreur lors de la vérification de l'entreprise:", error)
     }
 
     // Protection admin

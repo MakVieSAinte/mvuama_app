@@ -5,9 +5,9 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/create-agency',
-      name: 'create-agency',
-      component: () => import('../views/CreateAgencyView.vue'),
+      path: '/create-enterprise',
+      name: 'create-enterprise',
+      component: () => import('../views/CreateEnterpriseView.vue'),
       meta: { requiresAuth: true },
     },
     {
