@@ -1,5 +1,6 @@
 import { supabase } from '../config/supabaseClient'
 import { AuthNotificationService } from './authNotificationService'
+import { useUserStore } from '@/stores/userStore'
 
 export class AuthService {
   static async signUp(email: string, password: string) {
@@ -111,6 +112,10 @@ export class AuthService {
     try {
       const { error } = await supabase.auth.signOut()
       if (error) throw error
+
+      // Nettoyer les données du store utilisateur
+      const userStore = useUserStore()
+      userStore.clearUserData()
 
       // Notification de déconnexion réussie
       AuthNotificationService.notifyLogout()

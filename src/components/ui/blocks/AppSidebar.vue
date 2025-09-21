@@ -37,7 +37,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed, watchEffect } from 'vue'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -58,51 +58,46 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
+// Import du store utilisateur
+import { useUserStore } from '@/stores/userStore'
+
 const props = defineProps<SidebarProps & { activeTab: string }>()
 
 // Information utilisateur pour le dropdown
 const { isMobile } = useSidebar()
 
-// Import du service utilisateur
+// Import du service utilisateur pour le fallback
 import { UserService } from '@/services/user/userService'
 
-// Informations par défaut (en attendant de charger les vraies données)
-const userInfo = ref({
-  name: 'Chargement...',
-  firstName: '',
-  lastName: '',
-  email: '',
-  avatar: 'https://github.com/shadcn.png',
-})
+// Utiliser le store pour les informations utilisateur
+const userStore = useUserStore()
+
+// Informations utilisateur computées depuis le store
+const userInfo = computed(() => ({
+  name: userStore.userName,
+  firstName: userStore.userFirstName,
+  lastName: userStore.userLastName,
+  email: userStore.userEmail,
+  avatar: userStore.userAvatar || 'https://github.com/shadcn.png',
+}))
 
 // État du modal de confirmation de déconnexion
 const isLogoutDialogOpen = ref(false)
 
 // Charger les informations de l'utilisateur au montage du composant
 onMounted(async () => {
-  try {
-    // Récupérer les données formatées de l'utilisateur via le service
-    const userData = await UserService.getUserDisplayInfo()
-
-    if (userData) {
-      // Mettre à jour les informations de l'utilisateur
-      userInfo.value = {
-        name: userData.name,
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        email: userData.email,
-        avatar: userData.avatar || 'https://github.com/shadcn.png',
-      }
-      console.log('Informations utilisateur chargées:', userInfo.value)
-    } else {
-      console.log('Aucun utilisateur connecté trouvé')
-    }
-  } catch (error) {
-    console.error('Erreur lors de la récupération des informations utilisateur:', error)
+  // Si l'utilisateur n'est pas encore chargé dans le store, le charger
+  if (!userStore.currentUser) {
+    await userStore.fetchUserProfile()
+    console.log('Profil utilisateur chargé depuis le store')
   }
 })
 
-// Imports pour la gestion de l'authentification et de la navigation
+// S'assurer que les informations utilisateur sont toujours à jour
+// Réagir aux changements dans le store utilisateur
+watchEffect(() => {
+  console.log('Store utilisateur mis à jour:', userStore.lastUpdated)
+}) // Imports pour la gestion de l'authentification et de la navigation
 import { AuthService } from '@/services/auth/auth'
 import { useRouter } from 'vue-router'
 const router = useRouter()
