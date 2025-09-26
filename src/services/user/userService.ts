@@ -79,7 +79,7 @@ export class UserService {
         phone_number: profileData.phone,
         country: profileData.country,
         currency: profileData.currency, // Ajout de la devise
-        updated_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),  
       }
 
       // Mise à jour dans la table users
