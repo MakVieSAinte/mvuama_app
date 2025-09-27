@@ -109,6 +109,13 @@ export default defineComponent({
     const { toast } = useSonner()
 
     const handleEnterpriseCreated = (enterprise) => {
+      // Vérifier que l'objet enterprise existe et a les propriétés requises
+      if (!enterprise || !enterprise.id || !enterprise.name) {
+        console.error("Données d'entreprise invalides:", enterprise)
+        toast.error("Une erreur s'est produite lors de la création de l'entreprise")
+        return
+      }
+
       toast.success(`L'entreprise ${enterprise.name} a été créée avec succès !`)
       // Stockage de l'ID de l'entreprise dans le localStorage pour y accéder facilement
       localStorage.setItem('current_enterprise_id', enterprise.id)

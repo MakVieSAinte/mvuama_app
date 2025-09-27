@@ -103,7 +103,11 @@ export class AuthService {
     }
   }
 
-  static isAdmin(): boolean {
+  static isAdmin(session?: any): boolean {
+    if (session && session.user) {
+      return session.user.role === 'admin'
+    }
+    // Fallback au comportement précédent si pas de session fournie
     const user = JSON.parse(localStorage.getItem('sb-user') || 'null')
     return user && user.role === 'admin'
   }

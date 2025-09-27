@@ -93,10 +93,22 @@ export default defineComponent({
       } catch (error: unknown) {
         console.error("Erreur lors du renvoi de l'email:", error)
 
-        // Notification d'erreur
-        const errorMessage =
-          error instanceof Error ? error.message : "Une erreur inattendue s'est produite"
-        AuthNotificationService.notifyResetEmailError(errorMessage)
+        // Vérifier si c'est l'erreur de limite de temps
+        if (
+          error instanceof Error &&
+          error.message.includes('security purposes') &&
+          error.message.includes('seconds')
+        ) {
+          // Message spécifique pour la limite de temps
+          AuthNotificationService.notifyResetEmailError(
+            "Un lien de réinitialisation vient d'être envoyé à votre adresse email. Veuillez patienter une minute avant de demander un nouvel envoi.",
+          )
+        } else {
+          // Autres erreurs
+          const errorMessage =
+            error instanceof Error ? error.message : "Une erreur inattendue s'est produite"
+          AuthNotificationService.notifyResetEmailError(errorMessage)
+        }
       } finally {
         this.isLoading = false
       }
@@ -104,3 +116,5 @@ export default defineComponent({
   },
 })
 </script>
+
+<style></style>

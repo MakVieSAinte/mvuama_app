@@ -8,12 +8,12 @@ const router = createRouter({
       path: '/create-enterprise',
       name: 'create-enterprise',
       component: () => import('../views/CreateEnterpriseView.vue'),
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, skipEnterpriseCheck: true },
     },
     {
       path: '/auth',
       name: 'auth',
-      meta: { requiresAuth: false },
+      meta: { requiresAuth: false, public: true },
       children: [
         {
           path: 'login',
@@ -182,5 +182,3 @@ const router = createRouter({
 router.beforeEach(authMiddleware)
 
 export default router
-
-

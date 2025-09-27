@@ -877,13 +877,16 @@ export default {
           )
         }
 
-        if (response.success && response.data) {
+        if (response && response.success && response.data) {
           toast.success('Entreprise créée avec succès!')
 
           // Émission de l'événement avec les données de l'agence
           emit('created', response.data)
         } else {
-          throw new Error("Échec de la création de l'entreprise")
+          throw new Error(
+            "Échec de la création de l'entreprise: " +
+              (response?.error?.message || 'Réponse invalide du service'),
+          )
         }
       } catch (error) {
         console.error("Erreur lors de la création de l'entreprise:", error)
